@@ -2,7 +2,7 @@ import React, { lazy, Suspense } from "react";
 import { RouteObject, useRoutes, BrowserRouter } from "react-router-dom";
 
 const Loading = () => (
-    <p className="p-4 w-full h-full text-center">Loading...</p>
+    <p className="h-full w-full p-4 text-center">Loading...</p>
 );
 
 const IndexScreen = lazy(() => import("../screens/Index"));

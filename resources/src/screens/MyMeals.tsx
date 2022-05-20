@@ -22,17 +22,17 @@ export default function MyMeals() {
     return (
         <Suspense fallback={<div>Loading...</div>}>
             <div className="container">
-                <section className="h-screen w-full flex flex-col items-center">
-                    <h1 className="text-4xl text-gray-200 mt-10">My Meals</h1>
+                <section className="flex h-screen w-full flex-col items-center">
+                    <h1 className="mt-10 text-4xl text-gray-200">My Meals</h1>
 
-                    <div className="grid grid-cols-1 gap-4 mt-10 text-gray-800">
+                    <div className="mt-10 grid grid-cols-1 gap-4 text-gray-800">
                         {meals.map((meal) => (
                             <div
                                 onClick={() => removeMeal(meal.id)}
                                 key={meal.id}
-                                className="flex flex-col items-center bg-white rounded-sm p-4 shadow-lg"
+                                className="flex flex-col items-center rounded-sm bg-white p-4 shadow-lg"
                             >
-                                <h2 className="text-2xl text-center w-full truncate ">
+                                <h2 className="w-full truncate text-center text-2xl ">
                                     {meal.name}
                                 </h2>
                                 <div className="grid grid-cols-2 gap-4">

@@ -25,8 +25,8 @@ function Index() {
     return (
         <>
             <Head title="Welcome" />
-            <div className="w-3/4 h-screen mx-auto ">
-                <div className="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto h-screen w-3/4 ">
+                <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
                     <div className="max-w-md w-full space-y-8">
                         <div>
                             <img
@@ -44,7 +44,7 @@ function Index() {
                                 name="remember"
                                 defaultValue="true"
                             />
-                            <div className="rounded-md shadow-md -space-y-px">
+                            <div className="-space-y-px rounded-md shadow-md">
                                 <div>
                                     <label
                                         htmlFor="email-address"
@@ -62,7 +62,7 @@ function Index() {
                                         }
                                         autoComplete="email"
                                         required
-                                        className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                                        className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-3 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                                         placeholder="Email address"
                                     />
                                 </div>
@@ -83,7 +83,7 @@ function Index() {
                                         }
                                         autoComplete="current-password"
                                         required
-                                        className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                                        className="relative block w-full appearance-none rounded-none rounded-b-md border border-gray-300 px-3 py-3 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                                         placeholder="Password"
                                     />
                                 </div>
@@ -95,7 +95,7 @@ function Index() {
                                         id="remember-me"
                                         name="remember-me"
                                         type="checkbox"
-                                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                     />
                                     <label
                                         htmlFor="remember-me"
@@ -119,7 +119,7 @@ function Index() {
                                 <button
                                     onClick={handleLogin}
                                     type="submit"
-                                    className="group relative w-full flex justify-center py-3 px-5 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800"
+                                    className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-5 text-sm font-medium text-white hover:bg-indigo-700 active:bg-indigo-800"
                                 >
                                     Sign in
                                 </button>

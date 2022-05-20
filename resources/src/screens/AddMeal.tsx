@@ -42,7 +42,7 @@ export default function AddMeal() {
 
     return (
         <div className="container">
-            <section className="h-screen w-full flex flex-col items-center justify-center">
+            <section className="flex h-screen w-full flex-col items-center justify-center">
                 <form className="flex flex-col items-center">
                     <div className="flex flex-col items-center">
                         <label className="text-xl text-gray-200">Name</label>
@@ -52,7 +52,7 @@ export default function AddMeal() {
                             </p>
                         )}
                         <input
-                            className={`w-full mt-2 p-2 border text-gray-800 border-gray-400 rounded${
+                            className={`mt-2 w-full border border-gray-400 p-2 text-gray-800 rounded${
                                 invalidInputs
                                     ? " border-red-500"
                                     : "border-none"
@@ -71,7 +71,7 @@ export default function AddMeal() {
                             </p>
                         )}
                         <input
-                            className={`w-full mt-2 p-2 border text-gray-800 border-gray-400 rounded${
+                            className={`mt-2 w-full border border-gray-400 p-2 text-gray-800 rounded${
                                 invalidInputs
                                     ? " border-red-500"
                                     : "border-none"
@@ -87,7 +87,7 @@ export default function AddMeal() {
                             Calories
                         </label>
                         <input
-                            className="w-full mt-2 p-2 border text-gray-800 border-gray-400 rounded"
+                            className="mt-2 w-full rounded border border-gray-400 p-2 text-gray-800"
                             type="number"
                             value={calories}
                             onChange={(e) => setCalories(e.target.value)}
@@ -96,7 +96,7 @@ export default function AddMeal() {
                     <div className="flex flex-col items-center">
                         <label className="text-xl text-gray-200">Carbs</label>
                         <input
-                            className="w-full mt-2 p-2 border text-gray-800 border-gray-400 rounded"
+                            className="mt-2 w-full rounded border border-gray-400 p-2 text-gray-800"
                             type="number"
                             value={carbs}
                             onChange={(e) => setCarbs(e.target.value)}
@@ -105,7 +105,7 @@ export default function AddMeal() {
                     <div className="flex flex-col items-center">
                         <label className="text-xl text-gray-200">Protein</label>
                         <input
-                            className="w-full mt-2 p-2 border text-gray-800 border-gray-400 rounded"
+                            className="mt-2 w-full rounded border border-gray-400 p-2 text-gray-800"
                             type="number"
                             value={protein}
                             onChange={(e) => setProtein(e.target.value)}
@@ -114,7 +114,7 @@ export default function AddMeal() {
                     <div className="flex flex-col items-center">
                         <label className="text-xl text-gray-200">Fat</label>
                         <input
-                            className="w-full mt-2 p-2 border text-gray-800 border-gray-400 rounded"
+                            className="mt-2 w-full rounded border border-gray-400 p-2 text-gray-800"
                             type="number"
                             value={fat}
                             onChange={(e) => setFat(e.target.value)}
@@ -122,7 +122,7 @@ export default function AddMeal() {
                     </div>
                     <button
                         onClick={handleSubmit}
-                        className="px-4 py-3 bg-primary rounded-md w-full mt-6"
+                        className="mt-6 w-full rounded-md bg-primary px-4 py-3"
                     >
                         Submit meal
                     </button>
