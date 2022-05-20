@@ -1,30 +1,39 @@
 import axios from "axios";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function AddMeal() {
     const [name, setName] = React.useState("");
-    const [portion, setPortion] = React.useState(null);
-    const [calories, setCalories] = React.useState(null);
-    const [carbs, setCarbs] = React.useState(null);
-    const [protein, setProtein] = React.useState(null);
-    const [fat, setFat] = React.useState(null);
+    const [portion, setPortion] = React.useState(undefined);
+    const [calories, setCalories] = React.useState(undefined);
+    const [carbs, setCarbs] = React.useState(undefined);
+    const [protein, setProtein] = React.useState(undefined);
+    const [fat, setFat] = React.useState(undefined);
 
     const [invalidInputs, setInvalidInputs] = React.useState(false);
+
+    const navigate = useNavigate();
 
     const handleSubmit = async (e: MouseEvent) => {
         e.preventDefault();
         if (name && portion) {
             setInvalidInputs(false);
-            const response = await axios.post(`/api/add-meal`, {
-                name,
-                portion,
-                calories,
-                carbs,
-                protein,
-                fat,
-            });
-            if (response.success) {
-                alert("Meal added!");
+            try {
+                const response = await axios.post(`/api/meals`, {
+                    name,
+                    portion,
+                    calories,
+                    carbs,
+                    protein,
+                    fat,
+                });
+
+                if (response.status === 200) {
+                    // TODO: Ask if user wants to add another meal
+                    navigate("/my-meals");
+                }
+            } catch (error) {
+                console.log(error);
             }
         } else {
             setInvalidInputs(true);
@@ -33,7 +42,7 @@ export default function AddMeal() {
 
     return (
         <div className="container">
-            <section className="h-screen w-full flex flex-col items-center">
+            <section className="h-screen w-full flex flex-col items-center justify-center">
                 <form className="flex flex-col items-center">
                     <div className="flex flex-col items-center">
                         <label className="text-xl text-gray-200">Name</label>

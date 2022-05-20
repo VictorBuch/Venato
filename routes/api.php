@@ -26,5 +26,8 @@ Route::group(['/auth'], function () {
     Route::post('/logout', 'AuthController@logout');
 });
 
+
+
 Route::get('/meals', [MealController::class, 'getMeals']);
-Route::post('/add-meal', [MealController::class, 'addMeal']);
+Route::post('/meals', [MealController::class, 'addMeal']);
+Route::delete('/meals/{id}', [MealController::class, 'deleteMeal']);

@@ -8,6 +8,13 @@ use Illuminate\Http\Request;
 class MealController extends Controller
 {
 
+    public function deleteMeal(Request $request, $id)
+    {
+        $meal = Meal::find($id);
+        $meal->delete();
+        return response()->json(['message' => 'Meal deleted successfully']);
+    }
+
     public function getMeals()
     {
         return response()->json(Meal::all());

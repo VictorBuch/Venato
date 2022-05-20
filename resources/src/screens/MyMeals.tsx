@@ -1,8 +1,9 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
+import { Meal } from "../types/meals";
 
 export default function MyMeals() {
-    const [meals, setMeals] = useState([]);
+    const [meals, setMeals] = useState<Meal[]>([]);
 
     useEffect(() => {
         const fetchMeals = async () => {
@@ -12,37 +13,39 @@ export default function MyMeals() {
         fetchMeals();
     }, []);
 
+    const removeMeal = async (id: number) => {
+        await axios.delete(`/api/meals/${id}`);
+        const newMeals = await axios.get("/api/meals");
+        setMeals(newMeals.data);
+    };
+
     return (
-        <div className="container">
-            <section className="h-screen w-full flex flex-col items-center">
-                <div className="flex flex-col items-center">
-                    <h1 className="text-xl text-gray-200">My Meals</h1>
-                    <ul className="flex flex-col items-center">
+        <Suspense fallback={<div>Loading...</div>}>
+            <div className="container">
+                <section className="h-screen w-full flex flex-col items-center">
+                    <h1 className="text-4xl text-gray-200 mt-10">My Meals</h1>
+
+                    <div className="grid grid-cols-1 gap-4 mt-10 text-gray-800">
                         {meals.map((meal) => (
-                            <li key={meal.id}>
-                                <div className="flex flex-col items-center">
-                                    <h2 className="text-xl text-gray-200">
-                                        {meal.name}
-                                    </h2>
-                                    <p className="text-gray-200">
-                                        {meal.portion}
-                                    </p>
-                                    <p className="text-gray-200">
-                                        {meal.calories}
-                                    </p>
-                                    <p className="text-gray-200">
-                                        {meal.carbs}
-                                    </p>
-                                    <p className="text-gray-200">
-                                        {meal.protein}
-                                    </p>
-                                    <p className="text-gray-200">{meal.fat}</p>
+                            <div
+                                onClick={() => removeMeal(meal.id)}
+                                key={meal.id}
+                                className="flex flex-col items-center bg-white rounded-sm p-4 shadow-lg"
+                            >
+                                <h2 className="text-2xl text-center w-full truncate ">
+                                    {meal.name}
+                                </h2>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <p>Calories: {meal.calories}</p>
+                                    <p>Carbs: {meal.carbs || "Unkown"}</p>
+                                    <p>Protein: {meal.protein || "Unkown"}</p>
+                                    <p>Fat: {meal.fat || "Unkown"}</p>
                                 </div>
-                            </li>
+                            </div>
                         ))}
-                    </ul>
-                </div>
-            </section>
-        </div>
+                    </div>
+                </section>
+            </div>
+        </Suspense>
     );
 }
