@@ -31,9 +31,11 @@ export default function AddMeal() {
                 });
 
                 if (response.status === 200) {
+                    toast.success("Meal added successfully!");
                     setTimeout(() => {
                         navigate("/my-meals");
-                    }, 2000);
+                    }, 2500);
+
                     // TODO: Ask if user wants to add another meal
                 }
             } catch (error) {

@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { MouseEvent, useState } from "react";
+import { Link } from "react-router-dom";
 import { Head } from "../components/shared/Head";
 
 function Index() {
@@ -15,10 +16,6 @@ function Index() {
                 email,
                 password,
             }
-        );
-        console.log(
-            "🚀 ~ file: Index.tsx ~ line 13 ~ handleLogin ~ response",
-            response
         );
     };
 
@@ -115,15 +112,19 @@ function Index() {
                                 </div>
                             </div>
 
-                            <div>
-                                <button
-                                    onClick={handleLogin}
-                                    type="submit"
-                                    className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-5 text-sm font-medium text-white hover:bg-indigo-700 active:bg-indigo-800"
-                                >
-                                    Sign in
-                                </button>
-                            </div>
+                            <button
+                                onClick={handleLogin}
+                                type="submit"
+                                className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-5 text-sm font-medium text-white hover:bg-indigo-700 active:bg-indigo-800"
+                            >
+                                Sign in
+                            </button>
+                            <Link
+                                to="/signup"
+                                className=" flex items-start justify-center text-center text-sm text-accent"
+                            >
+                                Sign up
+                            </Link>
                         </form>
                     </div>
                 </div>
