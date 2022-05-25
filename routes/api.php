@@ -1,9 +1,9 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MealController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use PHPUnit\Framework\RiskyTestError;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,14 +20,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(['/auth'], function () {
-    Route::post('/register', [AuthController::class, 'register']);
+Route::group(['prefix' => '/auth'], function () {
     Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 
-
-Route::get('/meals', [MealController::class, 'getMeals']);
-Route::post('/meals', [MealController::class, 'addMeal']);
-Route::delete('/meals/{id}', [MealController::class, 'deleteMeal']);
+Route::group(['middleware' => 'auth:sanctum'], function () {
+    Route::get('/meals', [MealController::class, 'getMeals'])->middleware('auth:sanctum');
+    Route::post('/meals', [MealController::class, 'addMeal'])->middleware('auth:sanctum');
+    Route::delete('/meals/{id}', [MealController::class, 'deleteMeal']);
+});

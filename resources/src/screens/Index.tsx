@@ -1,22 +1,42 @@
 import axios from "axios";
-import React, { MouseEvent, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { MouseEvent, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Head } from "../components/shared/Head";
 
 function Index() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    const navigate = useNavigate();
+
     const handleLogin = async (e: MouseEvent) => {
         e.preventDefault();
 
-        const response = await axios.post(
-            "http://fitness-journey.test/api/auth/login",
-            {
-                email,
-                password,
+        const cookie = await axios.get("/sanctum/csrf-cookie");
+        console.log("🚀 ~ file: Index.tsx ~ line 30 ~ cookie ~ cookie", cookie);
+        if (cookie.status === 204) {
+            console.log("status is 202");
+
+            const response = await axios.post(
+                "http://fitness-journey.test/api/auth/login",
+                {
+                    email,
+                    password,
+                }
+            );
+            console.log(
+                "🚀 ~ file: Index.tsx ~ line 24 ~ cookie ~ response",
+                response
+            );
+            if (response.status === 200) {
+                const user = await axios.get("/api/user");
+                console.log(
+                    "🚀 ~ file: Index.tsx ~ line 14 ~ useEffect ~ user",
+                    user
+                );
+                navigate("/my-meals");
             }
-        );
+        }
     };
 
     return (

@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Head } from "../components/shared/Head";
 
 export default function Signup() {
@@ -7,13 +8,19 @@ export default function Signup() {
     const [password, setPassword] = useState("");
     const [passwordConfirmation, setPasswordConfirmation] = useState("");
 
+    const navigate = useNavigate();
+
     const handleSignup = async (e) => {
         e.preventDefault();
-        const response = await axios.post("/api/signup", {
+        const response = await axios.post("/api/auth/register", {
             email,
             password,
-            passwordConfirmation,
+            password_confirmation: passwordConfirmation,
         });
+
+        if (response.status === 200) {
+            navigate("/");
+        }
     };
 
     return (
