@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ConsumedMealController;
 use App\Http\Controllers\MealController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,5 +31,9 @@ Route::group(['prefix' => '/auth'], function () {
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/meals', [MealController::class, 'getMeals'])->middleware('auth:sanctum');
     Route::post('/meals', [MealController::class, 'addMeal'])->middleware('auth:sanctum');
-    Route::delete('/meals/{id}', [MealController::class, 'deleteMeal']);
+    Route::delete('/meals/{id}', [MealController::class, 'deleteMeal'])->middleware('auth:sanctum');
+
+    Route::get('/consumed_meals/{meal_type}', [ConsumedMealController::class, 'getMeals'])->middleware('auth:sanctum');
+    Route::post('/consumed_meals', [ConsumedMealController::class, 'addMeal'])->middleware('auth:sanctum');
+    Route::delete('/consumed_meals/{id}', [ConsumedMealController::class, 'deleteMeal'])->middleware('auth:sanctum');
 });

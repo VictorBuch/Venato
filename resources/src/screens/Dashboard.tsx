@@ -12,6 +12,7 @@ import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import RamenDiningRoundedIcon from "@mui/icons-material/RamenDiningRounded";
 import DinnerDiningRoundedIcon from "@mui/icons-material/DinnerDiningRounded";
 import FastfoodRoundedIcon from "@mui/icons-material/FastfoodRounded";
+import { useNavigate } from "react-router-dom";
 
 type MealCardProps = {
     title: string;
@@ -29,7 +30,10 @@ function MealCard({
     addFoodItem,
 }: MealCardProps) {
     return (
-        <div className="flex h-28 flex-col rounded-md border border-gray-400 bg-base-content shadow-lg">
+        <div
+            className="flex h-28 flex-col rounded-md border border-gray-400 bg-base-content shadow-lg"
+            onClick={addFoodItem}
+        >
             <div className="flex h-full items-center py-3 px-4">
                 <figure>{icon}</figure>
                 <main className="ml-6 flex w-60 flex-col items-start justify-center">
@@ -38,10 +42,7 @@ function MealCard({
                         {foodItems || "reccomended amount: 800 kcal"}
                     </p>
                 </main>
-                <AddCircleRoundedIcon
-                    className="ml-auto "
-                    onClick={addFoodItem}
-                />
+                <AddCircleRoundedIcon className="ml-auto " />
             </div>
             <hr className="border border-gray-200" />
             <p className="flex h-max items-end justify-center  py-2 text-center text-sm">
@@ -162,11 +163,9 @@ export default function Dashboard() {
         (proteinEaten / proteinGoal) * 100
     );
 
-    // TODO: Update this to use personal data from database
+    // TODO: Update this to use personal data from databas
 
-    const addFoodItem = (e: React.MouseEvent) => {
-        console.log("add food");
-    };
+    const navigate = useNavigate();
 
     return (
         <>
@@ -242,28 +241,28 @@ export default function Dashboard() {
                             foodItems={["eggs, bacon, toast, coffee"]}
                             calories={300}
                             icon={<BakeryDiningRoundedIcon />}
-                            addFoodItem={addFoodItem}
+                            addFoodItem={() => navigate("/food?meal=breakfast")}
                         />
                         <MealCard
                             title="Lunch"
                             foodItems={["salad, chicken, rice"]}
                             calories={700}
                             icon={<RamenDiningRoundedIcon />}
-                            addFoodItem={addFoodItem}
+                            addFoodItem={() => navigate("/food?meal=lunch")}
                         />
                         <MealCard
                             title="Dinner"
                             foodItems={["steak, pasta, rice"]}
                             calories={1000}
                             icon={<DinnerDiningRoundedIcon />}
-                            addFoodItem={addFoodItem}
+                            addFoodItem={() => navigate("/food?meal=dinner")}
                         />
                         <MealCard
                             title="Snack"
                             foodItems={["chips, chocolate"]}
                             calories={300}
                             icon={<FastfoodRoundedIcon />}
-                            addFoodItem={addFoodItem}
+                            addFoodItem={() => navigate("/food?meal=snack")}
                         />
                     </div>
                 </section>

@@ -1,6 +1,8 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 import { Head } from "../components/shared/Head";
 
 export default function Signup() {
@@ -19,7 +21,10 @@ export default function Signup() {
         });
 
         if (response.status === 200) {
-            navigate("/");
+            toast.success("Successfully signed up!");
+            setTimeout(() => {
+                navigate("/");
+            }, 2000);
         }
     };
 
