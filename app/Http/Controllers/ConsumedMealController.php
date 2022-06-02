@@ -11,11 +11,8 @@ class ConsumedMealController extends Controller
 
     public function getMeals(Request $request, $meal_type)
     {
-        $user = auth()->user();
-        $userMealTable = ConsumedMeal::where('user_id', $user->id)->where('meal_type', $meal_type)->get();
-        $meals = Meal::where('id', $userMealTable->pluck('meal_id'))->get();
-        dd($meals);
-        return response()->json($meals);
+        $userWithMeals = auth()->user()->load('consumedMeals.meal');
+        return response()->json($userWithMeals);
     }
 
     public function addMeal(Request $request)
@@ -32,7 +29,7 @@ class ConsumedMealController extends Controller
     public function deleteMeal(Request $request, $id)
     {
         $user = auth()->user();
-        $meal = ConsumedMeal::where('user_id', $user->id)->find($id);
+        $meal = ConsumedMeal::where('user_id', $user->id)->where('meal_id', $id)->first();
         $meal->delete();
         return response()->json(['message' => 'Meal deleted successfully']);
     }

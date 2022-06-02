@@ -30,7 +30,9 @@ export default function Food() {
     }, []);
 
     const refetchConsumedMeals = async () => {
-        const consumedMealsDB = await axios.get(`/api/consumed_meals`);
+        const consumedMealsDB = await axios.get(
+            `/api/consumed_meals/${mealType}`
+        );
         setConsumedMeals(consumedMealsDB.data);
     };
 
@@ -44,6 +46,13 @@ export default function Food() {
         }
     };
 
+    const handleRemoveMeals = async (meal: Meal) => {
+        const response = await axios.delete(`/api/consumed_meals/${meal.id}`);
+        if (response.status === 200) {
+            refetchConsumedMeals();
+        }
+    };
+
     return (
         <div className="container space-y-4">
             <section className="flex h-full w-full flex-col items-center ">
@@ -51,19 +60,26 @@ export default function Food() {
             </section>
             <section>
                 <h1>Consumed meals</h1>
-                {consumedMeals.map((consumedMeal) => (
-                    <MealCard key={consumedMeal.id} {...consumedMeal} />
-                ))}
+                {consumedMeals.length &&
+                    consumedMeals.map((consumedMeal) => (
+                        <MealCard
+                            key={consumedMeal.id}
+                            {...consumedMeal}
+                            remove
+                            clicked={() => handleRemoveMeals(consumedMeal)}
+                        />
+                    ))}
             </section>
             <section>
                 <h1>Meals</h1>
-                {meals.map((meal) => (
-                    <MealCard
-                        key={meal.id}
-                        {...meal}
-                        clicked={() => handleAddMeal(meal)}
-                    />
-                ))}
+                {meals.length &&
+                    meals.map((meal) => (
+                        <MealCard
+                            key={meal.id}
+                            {...meal}
+                            clicked={() => handleAddMeal(meal)}
+                        />
+                    ))}
             </section>
         </div>
     );

@@ -7,9 +7,16 @@ interface Props {
     portion: number;
     calories: number;
     clicked: () => void;
+    remove: boolean;
 }
 
-export default function MealCard({ name, calories, portion, clicked }: Props) {
+export default function MealCard({
+    name,
+    calories,
+    portion,
+    clicked,
+    remove = false,
+}: Props) {
     return (
         <div
             className="text-neutral-contetn flex w-full items-center rounded bg-neutral p-4 shadow-lg"
@@ -22,7 +29,10 @@ export default function MealCard({ name, calories, portion, clicked }: Props) {
                 <p className="text-md ">{calories} kcal</p>
                 <p className="text-md ">{portion} g</p>
             </div>
-            <AddCircleRoundedIcon className="ml-auto scale-150 " />
+
+            <AddCircleRoundedIcon
+                className={`ml-auto scale-150 ${remove ? "rotate-45" : ""}`}
+            />
         </div>
     );
 }
