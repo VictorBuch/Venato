@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { MouseEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { Head } from "../components/shared/Head";
 
 function Index() {
@@ -24,7 +25,11 @@ function Index() {
 
             if (response.status === 200) {
                 navigate("/dashboard");
+            } else {
+                toast.error("Invalid credentials");
             }
+        } else {
+            toast.error("Something went wrong");
         }
     };
 

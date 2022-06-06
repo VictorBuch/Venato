@@ -17,7 +17,9 @@ class MealController extends Controller
 
     public function getMeals()
     {
-        return response()->json(Meal::all());
+        $user = auth()->user();
+        $meals = Meal::whereNotIn('id', $user->consumedMeals->pluck('meal_id'))->get();
+        return response()->json($meals);
     }
 
     public function addMeal(Request $request)

@@ -11,8 +11,15 @@ class ConsumedMealController extends Controller
 
     public function getMeals(Request $request, $meal_type)
     {
-        $userWithMeals = auth()->user()->load('consumedMeals.meal');
-        return response()->json($userWithMeals);
+        try {
+            $userWithMeals = auth()->user()->load('consumedMeals.meal');
+            $meals = $userWithMeals->consumedMeals->pluck('meal');
+            $meals = $meals->unique('id');
+
+            return response()->json($meals);
+        } catch (\Throwable $th) {
+            return response()->json(['error' => $th->getMessage()], 500);
+        }
     }
 
     public function addMeal(Request $request)

@@ -29,7 +29,6 @@ export default function MealCard({
                 <p className="text-md ">{calories} kcal</p>
                 <p className="text-md ">{portion} g</p>
             </div>
-
             <AddCircleRoundedIcon
                 className={`ml-auto scale-150 ${remove ? "rotate-45" : ""}`}
             />

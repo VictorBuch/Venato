@@ -29,11 +29,13 @@ export default function Food() {
         fetchData();
     }, []);
 
-    const refetchConsumedMeals = async () => {
+    const refetchData = async () => {
         const consumedMealsDB = await axios.get(
             `/api/consumed_meals/${mealType}`
         );
+        const mealsDB = await axios.get(`/api/meals`);
         setConsumedMeals(consumedMealsDB.data);
+        setMeals(mealsDB.data);
     };
 
     const handleAddMeal = async (meal: Meal) => {
@@ -42,14 +44,14 @@ export default function Food() {
             meal_type: mealType,
         });
         if (response.status === 200) {
-            refetchConsumedMeals();
+            refetchData();
         }
     };
 
     const handleRemoveMeals = async (meal: Meal) => {
         const response = await axios.delete(`/api/consumed_meals/${meal.id}`);
         if (response.status === 200) {
-            refetchConsumedMeals();
+            refetchData();
         }
     };
 
