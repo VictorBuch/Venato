@@ -271,6 +271,7 @@ export default function Dashboard() {
         setProteinPercent((totalProtein / protein.goal) * 100);
         setCaloriesPercent((totalCalories / calories.goal) * 100);
     }, [consumedMeals]);
+    console.log("render");
 
     return (
         <>
@@ -307,7 +308,9 @@ export default function Dashboard() {
                                 className="w-full"
                                 value={carbsPercent}
                                 variant="determinate"
+                                sx={{ zIndex: 0 }}
                             />
+
                             <p className="text-sm">
                                 {carbs.eaten} / {carbs.goal}g
                             </p>
