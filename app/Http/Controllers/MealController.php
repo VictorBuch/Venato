@@ -18,6 +18,7 @@ class MealController extends Controller
     public function getMeals()
     {
         $user = auth()->user();
+        // TODO: make it also take into account the user's meal type
         $meals = Meal::whereNotIn('id', $user->consumedMeals->pluck('meal_id'))->get();
         return response()->json($meals);
     }

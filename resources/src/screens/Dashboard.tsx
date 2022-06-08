@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useState } from "react";
+import React, { MouseEventHandler, useEffect, useState } from "react";
 import { Head } from "../components/shared/Head";
 import CircularProgress, {
     CircularProgressProps,
@@ -13,11 +13,13 @@ import RamenDiningRoundedIcon from "@mui/icons-material/RamenDiningRounded";
 import DinnerDiningRoundedIcon from "@mui/icons-material/DinnerDiningRounded";
 import FastfoodRoundedIcon from "@mui/icons-material/FastfoodRounded";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 type MealCardProps = {
     title: string;
     foodItems: string[];
     calories: number;
+    reccomendedCalories: number;
     icon: React.ReactElement;
     addFoodItem: MouseEventHandler;
 };
@@ -26,9 +28,19 @@ function MealCard({
     title,
     foodItems,
     calories,
+    reccomendedCalories,
     icon,
     addFoodItem,
 }: MealCardProps) {
+    //    loop through foodItems and add a , after each item except the last one
+    const foodItemsList = foodItems.map((item, index) => {
+        if (index === foodItems.length - 1) {
+            return item;
+        } else {
+            return `${item}, `;
+        }
+    });
+
     return (
         <div
             className="flex h-28 flex-col rounded-md border border-gray-400 bg-base-content shadow-lg"
@@ -39,7 +51,9 @@ function MealCard({
                 <main className="ml-6 flex w-60 flex-col items-start justify-center">
                     <h1 className="w-full text-base font-semibold">{title}</h1>
                     <p className="w-full truncate text-sm">
-                        {foodItems || "reccomended amount: 800 kcal"}
+                        {foodItems.length
+                            ? foodItemsList
+                            : `reccomended amount: ${reccomendedCalories} kcal`}
                     </p>
                 </main>
                 <AddCircleRoundedIcon className="ml-auto " />
@@ -137,35 +151,126 @@ function CircularProgressWithLabel(
 }
 
 export default function Dashboard() {
-    const [caloriesEaten, setCaloriesEaten] = useState(0);
-    const [caloriesBurned, setCaloriesBurned] = useState(0);
-    const [caloriesGoal, setCaloriesGoal] = useState(2200);
-    const [caloriesLeft, setCaloriesLeft] = useState(
-        caloriesGoal - caloriesEaten
-    );
+    const [calories, setCalories] = useState({
+        eaten: 0,
+        burned: 0,
+        goal: 2200,
+        left: 0,
+    });
+
     const [caloriesPercent, setCaloriesPercent] = useState(
-        (caloriesEaten / caloriesGoal) * 100
+        (calories.eaten / calories.goal) * 100
     );
 
-    const [carbsEaten, setCarbsEaten] = useState(5);
-    const [carbsGoal, setCarbsGoal] = useState(100);
+    const [carbs, setCarbs] = useState({
+        eaten: 0,
+        burned: 0,
+        goal: 100,
+        left: 0,
+    });
     const [carbsPercent, setCarbsPercent] = useState(
-        (carbsEaten / carbsGoal) * 100
+        (carbs.eaten / carbs.goal) * 100
     );
 
-    const [fatEaten, setFatEaten] = useState(2);
-    const [fatGoal, setFatGoal] = useState(100);
-    const [fatPercent, setFatPercent] = useState((fatEaten / fatGoal) * 100);
+    const [fat, setFat] = useState({
+        eaten: 0,
+        burned: 0,
+        goal: 90,
+        left: 0,
+    });
+    const [fatPercent, setFatPercent] = useState((fat.eaten / fat.goal) * 100);
 
-    const [proteinEaten, setProteinEaten] = useState(60);
-    const [proteinGoal, setProteinGoal] = useState(100);
+    const [protein, setProtein] = useState({
+        eaten: 0,
+        burned: 0,
+        goal: 160,
+        left: 0,
+    });
     const [proteinPercent, setProteinPercent] = useState(
-        (proteinEaten / proteinGoal) * 100
+        (protein.eaten / protein.goal) * 100
     );
 
-    // TODO: Update this to use personal data from databas
+    const [consumedMeals, setConsumedMeals] = useState({
+        breakfast: [],
+        lunch: [],
+        dinner: [],
+        snacks: [],
+    });
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const promises = [
+                axios.get("/api/consumed_meals/breakfast"),
+                axios.get("/api/consumed_meals/lunch"),
+                axios.get("/api/consumed_meals/dinner"),
+                axios.get("/api/consumed_meals/snacks"),
+            ];
+            const [breakfast, lunch, dinner, snacks] = await Promise.all(
+                promises
+            );
+
+            setConsumedMeals({
+                breakfast: breakfast.data,
+                lunch: lunch.data,
+                dinner: dinner.data,
+                snacks: snacks.data,
+            });
+        };
+        fetchData();
+
+        setCalories({ ...calories, left: calories.goal - calories.eaten });
+        setCarbs({ ...carbs, left: carbs.goal - carbs.eaten });
+        setFat({ ...fat, left: fat.goal - fat.eaten });
+        setProtein({ ...protein, left: protein.goal - protein.eaten });
+    }, []);
+
+    useEffect(() => {
+        const combinedMeals = consumedMeals.breakfast.concat(
+            consumedMeals.lunch,
+            consumedMeals.dinner,
+            consumedMeals.snacks
+        );
+        const totalCalories = combinedMeals.reduce(
+            (acc, meal) => acc + meal.calories,
+            0
+        );
+        const totalCarbs = combinedMeals.reduce(
+            (acc, meal) => acc + meal.carbs,
+            0
+        );
+        const totalFat = combinedMeals.reduce((acc, meal) => acc + meal.fat, 0);
+        const totalProtein = combinedMeals.reduce(
+            (acc, meal) => acc + meal.protein,
+            0
+        );
+
+        setCalories({
+            ...calories,
+            eaten: totalCalories,
+            left: calories.goal - totalCalories,
+        });
+        setCarbs({
+            ...carbs,
+            eaten: totalCarbs,
+            left: carbs.goal - totalCarbs,
+        });
+        setFat({
+            ...fat,
+            eaten: totalFat,
+            left: fat.goal - totalFat,
+        });
+        setProtein({
+            ...protein,
+            eaten: totalProtein,
+            left: protein.goal - totalProtein,
+        });
+        setFatPercent((totalFat / fat.goal) * 100);
+        setCarbsPercent((totalCarbs / carbs.goal) * 100);
+        setProteinPercent((totalProtein / protein.goal) * 100);
+        setCaloriesPercent((totalCalories / calories.goal) * 100);
+    }, [consumedMeals]);
 
     return (
         <>
@@ -177,21 +282,21 @@ export default function Dashboard() {
                         className="item-center  flex w-full justify-between text-lg text-gray-200"
                     >
                         <div className=" flex w-1/4 flex-col items-center justify-center">
-                            <h1>{caloriesEaten}</h1>
+                            <h1>{calories.eaten}</h1>
                             <h2>EATEN</h2>
                         </div>
                         <div className="flex w-2/4 items-center justify-center">
                             <CircularProgressWithLabel
                                 percent={caloriesPercent}
-                                left={caloriesLeft}
-                                eaten={caloriesEaten}
-                                goal={caloriesGoal}
+                                left={calories.left}
+                                eaten={calories.eaten}
+                                goal={calories.goal}
                                 size={150}
                                 thickness={2}
                             />
                         </div>
                         <div className=" flex w-1/4 flex-col items-center justify-center">
-                            <h1>{caloriesBurned}</h1>
+                            <h1>{calories.burned}</h1>
                             <h2>BURNED</h2>
                         </div>
                     </section>
@@ -204,7 +309,7 @@ export default function Dashboard() {
                                 variant="determinate"
                             />
                             <p className="text-sm">
-                                {carbsEaten} / {carbsGoal}g
+                                {carbs.eaten} / {carbs.goal}g
                             </p>
                         </div>
                         <div className="flex w-1/4 flex-col items-center justify-center space-y-2">
@@ -215,7 +320,7 @@ export default function Dashboard() {
                                 variant="determinate"
                             />
                             <p className="text-sm">
-                                {proteinEaten} / {proteinGoal}g
+                                {protein.eaten} / {protein.goal}g
                             </p>
                         </div>
                         <div className="flex w-1/4 flex-col items-center justify-center space-y-2">
@@ -226,7 +331,7 @@ export default function Dashboard() {
                                 variant="determinate"
                             />
                             <p className="text-sm">
-                                {fatEaten} / {fatGoal}g
+                                {fat.eaten} / {fat.goal}g
                             </p>
                         </div>
                     </section>
@@ -238,29 +343,53 @@ export default function Dashboard() {
                     <div className="container space-y-6">
                         <MealCard
                             title="Breakfast"
-                            foodItems={["eggs, bacon, toast, coffee"]}
-                            calories={300}
+                            foodItems={consumedMeals.breakfast.map(
+                                (food) => food.name
+                            )}
+                            calories={consumedMeals.breakfast.reduce(
+                                (acc, food) => acc + food.calories,
+                                0
+                            )}
+                            reccomendedCalories={400}
                             icon={<BakeryDiningRoundedIcon />}
                             addFoodItem={() => navigate("/food?meal=breakfast")}
                         />
                         <MealCard
                             title="Lunch"
-                            foodItems={["salad, chicken, rice"]}
-                            calories={700}
+                            foodItems={consumedMeals.lunch.map(
+                                (food) => food.name
+                            )}
+                            calories={consumedMeals.lunch.reduce(
+                                (acc, food) => acc + food.calories,
+                                0
+                            )}
+                            reccomendedCalories={700}
                             icon={<RamenDiningRoundedIcon />}
                             addFoodItem={() => navigate("/food?meal=lunch")}
                         />
                         <MealCard
                             title="Dinner"
-                            foodItems={["steak, pasta, rice"]}
-                            calories={1000}
+                            foodItems={consumedMeals.dinner.map(
+                                (food) => food.name
+                            )}
+                            calories={consumedMeals.dinner.reduce(
+                                (acc, food) => acc + food.calories,
+                                0
+                            )}
+                            reccomendedCalories={900}
                             icon={<DinnerDiningRoundedIcon />}
                             addFoodItem={() => navigate("/food?meal=dinner")}
                         />
                         <MealCard
                             title="Snack"
-                            foodItems={["chips, chocolate"]}
-                            calories={300}
+                            foodItems={consumedMeals.snacks.map(
+                                (food) => food.name
+                            )}
+                            calories={consumedMeals.snacks.reduce(
+                                (acc, food) => acc + food.calories,
+                                0
+                            )}
+                            reccomendedCalories={300}
                             icon={<FastfoodRoundedIcon />}
                             addFoodItem={() => navigate("/food?meal=snack")}
                         />

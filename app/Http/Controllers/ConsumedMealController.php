@@ -4,18 +4,31 @@ namespace App\Http\Controllers;
 
 use App\Models\ConsumedMeal;
 use App\Models\Meal;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ConsumedMealController extends Controller
 {
 
-    public function getMeals(Request $request, $meal_type)
+    public function getMeals(Request $request)
     {
         try {
             $userWithMeals = auth()->user()->load('consumedMeals.meal');
-            $meals = $userWithMeals->consumedMeals->pluck('meal');
+            $consumedMeals = $userWithMeals->consumedMeals->filter(function ($consumedMeal) use ($request) {
+                return $consumedMeal->meal_type == $request->meal_type;
+            });
+            if ($request->has('date')) {
+                $date = Carbon::parse($request->date);
+                $consumedMeals = $consumedMeals->filter(function ($consumedMeal, $key) use ($date) {
+                    return $consumedMeal->created_at->format('Y-m-d') == $date->format('Y-m-d');
+                });
+            } else {
+                $consumedMeals = $consumedMeals->filter(function ($consumedMeal) {
+                    return $consumedMeal->created_at->isToday();
+                });
+            }
+            $meals = $consumedMeals->pluck('meal');
             $meals = $meals->unique('id');
-
             return response()->json($meals);
         } catch (\Throwable $th) {
             return response()->json(['error' => $th->getMessage()], 500);

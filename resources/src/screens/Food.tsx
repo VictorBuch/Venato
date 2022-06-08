@@ -62,26 +62,30 @@ export default function Food() {
             </section>
             <section>
                 <h1>Consumed meals</h1>
-                {consumedMeals.length &&
-                    consumedMeals.map((consumedMeal) => (
-                        <MealCard
-                            key={consumedMeal.id}
-                            {...consumedMeal}
-                            remove
-                            clicked={() => handleRemoveMeals(consumedMeal)}
-                        />
-                    ))}
+                <div className="space-y-4">
+                    {consumedMeals.length &&
+                        consumedMeals.map((consumedMeal) => (
+                            <MealCard
+                                key={consumedMeal.id}
+                                {...consumedMeal}
+                                remove
+                                clicked={() => handleRemoveMeals(consumedMeal)}
+                            />
+                        ))}
+                </div>
             </section>
             <section>
                 <h1>Meals</h1>
-                {meals.length &&
-                    meals.map((meal) => (
-                        <MealCard
-                            key={meal.id}
-                            {...meal}
-                            clicked={() => handleAddMeal(meal)}
-                        />
-                    ))}
+                <div className="space-y-4">
+                    {meals.length &&
+                        meals.map((meal) => (
+                            <MealCard
+                                key={meal.id}
+                                {...meal}
+                                clicked={() => handleAddMeal(meal)}
+                            />
+                        ))}
+                </div>
             </section>
         </div>
     );
