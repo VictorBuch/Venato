@@ -10,7 +10,7 @@ function useQuery() {
     return React.useMemo(() => new URLSearchParams(search), [search]);
 }
 
-export default function Food() {
+export default function AddFood() {
     const query = useQuery();
     const mealType = query.get("meal");
 
@@ -55,6 +55,10 @@ export default function Food() {
         }
     };
 
+    const handleCustomizePortion = async (meal: Meal) => {
+        // TODO: navigate to meal customization
+    };
+
     return (
         <div className="container space-y-4">
             <section className="flex h-full w-full flex-col items-center ">
@@ -69,7 +73,9 @@ export default function Food() {
                                 key={consumedMeal.id}
                                 {...consumedMeal}
                                 remove
-                                clicked={() => handleRemoveMeals(consumedMeal)}
+                                addRemovePortion={() =>
+                                    handleRemoveMeals(consumedMeal)
+                                }
                             />
                         ))}
                 </div>
@@ -82,7 +88,10 @@ export default function Food() {
                             <MealCard
                                 key={meal.id}
                                 {...meal}
-                                clicked={() => handleAddMeal(meal)}
+                                customizePortion={() =>
+                                    handleCustomizePortion(meal)
+                                }
+                                addRemovePortion={() => handleAddMeal(meal)}
                             />
                         ))}
                 </div>

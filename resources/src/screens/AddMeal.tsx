@@ -1,15 +1,18 @@
 import axios from "axios";
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import Select from "react-select";
+import { FormControl, InputLabel, NativeSelect } from "@mui/material";
 
 export default function AddMeal() {
-    const [name, setName] = React.useState("");
-    const [portion, setPortion] = React.useState(undefined);
-    const [calories, setCalories] = React.useState(undefined);
-    const [carbs, setCarbs] = React.useState(undefined);
-    const [protein, setProtein] = React.useState(undefined);
-    const [fat, setFat] = React.useState(undefined);
+    const [name, setName] = useState("");
+    const [portion, setPortion] = useState(undefined);
+    const [unit, setUnit] = useState(undefined);
+    const [calories, setCalories] = useState(undefined);
+    const [carbs, setCarbs] = useState(undefined);
+    const [protein, setProtein] = useState(undefined);
+    const [fat, setFat] = useState(undefined);
 
     const [invalidInputs, setInvalidInputs] = React.useState(false);
 
@@ -81,17 +84,45 @@ export default function AddMeal() {
                                     Please fill this field
                                 </p>
                             )}
-                            <input
-                                className={`mt-2 w-full border border-gray-400 p-2 text-gray-800 rounded${
-                                    invalidInputs
-                                        ? " border-red-500"
-                                        : "border-none"
-                                }`}
-                                type="number"
-                                value={portion}
-                                required
-                                onChange={(e) => setPortion(e.target.value)}
-                            />
+                            <div className="flex items-center">
+                                <input
+                                    className={`mt-2 w-full border border-gray-400 p-2 text-gray-800 rounded${
+                                        invalidInputs
+                                            ? " border-red-500"
+                                            : "border-none"
+                                    }`}
+                                    type="number"
+                                    value={portion}
+                                    required
+                                    onChange={(e) => setPortion(e.target.value)}
+                                />
+                                <FormControl>
+                                    <InputLabel
+                                        variant="standard"
+                                        htmlFor="uncontrolled-native"
+                                    >
+                                        Unit
+                                    </InputLabel>
+                                    <NativeSelect
+                                        className={`mt-2 border border-gray-400 p-2 text-gray-800 rounded${
+                                            invalidInputs
+                                                ? " border-red-500"
+                                                : "border-none"
+                                        }`}
+                                        defaultValue="g"
+                                        inputProps={{
+                                            name: "portion-unit",
+                                            id: "uncontrolled-native",
+                                        }}
+                                        onChange={(e) =>
+                                            setUnit(e.target.value)
+                                        }
+                                    >
+                                        <option value="g">g</option>
+                                        <option value="p">pound</option>
+                                    </NativeSelect>
+                                </FormControl>
+                            </div>
                         </div>
                         <div className="flex flex-col items-center">
                             <label className="text-xl text-gray-200">

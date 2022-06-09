@@ -18,6 +18,7 @@ return new class extends Migration
             $table->timestamps();
             $table->string('name');
             $table->integer('portion')->default(300);
+            $table->string('portion_unit')->default('g');
             $table->integer('calories')->default(0);
             $table->integer('carbs')->nullable();
             $table->integer('protein')->nullable();

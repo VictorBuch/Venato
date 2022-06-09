@@ -19,6 +19,8 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('meal_id');
             $table->string('meal_type');
+            $table->integer('portion')->default(300);
+            $table->string('portion_unit')->default('g');
         });
     }
 

@@ -6,23 +6,22 @@ interface Props {
     name: string;
     portion: number;
     calories: number;
-    clicked: () => void;
     remove: boolean;
+    addRemovePortion: () => void;
+    customizePortion?: () => void;
 }
 
 export default function MealCard({
     name,
     calories,
     portion,
-    clicked,
+    customizePortion,
+    addRemovePortion,
     remove = false,
 }: Props) {
     return (
-        <div
-            className="text-neutral-contetn flex w-full items-center rounded bg-neutral p-4 shadow-lg"
-            onClick={clicked}
-        >
-            <div className=" w-72">
+        <div className="text-neutral-contetn flex w-full items-center rounded bg-neutral p-4 shadow-lg">
+            <div onClick={customizePortion} className=" w-72">
                 <h1 className="w-full truncate text-xl font-bold text-white">
                     {name}
                 </h1>
@@ -30,6 +29,7 @@ export default function MealCard({
                 <p className="text-md ">{portion} g</p>
             </div>
             <AddCircleRoundedIcon
+                onClick={addRemovePortion}
                 className={`ml-auto scale-150 ${remove ? "rotate-45" : ""}`}
             />
         </div>

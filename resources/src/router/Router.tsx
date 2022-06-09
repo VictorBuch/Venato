@@ -10,7 +10,7 @@ const Page404Screen = lazy(() => import("../screens/404"));
 const Dashboard = lazy(() => import("../screens/Dashboard"));
 const AddMeal = lazy(() => import("../screens/AddMeal"));
 const MyMeals = lazy(() => import("../screens/MyMeals"));
-const Food = lazy(() => import("../screens/Food"));
+const AddFood = lazy(() => import("../screens/AddFood"));
 const GetUserInformation = lazy(() => import("../screens/GetUserInformation"));
 
 // Authorization routes
@@ -46,8 +46,8 @@ const InnerRouter = () => {
                     element: <Dashboard />,
                 },
                 {
-                    path: "/food",
-                    element: <Food />,
+                    path: "/add-food",
+                    element: <AddFood />,
                 },
                 {
                     path: "/add-meal",
