@@ -1,16 +1,13 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 import MealCard from "../components/MealCard";
+import { useQuery } from "../hooks/useQuery";
 import { Meal } from "../types/meals";
 
-function useQuery() {
-    const { search } = useLocation();
-
-    return React.useMemo(() => new URLSearchParams(search), [search]);
-}
-
 export default function AddFood() {
+    const navigate = useNavigate();
     const query = useQuery();
     const mealType = query.get("meal");
 
@@ -56,7 +53,7 @@ export default function AddFood() {
     };
 
     const handleCustomizePortion = async (meal: Meal) => {
-        // TODO: navigate to meal customization
+        navigate(`/food/${meal.id}?meal=${mealType}`);
     };
 
     return (

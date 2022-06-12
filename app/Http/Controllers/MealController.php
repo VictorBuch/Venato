@@ -15,11 +15,15 @@ class MealController extends Controller
         return response()->json(['message' => 'Meal deleted successfully']);
     }
 
-    public function getMeals()
+    public function getMeals(Request $request)
     {
         $user = auth()->user();
-        // TODO: make it also take into account the user's meal type
-        $meals = Meal::whereNotIn('id', $user->consumedMeals->pluck('meal_id'))->get();
+        if ($request->has('id')) {
+            $meals = Meal::where('id', $request->id)->first();
+        } else {
+            // TODO: make it also take into account the user's meal type
+            $meals = Meal::whereNotIn('id', $user->consumedMeals->pluck('meal_id'))->get();
+        }
         return response()->json($meals);
     }
 

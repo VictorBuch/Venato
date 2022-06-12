@@ -27,6 +27,7 @@ class ConsumedMealController extends Controller
                     return $consumedMeal->created_at->isToday();
                 });
             }
+            // TODO: make it take into account if the user has set a custom portion size in the consumed meal
             $meals = $consumedMeals->pluck('meal');
             $meals = $meals->unique('id');
             return response()->json($meals);
@@ -42,6 +43,8 @@ class ConsumedMealController extends Controller
         $meal->user_id = $user->id;
         $meal->meal_id = $request->meal_id;
         $meal->meal_type = $request->meal_type;
+        $meal->portion = $request->portion;
+        $meal->portion_unit = $request->portion_unit;
         $meal->save();
         return response()->json($meal);
     }
