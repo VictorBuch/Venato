@@ -6,4 +6,6 @@ export interface Meal {
     carbs?: number;
     protein?: number;
     fat?: number;
+    portion: number;
+    portion_unit: string;
 }

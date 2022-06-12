@@ -27,7 +27,10 @@ class ConsumedMealController extends Controller
                     return $consumedMeal->created_at->isToday();
                 });
             }
-            // TODO: make it take into account if the user has set a custom portion size in the consumed meal
+            $consumedMeals->each(function ($consumedMeal) {
+                $consumedMeal->meal->portion = $consumedMeal->portion;
+                $consumedMeal->meal->portion_unit = $consumedMeal->meal->portion_unit;
+            });
             $meals = $consumedMeals->pluck('meal');
             $meals = $meals->unique('id');
             return response()->json($meals);

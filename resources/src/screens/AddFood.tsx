@@ -39,6 +39,8 @@ export default function AddFood() {
         const response = await axios.post(`/api/consumed_meals`, {
             meal_id: meal.id,
             meal_type: mealType,
+            portion: meal.portion,
+            portion_unit: meal.portion_unit,
         });
         if (response.status === 200) {
             refetchData();
