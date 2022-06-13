@@ -82,6 +82,7 @@ function CircularProgressWithLabel(
         >
             <CircularProgress
                 variant="determinate"
+                color="inherit"
                 sx={{ zIndex: 0 }}
                 value={props.percent}
                 {...props}
@@ -200,6 +201,7 @@ export default function Dashboard() {
     const navigate = useNavigate();
 
     useEffect(() => {
+        // TODO: make this a hook
         const fetchData = async () => {
             const promises = [
                 axios.get("/api/consumed_meals/breakfast"),
@@ -294,6 +296,7 @@ export default function Dashboard() {
                                 goal={calories.goal}
                                 size={150}
                                 thickness={2}
+                                className="text-accent"
                             />
                         </div>
                         <div className=" flex w-1/4 flex-col items-center justify-center">
@@ -305,10 +308,11 @@ export default function Dashboard() {
                         <div className="flex w-1/4 flex-col items-center justify-center space-y-2">
                             <h3>Carbs</h3>
                             <LinearProgress
-                                className="w-full"
+                                color="inherit"
+                                className="w-full text-accent"
                                 value={carbsPercent}
                                 variant="determinate"
-                                sx={{ zIndex: 0 }}
+                                sx={{ zIndex: 0, borderRadius: "4px" }}
                             />
 
                             <p className="text-sm">
@@ -318,9 +322,11 @@ export default function Dashboard() {
                         <div className="flex w-1/4 flex-col items-center justify-center space-y-2">
                             <h3>Potein</h3>
                             <LinearProgress
-                                className="w-full"
+                                color="inherit"
+                                className="w-full text-accent"
                                 value={proteinPercent}
                                 variant="determinate"
+                                sx={{ zIndex: 0, borderRadius: "4px" }}
                             />
                             <p className="text-sm">
                                 {protein.eaten} / {protein.goal}g
@@ -329,9 +335,11 @@ export default function Dashboard() {
                         <div className="flex w-1/4 flex-col items-center justify-center space-y-2">
                             <h3>Fat</h3>
                             <LinearProgress
-                                className="w-full"
+                                color="inherit"
+                                className="w-full text-accent"
                                 value={fatPercent}
                                 variant="determinate"
+                                sx={{ zIndex: 0, borderRadius: "4px" }}
                             />
                             <p className="text-sm">
                                 {fat.eaten} / {fat.goal}g

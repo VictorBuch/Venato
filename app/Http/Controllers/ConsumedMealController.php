@@ -9,6 +9,15 @@ use Illuminate\Http\Request;
 
 class ConsumedMealController extends Controller
 {
+    private function calculatePercentageAmount($amount, $total)
+    {
+        return $amount / $total * 100;
+    }
+
+    private function caclutateAmountMultipliedByPercentage($amount, $percentage)
+    {
+        return $amount * $percentage / 100;
+    }
 
     public function getMeals(Request $request)
     {
@@ -28,6 +37,10 @@ class ConsumedMealController extends Controller
                 });
             }
             $consumedMeals->each(function ($consumedMeal) {
+                $consumedMeal->meal->calories = $this->caclutateAmountMultipliedByPercentage($consumedMeal->meal->calories, $this->calculatePercentageAmount($consumedMeal->portion, $consumedMeal->meal->portion));
+                $consumedMeal->meal->carbs = $this->caclutateAmountMultipliedByPercentage($consumedMeal->meal->carbs, $this->calculatePercentageAmount($consumedMeal->portion, $consumedMeal->meal->portion));
+                $consumedMeal->meal->fat = $this->caclutateAmountMultipliedByPercentage($consumedMeal->meal->fat, $this->calculatePercentageAmount($consumedMeal->portion, $consumedMeal->meal->portion));
+                $consumedMeal->meal->protein = $this->caclutateAmountMultipliedByPercentage($consumedMeal->meal->protein, $this->calculatePercentageAmount($consumedMeal->portion, $consumedMeal->meal->portion));
                 $consumedMeal->meal->portion = $consumedMeal->portion;
                 $consumedMeal->meal->portion_unit = $consumedMeal->meal->portion_unit;
             });
@@ -46,6 +59,15 @@ class ConsumedMealController extends Controller
         $meal->user_id = $user->id;
         $meal->meal_id = $request->meal_id;
         $meal->meal_type = $request->meal_type;
+        $meal->portion = $request->portion;
+        $meal->portion_unit = $request->portion_unit;
+        $meal->save();
+        return response()->json($meal);
+    }
+
+    public function updateMeal(Request $request, $id)
+    {
+        $meal = ConsumedMeal::find($id);
         $meal->portion = $request->portion;
         $meal->portion_unit = $request->portion_unit;
         $meal->save();

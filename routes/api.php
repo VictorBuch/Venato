@@ -29,11 +29,12 @@ Route::group(['prefix' => '/auth'], function () {
 
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
-    Route::get('/meals', [MealController::class, 'getMeals'])->middleware('auth:sanctum');
-    Route::post('/meals', [MealController::class, 'addMeal'])->middleware('auth:sanctum');
-    Route::delete('/meals/{id}', [MealController::class, 'deleteMeal'])->middleware('auth:sanctum');
+    Route::get('/meals', [MealController::class, 'getMeals']);
+    Route::post('/meals', [MealController::class, 'addMeal']);
+    Route::delete('/meals/{id}', [MealController::class, 'deleteMeal']);
 
-    Route::get('/consumed_meals/{meal_type}', [ConsumedMealController::class, 'getMeals'])->middleware('auth:sanctum');
-    Route::post('/consumed_meals', [ConsumedMealController::class, 'addMeal'])->middleware('auth:sanctum');
-    Route::delete('/consumed_meals/{id}', [ConsumedMealController::class, 'deleteMeal'])->middleware('auth:sanctum');
+    Route::get('/consumed_meals/{meal_type}', [ConsumedMealController::class, 'getMeals']);
+    Route::post('/consumed_meals', [ConsumedMealController::class, 'addMeal']);
+    Route::put('/consumed_meals/{id}', [ConsumedMealController::class, 'updateMeal']);
+    Route::delete('/consumed_meals/{id}', [ConsumedMealController::class, 'deleteMeal']);
 });

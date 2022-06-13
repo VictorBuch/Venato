@@ -19,6 +19,14 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->integer('weight')->nullable()->default(null);
+            $table->string('weight_unit')->nullable()->default(null);
+            $table->integer('height')->nullable()->default(null);
+            $table->string('height_unit')->nullable()->default(null);
+            $table->integer('age')->nullable()->default(null);
+            $table->integer('calorie_goal')->nullable()->default(null);
+            $table->string('activity_level')->nullable()->default(null);
+            $table->string('sex')->nullable()->default(null);
             $table->rememberToken();
             $table->timestamps();
         });
