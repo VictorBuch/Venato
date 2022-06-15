@@ -47,4 +47,19 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Logged out successfully.', 'status' => 'success']);
     }
+
+    public function getUser(Request $request)
+    {
+        $user = Auth::user();
+        return response()->json($user);
+    }
+
+    public function updateUser(Request $request)
+    {
+        $user = Auth::user();
+        $user->goal = $request->goal;
+        $user->update($request->all());
+        // Dont know why this is needed, but it is.
+        return response()->json($user);
+    }
 }

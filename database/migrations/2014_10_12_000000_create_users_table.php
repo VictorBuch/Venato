@@ -24,6 +24,7 @@ return new class extends Migration
             $table->integer('height')->nullable()->default(null);
             $table->string('height_unit')->nullable()->default(null);
             $table->integer('age')->nullable()->default(null);
+            $table->string('goal')->nullable()->default(null);
             $table->integer('calorie_goal')->nullable()->default(null);
             $table->string('activity_level')->nullable()->default(null);
             $table->string('sex')->nullable()->default(null);

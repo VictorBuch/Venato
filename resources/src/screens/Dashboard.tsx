@@ -155,7 +155,7 @@ export default function Dashboard() {
     const [calories, setCalories] = useState({
         eaten: 0,
         burned: 0,
-        goal: 2200,
+        goal: 0,
         left: 0,
     });
 
@@ -208,11 +208,13 @@ export default function Dashboard() {
                 axios.get("/api/consumed_meals/lunch"),
                 axios.get("/api/consumed_meals/dinner"),
                 axios.get("/api/consumed_meals/snacks"),
+                axios.get("/api/user"),
             ];
-            const [breakfast, lunch, dinner, snacks] = await Promise.all(
+            const [breakfast, lunch, dinner, snacks, user] = await Promise.all(
                 promises
             );
 
+            setCalories({ ...calories, goal: user.data.calorie_goal });
             setConsumedMeals({
                 breakfast: breakfast.data,
                 lunch: lunch.data,

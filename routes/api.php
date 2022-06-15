@@ -17,9 +17,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 Route::group(['prefix' => '/auth'], function () {
     Route::post('/login', [AuthController::class, 'login']);
@@ -37,4 +34,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/consumed_meals', [ConsumedMealController::class, 'addMeal']);
     Route::put('/consumed_meals/{id}', [ConsumedMealController::class, 'updateMeal']);
     Route::delete('/consumed_meals/{id}', [ConsumedMealController::class, 'deleteMeal']);
+
+    Route::get('/user', [AuthController::class, 'getUser']);
+    Route::put('/user', [AuthController::class, 'updateUser']);
 });
