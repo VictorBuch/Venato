@@ -5,6 +5,8 @@ import CircularProgress, {
 } from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 // SVG ICONS
 import BakeryDiningRoundedIcon from "@mui/icons-material/BakeryDiningRounded";
@@ -12,8 +14,7 @@ import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import RamenDiningRoundedIcon from "@mui/icons-material/RamenDiningRounded";
 import DinnerDiningRoundedIcon from "@mui/icons-material/DinnerDiningRounded";
 import FastfoodRoundedIcon from "@mui/icons-material/FastfoodRounded";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useAuth } from "../hooks/useAuth";
 
 type MealCardProps = {
     title: string;
@@ -275,12 +276,14 @@ export default function Dashboard() {
         setProteinPercent((totalProtein / protein.goal) * 100);
         setCaloriesPercent((totalCalories / calories.goal) * 100);
     }, [consumedMeals]);
-    console.log("render");
+
+    const { logout } = useAuth();
 
     return (
         <>
             <Head title="Dashboard" />
             <div className="flex h-screen w-full flex-col items-center">
+                <button onClick={logout}>User</button>
                 <div className="container py-16">
                     <section
                         id="CaloriesSection"

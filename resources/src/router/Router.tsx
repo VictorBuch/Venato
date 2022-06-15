@@ -1,5 +1,11 @@
 import React, { lazy, Suspense } from "react";
-import { RouteObject, useRoutes, BrowserRouter } from "react-router-dom";
+import {
+    RouteObject,
+    useRoutes,
+    BrowserRouter,
+    Navigate,
+} from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const Loading = () => (
     <p className="h-full w-full p-4 text-center">Loading...</p>
@@ -25,6 +31,11 @@ export const Router = () => {
     );
 };
 
+const ProtectedRoute = ({ children }) => {
+    const { authed } = useAuth();
+    return authed ? children : <Navigate to="/" />;
+};
+
 const InnerRouter = () => {
     const routes: RouteObject[] = [
         {
@@ -40,27 +51,56 @@ const InnerRouter = () => {
                 },
                 {
                     path: "/user-information",
-                    element: <GetUserInformation />,
+                    element: (
+                        <ProtectedRoute>
+                            <GetUserInformation />{" "}
+                        </ProtectedRoute>
+                    ),
                 },
                 {
                     path: "/dashboard",
-                    element: <Dashboard />,
+                    element: (
+                        <ProtectedRoute>
+                            {" "}
+                            <Dashboard />{" "}
+                        </ProtectedRoute>
+                    ),
                 },
                 {
                     path: "/add-food",
-                    element: <AddFood />,
+                    element: (
+                        <ProtectedRoute>
+                            {" "}
+                            <AddFood />{" "}
+                        </ProtectedRoute>
+                    ),
                 },
                 {
                     path: "/food/:id",
-                    element: <Food />,
+                    element: (
+                        <ProtectedRoute>
+                            {" "}
+                            <Food />{" "}
+                        </ProtectedRoute>
+                    ),
                 },
                 {
                     path: "/add-meal",
-                    element: <AddMeal />,
+                    element: (
+                        <ProtectedRoute>
+                            {" "}
+                            <AddMeal />{" "}
+                        </ProtectedRoute>
+                    ),
                 },
                 {
                     path: "/my-meals",
-                    element: <MyMeals />,
+                    element: (
+                        <ProtectedRoute>
+                            {" "}
+                            <MyMeals />{" "}
+                        </ProtectedRoute>
+                    ),
                 },
                 {
                     path: "*",

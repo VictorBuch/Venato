@@ -1,37 +1,34 @@
 import axios from "axios";
-import React, { MouseEvent, useState } from "react";
+import React, { MouseEvent, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { Head } from "../components/shared/Head";
+import { useAuth } from "../hooks/useAuth";
 
 function Index() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    const { login, authed } = useAuth();
     const navigate = useNavigate();
 
     const handleLogin = async (e: MouseEvent) => {
         e.preventDefault();
-
-        const cookie = await axios.get("/sanctum/csrf-cookie");
-        if (cookie.status === 204) {
-            const response = await axios.post(
-                "http://fitness-journey.test/api/auth/login",
-                {
-                    email,
-                    password,
-                }
-            );
-
-            if (response.status === 200) {
-                navigate("/dashboard");
-            } else {
-                toast.error("Invalid credentials");
-            }
-        } else {
-            toast.error("Something went wrong");
-        }
+        login(email, password);
     };
+
+    useEffect(() => {
+        if (authed) {
+            const getUser = async () => {
+                const response = await axios.get("/api/auth/user");
+                if (response.data.calorie_goal) {
+                    navigate("/dashboard");
+                } else {
+                    navigate("/user-information");
+                }
+            };
+            getUser();
+        }
+    }, [authed]);
 
     return (
         <>
