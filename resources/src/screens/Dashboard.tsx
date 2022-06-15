@@ -94,7 +94,7 @@ function CircularProgressWithLabel(
                 thickness={props.thickness}
                 value={100}
                 sx={{
-                    color: "rgba(255,255,255,0.1)",
+                    color: "rgba(59,109,114,1)",
                     top: 0,
                     left: 0,
                     bottom: 0,

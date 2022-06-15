@@ -154,7 +154,7 @@ export default function Food() {
                         </p>
                     </div>
                     <section className="my-8 space-y-6">
-                        <p className="text-md font-semibold text-base-content">
+                        <p className="text-lg font-semibold text-base-content">
                             Nutritional information
                         </p>
                         <div className="flex justify-center space-x-6">
@@ -205,9 +205,28 @@ export default function Food() {
                             </div>
                         </div>
                     </section>
+                    <section className="space-y-6">
+                        <h1 className="font-semi-bold text-lg text-base-content">
+                            Nutritional information
+                        </h1>
+                        <div className="flex w-full items-center justify-between">
+                            <p>carbs</p>
+                            <p>48</p>
+                        </div>
+                        <div className="flex w-full items-center justify-between">
+                            <p>Protein</p>
+                            <p>48</p>
+                        </div>
+                        <div className="flex w-full items-center justify-between">
+                            <p>Fat</p>
+                            <p>48</p>
+                        </div>
+                    </section>
+                </div>
+                <div className="text-md container fixed bottom-4">
                     <button
                         onClick={handleSubmit}
-                        className="text-md fixed bottom-4 rounded-full bg-neutral px-40 py-2 text-neutral-content  drop-shadow-xl active:bg-neutral-focus"
+                        className="w-full  rounded-full  bg-neutral px-4 py-2 text-neutral-content  drop-shadow-xl active:bg-neutral-focus"
                     >
                         Track
                     </button>
