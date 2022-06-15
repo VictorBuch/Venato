@@ -1,12 +1,15 @@
 import axios from "axios";
-import React, { MouseEvent, useEffect, useState } from "react";
+import React, { MouseEvent, useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Head } from "../components/shared/Head";
+import { UserContext } from "../contexts/UserContext";
 import { useAuth } from "../hooks/useAuth";
 
 function Index() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    const { user, setUser } = useContext(UserContext);
 
     const { login, authed } = useAuth();
     const navigate = useNavigate();
@@ -18,15 +21,11 @@ function Index() {
 
     useEffect(() => {
         if (authed) {
-            const getUser = async () => {
-                const response = await axios.get("/api/auth/user");
-                if (response.data.calorie_goal) {
-                    navigate("/dashboard");
-                } else {
-                    navigate("/user-information");
-                }
-            };
-            getUser();
+            if (user.calorie_goal) {
+                navigate("/dashboard");
+            } else {
+                navigate("/user-information");
+            }
         }
     }, [authed]);
 

@@ -5,15 +5,13 @@ import App from "../App";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import axios from "axios";
-import { AuthProvider } from "../hooks/useAuth";
 
 axios.defaults.withCredentials = true;
 
 ReactDOM.render(
     <React.StrictMode>
-        <AuthProvider>
-            <App />
-        </AuthProvider>
+        <App />
+
         <ToastContainer
             position="bottom-right"
             autoClose={2000}

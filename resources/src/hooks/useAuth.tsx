@@ -2,6 +2,7 @@
 import axios from "axios";
 import React, { useState, createContext, useContext, useEffect } from "react";
 import { toast } from "react-toastify";
+import { UserContext } from "../contexts/UserContext";
 
 // Create the context
 const AuthContext = createContext(null);
@@ -9,11 +10,26 @@ const AuthContext = createContext(null);
 // TODO: make it update the user context when the user logs in or out
 
 export const AuthProvider = ({ children }) => {
+    const { user, setUser } = useContext(UserContext);
+
     function getCookie(name: string) {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
         if (parts.length === 2) return parts.pop().split(";").shift();
     }
+
+    useEffect(() => {
+        if (authed) {
+            axios
+                .get("/api/user")
+                .then((res) => {
+                    setUser({ ...res.data, cookie: getCookie("XSRF-TOKEN") });
+                })
+                .catch((err) => {
+                    toast.error(err.response.data.message);
+                });
+        }
+    }, []);
 
     // Using the useState hook to keep track of the value authed (if a
     // user is logged in)
@@ -42,13 +58,16 @@ export const AuthProvider = ({ children }) => {
         password: string
     ): Promise<Boolean> => {
         const cookie = await axios.get("/sanctum/csrf-cookie");
+
         if (cookie.status === 204) {
+            setUser({ ...user, cookie: getCookie("XSRF-TOKEN") });
             const response = await axios.post("/api/auth/login", {
                 email,
                 password,
             });
 
             if (response.status === 200) {
+                setUser({ ...user, ...response.data });
                 return true;
             } else {
                 toast.error("Invalid credentials");

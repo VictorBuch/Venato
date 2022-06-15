@@ -1,4 +1,9 @@
-import React, { MouseEventHandler, useEffect, useState } from "react";
+import React, {
+    MouseEventHandler,
+    useContext,
+    useEffect,
+    useState,
+} from "react";
 import { Head } from "../components/shared/Head";
 import CircularProgress, {
     CircularProgressProps,
@@ -15,6 +20,7 @@ import RamenDiningRoundedIcon from "@mui/icons-material/RamenDiningRounded";
 import DinnerDiningRoundedIcon from "@mui/icons-material/DinnerDiningRounded";
 import FastfoodRoundedIcon from "@mui/icons-material/FastfoodRounded";
 import { useAuth } from "../hooks/useAuth";
+import { UserContext } from "../contexts/UserContext";
 
 type MealCardProps = {
     title: string;
@@ -153,6 +159,7 @@ function CircularProgressWithLabel(
 }
 
 export default function Dashboard() {
+    const { user, setUser } = useContext(UserContext);
     const [calories, setCalories] = useState({
         eaten: 0,
         burned: 0,
@@ -214,7 +221,7 @@ export default function Dashboard() {
             const [breakfast, lunch, dinner, snacks, user] = await Promise.all(
                 promises
             );
-
+            // TODO: use the user context instead of making an api call
             setCalories({ ...calories, goal: user.data.calorie_goal });
             setConsumedMeals({
                 breakfast: breakfast.data,
