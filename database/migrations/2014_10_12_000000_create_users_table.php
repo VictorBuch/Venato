@@ -26,6 +26,9 @@ return new class extends Migration
             $table->integer('age')->nullable()->default(null);
             $table->string('goal')->nullable()->default(null);
             $table->integer('calorie_goal')->nullable()->default(null);
+            $table->integer('carb_goal')->nullable()->default(null);
+            $table->integer('fat_goal')->nullable()->default(null);
+            $table->integer('protein_goal')->nullable()->default(null);
             $table->string('activity_level')->nullable()->default(null);
             $table->string('sex')->nullable()->default(null);
             $table->rememberToken();

@@ -28,7 +28,10 @@ class User extends Authenticatable
         'age',
         'calorie_goal',
         'activity_level',
-        'sex'
+        'sex',
+        'carb_goal',
+        'fat_goal',
+        'protein_goal'
     ];
 
     /**

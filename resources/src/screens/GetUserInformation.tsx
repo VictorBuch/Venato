@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import SelectUnstyled from "@mui/base/SelectUnstyled";
+import React, { useState } from "react";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -92,6 +91,14 @@ export default function GetUserInformation() {
         return Math.ceil(finalCaloricIntake);
     };
 
+    const calculateCarbFatProteinRatio = (calories: number) => {
+        return {
+            carbGoal: Math.ceil((calories * 0.4) / 4),
+            fatGoal: Math.ceil((calories * 0.2) / 9),
+            proteinGoal: Math.ceil((calories * 0.4) / 4),
+        };
+    };
+
     const handleSubmitUser = async () => {
         const { height, weight, age, sex, goal, activityLevel, isMetric } =
             user;
@@ -104,9 +111,11 @@ export default function GetUserInformation() {
             activityLevel,
             isMetric
         );
-        console.log(calories);
-
         setUser({ ...user, calories });
+
+        const { carbGoal, fatGoal, proteinGoal } =
+            calculateCarbFatProteinRatio(calories);
+
         const response = await axios.put("/api/user", {
             age,
             height,
@@ -115,19 +124,15 @@ export default function GetUserInformation() {
             goal: goal,
             activity_level: activityLevel,
             calorie_goal: calories,
+            carb_goal: carbGoal,
+            fat_goal: fatGoal,
+            protein_goal: proteinGoal,
         });
 
         if (response.status) {
             navigate("/dashboard");
         }
     };
-
-    useEffect(() => {
-        setUser({
-            ...user,
-            calories: calculateCaloricIntake(80, 183, 23, "male"),
-        });
-    }, []);
 
     return (
         <div>

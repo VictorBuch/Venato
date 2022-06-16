@@ -17,25 +17,29 @@ export const AuthProvider = ({ children }) => {
         const parts = value.split(`; ${name}=`);
         if (parts.length === 2) return parts.pop().split(";").shift();
     }
+    const [loading, setLoading] = useState<boolean>(true);
 
+    // Runs once when the component first mounts
     useEffect(() => {
-        if (authed) {
-            axios
-                .get("/api/user")
-                .then((res) => {
-                    setUser({ ...res.data, cookie: getCookie("XSRF-TOKEN") });
-                })
-                .catch((err) => {
-                    toast.error(err.response.data.message);
-                });
-        }
+        axios.get("/api/user").then((activeUser) => {
+            if (activeUser) {
+                console.log("activeUser", activeUser);
+
+                setAuthed(true);
+                setLoading(false);
+            } else {
+                console.log("no activeUser");
+
+                setAuthed(false);
+                setLoading(false);
+            }
+        });
     }, []);
 
     // Using the useState hook to keep track of the value authed (if a
     // user is logged in)
-    const [authed, setAuthed] = useState<boolean>(
-        Boolean(getCookie("XSRF-TOKEN"))
-    );
+    // Make this use a session cookie to keep track of the user instead of the xsrf token
+    const [authed, setAuthed] = useState<boolean>(!!getCookie("XSRF-TOKEN"));
 
     const login = async (email: string, password: string): Promise<void> => {
         const result = await asyncLogin(email, password);

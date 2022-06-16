@@ -31,9 +31,13 @@ export const Router = () => {
     );
 };
 
-const ProtectedRoute = ({ children }) => {
-    const { authed } = useAuth();
-    return authed ? children : <Navigate to="/" />;
+const ProtectedRoute = ({ children, navigateTo = "/" }) => {
+    const { authed, loading } = useAuth();
+    if (loading) {
+        return <Loading />;
+    } else {
+        return authed ? children : <Navigate to={navigateTo} />;
+    }
 };
 
 const InnerRouter = () => {

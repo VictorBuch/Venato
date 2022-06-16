@@ -222,7 +222,26 @@ export default function Dashboard() {
                 promises
             );
             // TODO: use the user context instead of making an api call
-            setCalories({ ...calories, goal: user.data.calorie_goal });
+            setCalories({
+                ...calories,
+                left: calories.goal - calories.eaten,
+                goal: user.data.calorie_goal,
+            });
+            setCarbs({
+                ...carbs,
+                left: carbs.goal - carbs.eaten,
+                goal: user.data.carb_goal,
+            });
+            setFat({
+                ...fat,
+                left: fat.goal - fat.eaten,
+                goal: user.data.fat_goal,
+            });
+            setProtein({
+                ...protein,
+                left: protein.goal - protein.eaten,
+                goal: user.data.protein_goal,
+            });
             setConsumedMeals({
                 breakfast: breakfast.data,
                 lunch: lunch.data,
@@ -231,11 +250,6 @@ export default function Dashboard() {
             });
         };
         fetchData();
-
-        setCalories({ ...calories, left: calories.goal - calories.eaten });
-        setCarbs({ ...carbs, left: carbs.goal - carbs.eaten });
-        setFat({ ...fat, left: fat.goal - fat.eaten });
-        setProtein({ ...protein, left: protein.goal - protein.eaten });
     }, []);
 
     useEffect(() => {
@@ -290,7 +304,9 @@ export default function Dashboard() {
         <>
             <Head title="Dashboard" />
             <div className="flex h-screen w-full flex-col items-center">
-                <button onClick={logout}>User</button>
+                <button className="btn btn-link" onClick={logout}>
+                    Log out
+                </button>
                 <div className="container py-16">
                     <section
                         id="CaloriesSection"
