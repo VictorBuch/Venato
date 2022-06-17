@@ -90,9 +90,6 @@ export default function AddFood() {
     }, []);
 
     useEffect(() => {
-        console.log("useEffect");
-        console.log("consumedMeals", consumedMeals);
-
         const combinedMeals = allConsumedMeals.breakfast.concat(
             allConsumedMeals.lunch,
             allConsumedMeals.dinner,
