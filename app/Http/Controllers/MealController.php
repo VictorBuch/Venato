@@ -20,11 +20,17 @@ class MealController extends Controller
         $user = auth()->user();
         if ($request->has('id')) {
             $meals = Meal::where('id', $request->id)->first();
+            return response()->json($meals);
         } else {
             // TODO: make it also take into account the user's meal type
-            $meals = Meal::whereNotIn('id', $user->consumedMeals->pluck('meal_id'))->get();
+            $meals = Meal::all();
+            // $consumedmeals = $user->consumedMeals;
+            // $meals = $meals->filter(function ($meal) use ($consumedmeals) {
+            //     return !($consumedmeals->contains('meal_id', $meal->id) && $meal->created_at->isToday());
+            // });
+            // $meals = Meal::whereNotIn('id', $user->consumedMeals->pluck('meal_id'))->get();
+            return response()->json($meals);
         }
-        return response()->json($meals);
     }
 
     public function addMeal(Request $request)

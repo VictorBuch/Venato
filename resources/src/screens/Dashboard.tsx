@@ -21,6 +21,7 @@ import DinnerDiningRoundedIcon from "@mui/icons-material/DinnerDiningRounded";
 import FastfoodRoundedIcon from "@mui/icons-material/FastfoodRounded";
 import { useAuth } from "../hooks/useAuth";
 import { UserContext } from "../contexts/UserContext";
+import { useMacros } from "../hooks/useMacros";
 
 type MealCardProps = {
     title: string;
@@ -159,45 +160,27 @@ function CircularProgressWithLabel(
 }
 
 export default function Dashboard() {
+    console.log("dashboard rendered");
+
     const { user, setUser } = useContext(UserContext);
-    const [calories, setCalories] = useState({
-        eaten: 0,
-        burned: 0,
-        goal: 0,
-        left: 0,
-    });
-
-    const [caloriesPercent, setCaloriesPercent] = useState(
-        (calories.eaten / calories.goal) * 100
-    );
-
-    const [carbs, setCarbs] = useState({
-        eaten: 0,
-        burned: 0,
-        goal: 100,
-        left: 0,
-    });
-    const [carbsPercent, setCarbsPercent] = useState(
-        (carbs.eaten / carbs.goal) * 100
-    );
-
-    const [fat, setFat] = useState({
-        eaten: 0,
-        burned: 0,
-        goal: 90,
-        left: 0,
-    });
-    const [fatPercent, setFatPercent] = useState((fat.eaten / fat.goal) * 100);
-
-    const [protein, setProtein] = useState({
-        eaten: 0,
-        burned: 0,
-        goal: 160,
-        left: 0,
-    });
-    const [proteinPercent, setProteinPercent] = useState(
-        (protein.eaten / protein.goal) * 100
-    );
+    const {
+        protein,
+        setProtein,
+        proteinPercent,
+        setProteinPercent,
+        fat,
+        setFat,
+        fatPercent,
+        setFatPercent,
+        carbs,
+        setCarbs,
+        carbsPercent,
+        setCarbsPercent,
+        calories,
+        setCalories,
+        caloriesPercent,
+        setCaloriesPercent,
+    } = useMacros();
 
     const [consumedMeals, setConsumedMeals] = useState({
         breakfast: [],
@@ -216,32 +199,10 @@ export default function Dashboard() {
                 axios.get("/api/consumed_meals/lunch"),
                 axios.get("/api/consumed_meals/dinner"),
                 axios.get("/api/consumed_meals/snacks"),
-                axios.get("/api/user"),
             ];
-            const [breakfast, lunch, dinner, snacks, user] = await Promise.all(
+            const [breakfast, lunch, dinner, snacks] = await Promise.all(
                 promises
             );
-            // TODO: use the user context instead of making an api call
-            setCalories({
-                ...calories,
-                left: calories.goal - calories.eaten,
-                goal: user.data.calorie_goal,
-            });
-            setCarbs({
-                ...carbs,
-                left: carbs.goal - carbs.eaten,
-                goal: user.data.carb_goal,
-            });
-            setFat({
-                ...fat,
-                left: fat.goal - fat.eaten,
-                goal: user.data.fat_goal,
-            });
-            setProtein({
-                ...protein,
-                left: protein.goal - protein.eaten,
-                goal: user.data.protein_goal,
-            });
             setConsumedMeals({
                 breakfast: breakfast.data,
                 lunch: lunch.data,
@@ -250,6 +211,26 @@ export default function Dashboard() {
             });
         };
         fetchData();
+        setCalories((calories) => ({
+            ...calories,
+            left: calories.goal - calories.eaten,
+            goal: user.calorie_goal,
+        }));
+        setCarbs((carbs) => ({
+            ...carbs,
+            left: carbs.goal - carbs.eaten,
+            goal: user.carb_goal,
+        }));
+        setFat((fat) => ({
+            ...fat,
+            left: fat.goal - fat.eaten,
+            goal: user.fat_goal,
+        }));
+        setProtein((protein) => ({
+            ...protein,
+            left: protein.goal - protein.eaten,
+            goal: user.protein_goal,
+        }));
     }, []);
 
     useEffect(() => {
@@ -272,31 +253,36 @@ export default function Dashboard() {
             0
         );
 
-        setCalories({
+        setCalories((calories) => ({
             ...calories,
             eaten: totalCalories,
             left: calories.goal - totalCalories,
-        });
-        setCarbs({
+        }));
+        setCarbs((carbs) => ({
             ...carbs,
             eaten: totalCarbs,
             left: carbs.goal - totalCarbs,
-        });
-        setFat({
+        }));
+        setFat((fat) => ({
             ...fat,
             eaten: totalFat,
             left: fat.goal - totalFat,
-        });
-        setProtein({
+        }));
+        setProtein((protein) => ({
             ...protein,
             eaten: totalProtein,
             left: protein.goal - totalProtein,
-        });
+        }));
         setFatPercent((totalFat / fat.goal) * 100);
         setCarbsPercent((totalCarbs / carbs.goal) * 100);
         setProteinPercent((totalProtein / protein.goal) * 100);
         setCaloriesPercent((totalCalories / calories.goal) * 100);
-    }, [consumedMeals]);
+    }, [
+        consumedMeals.breakfast,
+        consumedMeals.lunch,
+        consumedMeals.dinner,
+        consumedMeals.snacks,
+    ]);
 
     const { logout } = useAuth();
 

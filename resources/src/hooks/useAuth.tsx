@@ -8,6 +8,7 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
     const { user, setUser } = useContext(UserContext);
+    const [loading, setLoading] = useState(true);
 
     function getCookie(name: string) {
         const value = `; ${document.cookie}`;
@@ -18,6 +19,7 @@ export const AuthProvider = ({ children }) => {
     // Runs once when the component first mounts
     useEffect(() => {
         const fetchUser = async () => {
+            setLoading(true);
             const cookie = getCookie("XSRF-TOKEN");
             if (cookie) {
                 axios.defaults.headers.common["X-XSRF-TOKEN"] = cookie;
@@ -26,8 +28,10 @@ export const AuthProvider = ({ children }) => {
             if (response.status === 200) {
                 setUser(response.data);
                 setAuthed(true);
+                setLoading(false);
             } else {
                 setAuthed(false);
+                setLoading(false);
             }
         };
         fetchUser();
@@ -94,7 +98,9 @@ export const AuthProvider = ({ children }) => {
     return (
         // Using the provider so that ANY component in our application can
         // use the values that we are sending.
-        <AuthContext.Provider value={{ authed, setAuthed, login, logout }}>
+        <AuthContext.Provider
+            value={{ authed, setAuthed, login, logout, loading }}
+        >
             {children}
         </AuthContext.Provider>
     );

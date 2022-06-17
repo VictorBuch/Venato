@@ -8,9 +8,7 @@ export const useMacros = () => {
         left: 0,
     });
 
-    const [caloriesPercent, setCaloriesPercent] = useState(
-        (calories.eaten / calories.goal) * 100
-    );
+    const [caloriesPercent, setCaloriesPercent] = useState(0);
 
     const [carbs, setCarbs] = useState({
         eaten: 0,
@@ -18,9 +16,7 @@ export const useMacros = () => {
         goal: 0,
         left: 0,
     });
-    const [carbsPercent, setCarbsPercent] = useState(
-        (carbs.eaten / carbs.goal) * 100
-    );
+    const [carbsPercent, setCarbsPercent] = useState(0);
 
     const [fat, setFat] = useState({
         eaten: 0,
@@ -28,7 +24,7 @@ export const useMacros = () => {
         goal: 0,
         left: 0,
     });
-    const [fatPercent, setFatPercent] = useState((fat.eaten / fat.goal) * 100);
+    const [fatPercent, setFatPercent] = useState(0);
 
     const [protein, setProtein] = useState({
         eaten: 0,
@@ -36,9 +32,7 @@ export const useMacros = () => {
         goal: 0,
         left: 0,
     });
-    const [proteinPercent, setProteinPercent] = useState(
-        (protein.eaten / protein.goal) * 100
-    );
+    const [proteinPercent, setProteinPercent] = useState(0);
     return {
         calories,
         setCalories,
