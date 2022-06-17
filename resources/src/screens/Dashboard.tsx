@@ -22,6 +22,7 @@ import FastfoodRoundedIcon from "@mui/icons-material/FastfoodRounded";
 import { useAuth } from "../hooks/useAuth";
 import { UserContext } from "../contexts/UserContext";
 import { useMacros } from "../hooks/useMacros";
+import { DropdownMenuButton } from "../components/DropdownMenuButton";
 
 type MealCardProps = {
     title: string;
@@ -289,11 +290,23 @@ export default function Dashboard() {
     return (
         <>
             <Head title="Dashboard" />
+            <nav className="container flex h-max w-full items-center justify-evenly">
+                <div className="w-1/4"></div>
+                <h1 className="w-2/4 text-2xl font-bold text-accent-focus ">
+                    Fitness journey
+                </h1>
+                <div className="ml-auto flex w-1/4 items-center justify-end">
+                    {/* TODO: make it send a logout function call */}
+                    <DropdownMenuButton
+                        items={[
+                            { name: "My account", navigateTo: "/my-account" },
+                            { name: "Log Out" },
+                        ]}
+                    />
+                </div>
+            </nav>
             <div className="flex h-screen w-full flex-col items-center">
-                <button className="btn btn-link" onClick={logout}>
-                    Log out
-                </button>
-                <div className="container py-16">
+                <div className="container py-8">
                     <section
                         id="CaloriesSection"
                         className="item-center  flex w-full justify-between text-lg text-gray-200"

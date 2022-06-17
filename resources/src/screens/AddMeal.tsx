@@ -2,13 +2,11 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import Select from "react-select";
-import { FormControl, InputLabel, NativeSelect } from "@mui/material";
 
 export default function AddMeal() {
     const [name, setName] = useState("");
     const [portion, setPortion] = useState(undefined);
-    const [unit, setUnit] = useState(undefined);
+    // const [unit, setUnit] = useState('g');
     const [calories, setCalories] = useState(undefined);
     const [carbs, setCarbs] = useState(undefined);
     const [protein, setProtein] = useState(undefined);
@@ -36,7 +34,7 @@ export default function AddMeal() {
                 if (response.status === 200) {
                     toast.success("Meal added successfully!");
                     setTimeout(() => {
-                        navigate("/my-meals");
+                        navigate("/dashboard");
                     }, 2500);
 
                     // TODO: Ask if user wants to add another meal
@@ -96,32 +94,6 @@ export default function AddMeal() {
                                     required
                                     onChange={(e) => setPortion(e.target.value)}
                                 />
-                                <FormControl>
-                                    <InputLabel
-                                        variant="standard"
-                                        htmlFor="uncontrolled-native"
-                                    >
-                                        Unit
-                                    </InputLabel>
-                                    <NativeSelect
-                                        className={`mt-2 border border-gray-400 p-2 text-gray-800 rounded${
-                                            invalidInputs
-                                                ? " border-red-500"
-                                                : "border-none"
-                                        }`}
-                                        defaultValue="g"
-                                        inputProps={{
-                                            name: "portion-unit",
-                                            id: "uncontrolled-native",
-                                        }}
-                                        onChange={(e) =>
-                                            setUnit(e.target.value)
-                                        }
-                                    >
-                                        <option value="g">g</option>
-                                        <option value="p">pound</option>
-                                    </NativeSelect>
-                                </FormControl>
                             </div>
                         </div>
                         <div className="flex flex-col items-center">
