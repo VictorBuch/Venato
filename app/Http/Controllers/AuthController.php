@@ -10,6 +10,9 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
+        if ($request->session()->has('users')) {
+            dd($request->session()->get('users'));
+        }
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],

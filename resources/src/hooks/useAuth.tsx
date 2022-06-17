@@ -7,8 +7,6 @@ import { UserContext } from "../contexts/UserContext";
 // Create the context
 const AuthContext = createContext(null);
 
-// TODO: make it update the user context when the user logs in or out
-
 export const AuthProvider = ({ children }) => {
     const { user, setUser } = useContext(UserContext);
 
@@ -17,29 +15,23 @@ export const AuthProvider = ({ children }) => {
         const parts = value.split(`; ${name}=`);
         if (parts.length === 2) return parts.pop().split(";").shift();
     }
-    const [loading, setLoading] = useState<boolean>(true);
 
     // Runs once when the component first mounts
     useEffect(() => {
-        axios.get("/api/user").then((activeUser) => {
-            if (activeUser) {
-                console.log("activeUser", activeUser);
-
+        const fetchUser = async () => {
+            const cookie = getCookie("XSRF-TOKEN");
+            if (cookie) {
                 setAuthed(true);
-                setLoading(false);
             } else {
-                console.log("no activeUser");
-
                 setAuthed(false);
-                setLoading(false);
             }
-        });
+        };
+        fetchUser();
     }, []);
 
     // Using the useState hook to keep track of the value authed (if a
     // user is logged in)
-    // Make this use a session cookie to keep track of the user instead of the xsrf token
-    const [authed, setAuthed] = useState<boolean>(!!getCookie("XSRF-TOKEN"));
+    const [authed, setAuthed] = useState<boolean>(false);
 
     const login = async (email: string, password: string): Promise<void> => {
         const result = await asyncLogin(email, password);
@@ -87,6 +79,7 @@ export const AuthProvider = ({ children }) => {
         const response = await axios.post("/api/auth/logout");
         if (response.status === 200) {
             sessionStorage.clear();
+            setUser({});
             return true;
         } else {
             toast.error("Something went wrong");

@@ -9,9 +9,8 @@ import axios from "axios";
 axios.defaults.withCredentials = true;
 
 ReactDOM.render(
-    <React.StrictMode>
+    <>
         <App />
-
         <ToastContainer
             position="bottom-right"
             autoClose={2000}
@@ -23,6 +22,6 @@ ReactDOM.render(
             draggable
             pauseOnHover
         />
-    </React.StrictMode>,
+    </>,
     document.getElementById("root")
 );
