@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { MouseEvent, useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Head } from "../components/shared/Head";

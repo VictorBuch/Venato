@@ -1,4 +1,3 @@
-// /src/hooks/useAuth.tsx
 import axios from "axios";
 import React, { useState, createContext, useContext, useEffect } from "react";
 import { toast } from "react-toastify";
@@ -21,6 +20,11 @@ export const AuthProvider = ({ children }) => {
         const fetchUser = async () => {
             const cookie = getCookie("XSRF-TOKEN");
             if (cookie) {
+                axios.defaults.headers.common["X-XSRF-TOKEN"] = cookie;
+            }
+            const response = await axios.get("/api/user");
+            if (response.status === 200) {
+                setUser(response.data);
                 setAuthed(true);
             } else {
                 setAuthed(false);
