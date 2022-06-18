@@ -243,6 +243,15 @@ export default function AddFood() {
         navigate(`/food/${meal.id}?meal=${mealType}`);
     };
 
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
     return (
         <>
             <section className="container bg-accent py-8">
@@ -264,7 +273,49 @@ export default function AddFood() {
                         {mealType!.toUpperCase()}
                     </h1>
                     <div className="ml-auto h-max w-max">
-                        <DropdownMenuButton />
+                        <div>
+                            <IconButton
+                                aria-label="more"
+                                id="long-button"
+                                aria-controls={open ? "long-menu" : undefined}
+                                aria-expanded={open ? "true" : undefined}
+                                aria-haspopup="true"
+                                onClick={handleClick}
+                            >
+                                <MoreVertIcon className="!fill-accent-content" />
+                            </IconButton>
+                            <Menu
+                                id="basic-menu"
+                                anchorEl={anchorEl}
+                                open={open}
+                                onClose={handleClose}
+                                MenuListProps={{
+                                    "aria-labelledby": "basic-button",
+                                }}
+                            >
+                                <MenuItem
+                                    onClick={() => {
+                                        navigate("/quick-track");
+                                    }}
+                                >
+                                    Quick Track
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() => {
+                                        navigate("/add-food");
+                                    }}
+                                >
+                                    Add Food
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() => {
+                                        navigate("/add-meal");
+                                    }}
+                                >
+                                    Add Meal
+                                </MenuItem>
+                            </Menu>
+                        </div>
                     </div>
                 </div>
                 <div className="mt-6 flex items-center justify-center">

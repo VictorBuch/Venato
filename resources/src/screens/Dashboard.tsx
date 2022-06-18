@@ -12,17 +12,18 @@ import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import { UserContext } from "../contexts/UserContext";
+import { useMacros } from "../hooks/useMacros";
+import { IconButton, Menu, MenuItem } from "@mui/material";
 
 // SVG ICONS
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import BakeryDiningRoundedIcon from "@mui/icons-material/BakeryDiningRounded";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import RamenDiningRoundedIcon from "@mui/icons-material/RamenDiningRounded";
 import DinnerDiningRoundedIcon from "@mui/icons-material/DinnerDiningRounded";
 import FastfoodRoundedIcon from "@mui/icons-material/FastfoodRounded";
-import { useAuth } from "../hooks/useAuth";
-import { UserContext } from "../contexts/UserContext";
-import { useMacros } from "../hooks/useMacros";
-import { DropdownMenuButton } from "../components/DropdownMenuButton";
 
 type MealCardProps = {
     title: string;
@@ -287,22 +288,60 @@ export default function Dashboard() {
 
     const { logout } = useAuth();
 
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
     return (
         <>
             <Head title="Dashboard" />
             <nav className="container flex h-max w-full items-center justify-evenly">
-                <div className="w-1/4"></div>
+                <div className="w-1/4" />
                 <h1 className="w-2/4 text-2xl font-bold text-accent-focus ">
                     Fitness journey
                 </h1>
                 <div className="ml-auto flex w-1/4 items-center justify-end">
-                    {/* TODO: make it send a logout function call */}
-                    <DropdownMenuButton
-                        items={[
-                            { name: "My account", navigateTo: "/my-account" },
-                            { name: "Log Out" },
-                        ]}
-                    />
+                    <div>
+                        <IconButton
+                            aria-label="more"
+                            id="long-button"
+                            aria-controls={open ? "long-menu" : undefined}
+                            aria-expanded={open ? "true" : undefined}
+                            aria-haspopup="true"
+                            onClick={handleClick}
+                        >
+                            <MoreVertIcon className="!fill-accent-content" />
+                        </IconButton>
+                        <Menu
+                            id="basic-menu"
+                            anchorEl={anchorEl}
+                            open={open}
+                            onClose={handleClose}
+                            MenuListProps={{
+                                "aria-labelledby": "basic-button",
+                            }}
+                        >
+                            <MenuItem
+                                onClick={() => {
+                                    navigate("/my-account");
+                                }}
+                            >
+                                My Account
+                            </MenuItem>
+                            <MenuItem
+                                onClick={() => {
+                                    logout();
+                                }}
+                            >
+                                Logout
+                            </MenuItem>
+                        </Menu>
+                    </div>
                 </div>
             </nav>
             <div className="flex h-screen w-full flex-col items-center">
