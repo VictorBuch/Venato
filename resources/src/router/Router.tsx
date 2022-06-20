@@ -14,10 +14,11 @@ const Loading = () => (
 const IndexScreen = lazy(() => import("../screens/Index"));
 const Page404Screen = lazy(() => import("../screens/404"));
 const Dashboard = lazy(() => import("../screens/Dashboard"));
+const TrackFood = lazy(() => import("../screens/TrackFood"));
+const Food = lazy(() => import("../screens/Food"));
+const AddFood = lazy(() => import("../screens/AddFood"));
 const AddMeal = lazy(() => import("../screens/AddMeal"));
 const MyMeals = lazy(() => import("../screens/MyMeals"));
-const AddFood = lazy(() => import("../screens/AddFood"));
-const Food = lazy(() => import("../screens/Food"));
 const GetUserInformation = lazy(() => import("../screens/GetUserInformation"));
 
 // Authorization routes
@@ -57,7 +58,7 @@ const InnerRouter = () => {
                     path: "/user-information",
                     element: (
                         <ProtectedRoute>
-                            <GetUserInformation />{" "}
+                            <GetUserInformation />
                         </ProtectedRoute>
                     ),
                 },
@@ -65,17 +66,15 @@ const InnerRouter = () => {
                     path: "/dashboard",
                     element: (
                         <ProtectedRoute>
-                            {" "}
-                            <Dashboard />{" "}
+                            <Dashboard />
                         </ProtectedRoute>
                     ),
                 },
                 {
-                    path: "/add-food",
+                    path: "/track-food",
                     element: (
                         <ProtectedRoute>
-                            {" "}
-                            <AddFood />{" "}
+                            <TrackFood />
                         </ProtectedRoute>
                     ),
                 },
@@ -83,8 +82,15 @@ const InnerRouter = () => {
                     path: "/food/:id",
                     element: (
                         <ProtectedRoute>
-                            {" "}
-                            <Food />{" "}
+                            <Food />
+                        </ProtectedRoute>
+                    ),
+                },
+                {
+                    path: "/add-food",
+                    element: (
+                        <ProtectedRoute>
+                            <AddFood />
                         </ProtectedRoute>
                     ),
                 },
@@ -92,8 +98,7 @@ const InnerRouter = () => {
                     path: "/add-meal",
                     element: (
                         <ProtectedRoute>
-                            {" "}
-                            <AddMeal />{" "}
+                            <AddMeal />
                         </ProtectedRoute>
                     ),
                 },
@@ -101,8 +106,7 @@ const InnerRouter = () => {
                     path: "/my-meals",
                     element: (
                         <ProtectedRoute>
-                            {" "}
-                            <MyMeals />{" "}
+                            <MyMeals />
                         </ProtectedRoute>
                     ),
                 },

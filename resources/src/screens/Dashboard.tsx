@@ -430,7 +430,7 @@ export default function Dashboard() {
                             reccomendedCalories={400}
                             icon={<BakeryDiningRoundedIcon />}
                             addFoodItem={() =>
-                                navigate("/add-food?meal=breakfast")
+                                navigate("/track-food?meal=breakfast")
                             }
                         />
                         <MealCard
@@ -444,7 +444,9 @@ export default function Dashboard() {
                             )}
                             reccomendedCalories={700}
                             icon={<RamenDiningRoundedIcon />}
-                            addFoodItem={() => navigate("/add-food?meal=lunch")}
+                            addFoodItem={() =>
+                                navigate("/track-food?meal=lunch")
+                            }
                         />
                         <MealCard
                             title="Dinner"
@@ -458,7 +460,7 @@ export default function Dashboard() {
                             reccomendedCalories={900}
                             icon={<DinnerDiningRoundedIcon />}
                             addFoodItem={() =>
-                                navigate("/add-food?meal=dinner")
+                                navigate("/track-food?meal=dinner")
                             }
                         />
                         <MealCard
@@ -472,7 +474,9 @@ export default function Dashboard() {
                             )}
                             reccomendedCalories={300}
                             icon={<FastfoodRoundedIcon />}
-                            addFoodItem={() => navigate("/add-food?meal=snack")}
+                            addFoodItem={() =>
+                                navigate("/track-food?meal=snack")
+                            }
                         />
                     </div>
                 </section>
