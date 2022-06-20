@@ -30,7 +30,7 @@ export default function MealCard({
             </div>
             <AddCircleRoundedIcon
                 onClick={addRemovePortion}
-                className={`ml-auto scale-150 !text-accent-focus ${
+                className={`ml-auto scale-150  !text-accent-focus ${
                     remove ? "rotate-45" : ""
                 }`}
             />

@@ -302,7 +302,7 @@ export default function Dashboard() {
             <Head title="Dashboard" />
             <nav className="container flex h-max w-full items-center justify-evenly">
                 <div className="w-1/4" />
-                <h1 className="w-2/4 text-2xl font-bold text-accent-focus ">
+                <h1 className="w-2/4 text-2xl font-bold text-accent  ">
                     Fitness journey
                 </h1>
                 <div className="ml-auto flex w-1/4 items-center justify-end">

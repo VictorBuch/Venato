@@ -24,6 +24,7 @@ return new class extends Migration
             $table->integer('protein')->nullable();
             $table->integer('fat')->nullable();
             $table->integer('recipe_id')->nullable();
+            $table->char('nutrition_grade', 1)->nullable();
         });
     }
 

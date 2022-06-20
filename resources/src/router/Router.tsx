@@ -16,6 +16,7 @@ const Page404Screen = lazy(() => import("../screens/404"));
 const Dashboard = lazy(() => import("../screens/Dashboard"));
 const TrackFood = lazy(() => import("../screens/TrackFood"));
 const Food = lazy(() => import("../screens/Food"));
+const QuickTrack = lazy(() => import("../screens/QuickTrack"));
 const AddFood = lazy(() => import("../screens/AddFood"));
 const AddMeal = lazy(() => import("../screens/AddMeal"));
 const MyMeals = lazy(() => import("../screens/MyMeals"));
@@ -23,6 +24,9 @@ const GetUserInformation = lazy(() => import("../screens/GetUserInformation"));
 
 // Authorization routes
 const SignupScreen = lazy(() => import("../screens/Signup"));
+
+// Test routes
+const Test = lazy(() => import("../screens/Test"));
 
 export const Router = () => {
     return (
@@ -49,6 +53,10 @@ const InnerRouter = () => {
                 {
                     index: true,
                     element: <IndexScreen />,
+                },
+                {
+                    path: "/test",
+                    element: <Test />,
                 },
                 {
                     path: "/signup",
@@ -83,6 +91,14 @@ const InnerRouter = () => {
                     element: (
                         <ProtectedRoute>
                             <Food />
+                        </ProtectedRoute>
+                    ),
+                },
+                {
+                    path: "/quick-track",
+                    element: (
+                        <ProtectedRoute>
+                            <QuickTrack />
                         </ProtectedRoute>
                     ),
                 },

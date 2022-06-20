@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ConsumedMealController;
+use App\Http\Controllers\FoodProductsController;
 use App\Http\Controllers\MealController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -38,3 +39,5 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/user', [AuthController::class, 'getUser']);
     Route::put('/user', [AuthController::class, 'updateUser']);
 });
+
+Route::get('/foodDB', [FoodProductsController::class, 'importFoodProducts']);
