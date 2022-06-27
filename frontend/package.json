@@ -22,6 +22,7 @@
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "next",
 		"@sveltejs/kit": "next",
+		"@tailwindcss/line-clamp": "^0.4.0",
 		"@typescript-eslint/eslint-plugin": "^5.27.0",
 		"@typescript-eslint/parser": "^5.27.0",
 		"@zerodevx/svelte-toast": "^0.7.2",
