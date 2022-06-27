@@ -41,23 +41,17 @@
 
 			if (items.length > 1) {
 				// loop through items array and add up the serving_size_g and calories for each item
-				const totalCalories = Math.ceil(items.reduce((acc, item) => acc + item.calories, 0));
-				const totalPortion = Math.ceil(items.reduce((acc, item) => acc + item.serving_size_g, 0));
-				const totalProtein = Math.ceil(items.reduce((acc, item) => acc + item.protein_g, 0));
-				const totalCarbs = Math.ceil(
-					items.reduce((acc, item) => acc + item.carbohydrates_total_g, 0)
-				);
-				const totalFiber = Math.ceil(items.reduce((acc, item) => acc + item.fiber_g, 0));
-				const totalFat = Math.ceil(items.reduce((acc, item) => acc + item.fat_total_g, 0));
-				const totalFatSaturated = Math.ceil(
-					items.reduce((acc, item) => acc + item.fat_saturated_g, 0)
-				);
-				const totalCholesterol = Math.ceil(
-					items.reduce((acc, item) => acc + item.cholesterol_mg, 0)
-				);
-				const totalSodium = Math.ceil(items.reduce((acc, item) => acc + item.sodium_mg, 0));
-				const totalPotassium = Math.ceil(items.reduce((acc, item) => acc + item.potassium_mg, 0));
-				const totalSugar = Math.ceil(items.reduce((acc, item) => acc + item.sugar_g, 0));
+				const totalCalories = items.reduce((acc, item) => acc + item.calories, 0);
+				const totalPortion = items.reduce((acc, item) => acc + item.serving_size_g, 0);
+				const totalProtein = items.reduce((acc, item) => acc + item.protein_g, 0);
+				const totalCarbs = items.reduce((acc, item) => acc + item.carbohydrates_total_g, 0);
+				const totalFiber = items.reduce((acc, item) => acc + item.fiber_g, 0);
+				const totalFat = items.reduce((acc, item) => acc + item.fat_total_g, 0);
+				const totalFatSaturated = items.reduce((acc, item) => acc + item.fat_saturated_g, 0);
+				const totalCholesterol = items.reduce((acc, item) => acc + item.cholesterol_mg, 0);
+				const totalSodium = items.reduce((acc, item) => acc + item.sodium_mg, 0);
+				const totalPotassium = items.reduce((acc, item) => acc + item.potassium_mg, 0);
+				const totalSugar = items.reduce((acc, item) => acc + item.sugar_g, 0);
 				const totalFoods = items.map((item) => `${item.serving_size_g}g ${item.name}`);
 				const totalFoodsString = totalFoods.join(', ');
 				const finalFood = {
@@ -163,7 +157,7 @@
 {#if tab == 1}
 	<section class="mb-28 overflow-x-hidden">
 		<form on:submit|preventDefault={fetchMeal} class="container flex flex-col items-center ">
-			<div class="w-full space-y-2">
+			<div class="mb-2 w-full space-y-2">
 				<label for="Meal">Input a meal</label>
 				<input
 					type="text"
@@ -176,7 +170,7 @@
 			</div>
 			{#if Object.keys(food).length > 0}
 				<div
-					class="bg-base-content text-neutral mt-8 flex h-max w-full flex-col rounded-md border border-gray-400 shadow-lg"
+					class="bg-base-content text-neutral mt-6 flex h-max w-full flex-col rounded-md border border-gray-400 shadow-lg"
 					on:click={addFoodItem}
 				>
 					<div class="flex h-full items-center py-3 px-4">
@@ -251,38 +245,38 @@
 					<section class="space-y-2">
 						<div class="text-semi-bold flex w-full items-center justify-between text-lg">
 							<p>Carbs (g)</p>
-							<p>{food.carbs}</p>
+							<p>{food.carbs.toFixed(2)}</p>
 						</div>
 						{#if Object.hasOwn(food, 'fiber')}
 							<div class="flex w-full items-center justify-between text-sm font-light">
 								<p>Fiber (g)</p>
-								<p>{food.fiber}</p>
+								<p>{food.fiber.toFixed(2)}</p>
 							</div>
 						{/if}
 						{#if Object.hasOwn(food, 'sugars')}
 							<div class="flex w-full items-center justify-between text-sm font-light">
 								<p>Sugars (g)</p>
-								<p>{food.sugars}</p>
+								<p>{food.sugars.toFixed(2)}</p>
 							</div>
 						{/if}
 					</section>
 					<div class="text-semi-bold flex w-full items-center justify-between text-lg">
 						<p>Protein (g)</p>
-						<p>{food.protein}</p>
+						<p>{food.protein.toFixed(2)}</p>
 					</div>
 					<section class="space-y-2">
 						<div class="text-semi-bold flex w-full items-center justify-between text-lg">
 							<p>Fat (g)</p>
-							<p>{food.fat}</p>
+							<p>{food.fat.toFixed(2)}</p>
 						</div>
 						{#if Object.hasOwn(food, 'saturatedFat')}
 							<div class="flex w-full items-center justify-between text-sm font-light">
 								<p>Saturated fat (g)</p>
-								<p>{food.saturatedFat}</p>
+								<p>{food.saturatedFat.toFixed(2)}</p>
 							</div>
 							<div class="flex w-full items-center justify-between text-sm font-light">
 								<p>Unsaturated fat (g)</p>
-								<p>{food.fat - food.saturatedFat}</p>
+								<p>{Math.ceil(food.fat - food.saturatedFat).toFixed(2)}</p>
 							</div>
 						{/if}
 					</section>
@@ -293,19 +287,19 @@
 						{#if Object.hasOwn(food, 'cholesterol')}
 							<div class="flex w-full items-center justify-between text-sm font-light">
 								<p>Cholesterol (mg)</p>
-								<p>{food.cholesterol}</p>
+								<p>{food.cholesterol.toFixed(2)}</p>
 							</div>
 						{/if}
 						{#if Object.hasOwn(food, 'sodium')}
 							<div class="flex w-full items-center justify-between text-sm font-light">
 								<p>Sodium (mg)</p>
-								<p>{food.sodium}</p>
+								<p>{food.sodium.toFixed(2)}</p>
 							</div>
 						{/if}
 						{#if Object.hasOwn(food, 'potasium')}
 							<div class="flex w-full items-center justify-between text-sm font-light">
 								<p>Potasium (mg)</p>
-								<p>{food.potasium}</p>
+								<p>{food.potasium.toFixed(2)}</p>
 							</div>
 						{/if}
 					</section>

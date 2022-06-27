@@ -53,6 +53,8 @@
 		consumedDinner,
 		consumedSnacks
 	} from '../../stores/consumedMeals';
+
+	import BarcodeScan from 'svelte-material-icons/BarcodeScan.svelte';
 	import DotsVertical from 'svelte-material-icons/DotsVertical.svelte';
 	import FoodCard from '../../components/FoodCard.svelte';
 
@@ -121,6 +123,10 @@
 	const handleCustomizePortion = async (meal: Meal) => {
 		goto(`/track-food/${mealType}-${meal.id}`);
 	};
+
+	const handleBarcodeScanning = async () => {
+		goto(`/track-food/scan`);
+	};
 </script>
 
 <section class="bg-accent container py-8">
@@ -157,7 +163,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="mt-6 flex items-center justify-center">
+	<div class="mt-6 flex items-center justify-center space-x-2">
 		<div class="form-control w-full">
 			<div class="input-group">
 				<input
@@ -184,6 +190,12 @@
 				</button>
 			</div>
 		</div>
+		<figure
+			on:click={handleBarcodeScanning}
+			class="bg-accent-content text-neutral rounded-full p-2"
+		>
+			<BarcodeScan size={'25'} color="inherit" />
+		</figure>
 	</div>
 </section>
 <div class="container mb-10 space-y-4">
