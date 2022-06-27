@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ConsumedMealController;
+use App\Http\Controllers\FoodProductsController;
 use App\Http\Controllers\MealController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,5 @@ Route::group(['middleware' => 'auth:api',], function () {
     Route::put('/consumed_meals/{id}', [ConsumedMealController::class, 'updateMeal']);
     Route::delete('/consumed_meals/{id}', [ConsumedMealController::class, 'deleteMeal']);
 });
-
 
 Route::get('/foodDB', [FoodProductsController::class, 'importFoodProducts']);
