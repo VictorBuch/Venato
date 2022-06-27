@@ -93,7 +93,7 @@
 	<title>fitness Journey | {food.name}</title>
 </svelte:head>
 
-<section class="bg-accent flex  items-end  justify-between px-4 py-12">
+<section class="bg-accent flex  items-end  justify-between px-4 py-12 drop-shadow-md">
 	<div class="flex items-center space-x-4">
 		<a href="/track-food/{mealType}">
 			<svg

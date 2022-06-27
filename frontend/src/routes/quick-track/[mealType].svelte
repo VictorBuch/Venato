@@ -116,7 +116,7 @@
 <svelte:head>
 	<title>Fitness Journey | Quick Track</title>
 </svelte:head>
-<section class="bg-accent container mb-8 pt-8">
+<section class="bg-accent container mb-8 pt-8 drop-shadow-md">
 	<div class=" flex h-full w-full  items-center  ">
 		<a href="/track-food/{mealType}">
 			<svg

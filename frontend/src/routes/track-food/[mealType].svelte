@@ -129,7 +129,7 @@
 	};
 </script>
 
-<section class="bg-accent container py-8">
+<section class="bg-accent container py-8 drop-shadow-md">
 	<div class=" flex h-full w-full  items-center justify-between space-x-2">
 		<a href="/dashboard">
 			<svg
@@ -150,7 +150,7 @@
 		<div class="ml-auto h-max w-max">
 			<div class="dropdown dropdown-end">
 				<button tabindex="0">
-					<DotsVertical />
+					<DotsVertical size="20" />
 				</button>
 				<ul
 					tabindex="0"
@@ -198,16 +198,16 @@
 		</figure>
 	</div>
 </section>
+
 <div class="container mb-10 space-y-4">
 	{#if !searchQuery.length}
 		<section
-			class="border-base-content text-neutral-content my-8 flex w-full flex-col items-center space-y-4 rounded border p-4 shadow-lg"
+			class="border-accent-focus text-neutral-content my-8 flex w-full flex-col items-center space-y-4 rounded border p-4 shadow-lg"
 		>
 			<div class="flex w-full flex-col items-center justify-center space-y-2">
 				<div class="flex w-full items-center justify-between">
 					<h1 class="text-sm">Dalily intake</h1>
 					<h3 class="text-sm">
-						{' '}
 						{$caloriesEaten}/{$caloriesGoal} kcal
 					</h3>
 				</div>
@@ -217,7 +217,6 @@
 				<div class="flex w-1/4 flex-col items-center justify-center space-y-2">
 					<h3 class="text-sm">Carbs</h3>
 					<progress class="progress progress-accent w-full" value={$carbsPercent} max="100" />
-
 					<p class="text-sm">
 						{$carbsEaten}/{$carbsGoal}g
 					</p>
@@ -225,7 +224,6 @@
 				<div class="flex w-1/4 flex-col items-center justify-center space-y-2">
 					<h3 class="text-sm">Protein</h3>
 					<progress class="progress progress-accent w-full" value={$proteinPercent} max="100" />
-
 					<p class="text-sm">
 						{$proteinEaten}/{$proteinGoal}g
 					</p>
