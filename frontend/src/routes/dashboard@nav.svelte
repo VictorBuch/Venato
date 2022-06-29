@@ -45,6 +45,7 @@
 		caloriesEaten,
 		caloriesGoal,
 		caloriesPercent,
+		caloriesLeft,
 		carbsEaten,
 		carbsGoal,
 		carbsPercent,
@@ -133,7 +134,7 @@
 						percent={$caloriesPercent}
 						percentOver={(($caloriesEaten - $caloriesGoal) / $caloriesGoal) * 100}
 						stroke={1}
-						number={3223}
+						number={$caloriesLeft}
 						text={`Kcal ${$caloriesPercent > 100 ? 'over' : 'left'}`}
 					/>
 				</div>
@@ -152,14 +153,14 @@
 				</div>
 				<div class="flex w-1/4 flex-col items-center justify-center space-y-2">
 					<h3>Potein</h3>
-					<progress class="progress progress-accent w-full" value={$proteinPercent} max="100" />
+					<progress class="progress progress-accent w-full " value={$proteinPercent} max="100" />
 					<p class="text-sm">
 						{$proteinEaten} / {$proteinGoal}g
 					</p>
 				</div>
 				<div class="flex w-1/4 flex-col items-center justify-center space-y-2">
 					<h3>Fat</h3>
-					<progress class="progress progress-accent w-full" value={$fatPercent} max="100" />
+					<progress class="progress progress-accent w-full " value={$fatPercent} max="100" />
 					<p class="text-sm">
 						{$fatEaten} / {$fatGoal}g
 					</p>
@@ -211,3 +212,10 @@
 		</section>
 	</div>
 </main>
+
+<style>
+	.progress-accent {
+		--tw-bg-opacity: 1;
+		background-color: #4b5563;
+	}
+</style>

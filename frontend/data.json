@@ -9,27 +9,9 @@
 				"protein": 4,
 				"carbs": 39,
 				"fat": 3
-			},
-			{
-				"name": "Criossant",
-				"id": 2,
-				"calories": 400,
-				"portion": 400,
-				"protein": 49,
-				"carbs": 3,
-				"fat": 43
 			}
 		],
 		"lunch": [
-			{
-				"name": "Fried Rice",
-				"id": 3,
-				"calories": 300,
-				"portion": 200,
-				"protein": 4,
-				"carbs": 39,
-				"fat": 3
-			},
 			{
 				"name": "Fried Noodles",
 				"id": 4,
@@ -37,19 +19,10 @@
 				"portion": 400,
 				"protein": 49,
 				"carbs": 3,
-				"fat": 43
+				"fat": 10
 			}
 		],
 		"dinner": [
-			{
-				"name": "Protein Shake",
-				"id": 6,
-				"calories": 200,
-				"portion": 30,
-				"protein": 25,
-				"carbs": 3,
-				"fat": 4
-			},
 			{
 				"name": "Chili",
 				"id": 7,
@@ -57,7 +30,7 @@
 				"portion": 400,
 				"protein": 49,
 				"carbs": 8,
-				"fat": 56
+				"fat": 28
 			}
 		],
 		"snacks": [
@@ -68,16 +41,7 @@
 				"portion": 200,
 				"protein": 67,
 				"carbs": 87,
-				"fat": 98
-			},
-			{
-				"name": "Fried something",
-				"id": 9,
-				"calories": 400,
-				"portion": 400,
-				"protein": 49,
-				"carbs": 3,
-				"fat": 43
+				"fat": 10
 			}
 		]
 	},
