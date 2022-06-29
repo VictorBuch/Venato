@@ -16,7 +16,7 @@
 		<figure>
 			<slot />
 		</figure>
-		<main class="ml-6 flex w-60 flex-col items-start justify-center">
+		<div class="ml-6 flex w-60 flex-col items-start justify-center">
 			<h1 class="w-full text-base font-semibold">{title}</h1>
 			<p class="w-full truncate text-sm">
 				{#if foodItems.length}
@@ -31,7 +31,7 @@
 					{`reccomended amount: ${reccomendedCalories} kcal`}
 				{/if}
 			</p>
-		</main>
+		</div>
 		<PlusCircle size={'25'} />
 	</div>
 	<hr class="border border-gray-200" />

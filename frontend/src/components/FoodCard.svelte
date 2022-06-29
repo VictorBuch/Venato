@@ -23,7 +23,7 @@
 	on:click={customizeFoodItem}
 >
 	<div class="flex h-full items-center py-3 px-2">
-		<main class="ml-6 flex w-60 flex-col items-start  justify-center space-y-1">
+		<div class="ml-6 flex w-60 flex-col items-start  justify-center space-y-1">
 			<h1 class=" text-base-300 w-full font-semibold">{title}</h1>
 			<p class="text-base-100 w-full truncate text-xs ">
 				{calories} kcal
@@ -31,7 +31,7 @@
 			<p class="text-base-100 w-full truncate text-xs ">
 				{servingSize}
 			</p>
-		</main>
+		</div>
 		<figure class:rotate-45={remove} class="text-base-300 ml-auto mr-4" on:click={clickFoodIcon}>
 			<PlusCircle size={'25'} />
 		</figure>

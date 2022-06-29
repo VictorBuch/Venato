@@ -39,7 +39,7 @@
 		</div>
 	</div>
 </section>
-<section class="container">
+<main class="container">
 	<div class="card bg-neutral my-8 w-full shadow-xl">
 		<div class="card-body h-max">
 			<div class="flex items-center space-x-8">
@@ -85,4 +85,4 @@
 			</div>
 		</div>
 	</div>
-</section>
+</main>

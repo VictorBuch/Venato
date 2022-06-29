@@ -98,7 +98,7 @@
 	<title>Firness Journey | Dashboard</title>
 </svelte:head>
 
-<main class="w-screen overflow-x-hidden">
+<main class=" w-screen overflow-x-hidden">
 	<nav class="container mt-6 flex h-max w-full items-center justify-evenly">
 		<div class="w-1/4" />
 		<h1 class="text-accent w-2/4 text-2xl font-bold  ">Fitness journey</h1>
@@ -168,7 +168,7 @@
 		</div>
 		<section
 			id="Food"
-			class="item-center bg-base-100 text-base-200 mt-8 flex w-full flex-col justify-center pb-8 text-lg"
+			class="item-center bg-base-100 text-base-200 mt-8 flex w-full flex-col justify-center  text-lg"
 		>
 			<div class="container space-y-6">
 				<MealCard

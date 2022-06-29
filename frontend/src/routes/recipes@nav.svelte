@@ -79,7 +79,7 @@
 		</div>
 	{/if}
 </section>
-<main class="overflow-x-hidden py-8">
+<main class="overflow-x-hidden pt-8">
 	{#if searchQuery.length}
 		<div class="container grid grid-cols-2 gap-4">
 			{#each recipes as recipe}

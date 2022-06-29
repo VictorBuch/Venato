@@ -27,7 +27,6 @@
 		// 	toast.push('Invalod email or password');
 		// }
 		const response = await fetch('http://localhost:3004/user');
-		console.log(response);
 
 		if (response.ok) {
 			const serverUser = await response.json();
@@ -35,7 +34,6 @@
 				...serverUser,
 				authed: true
 			};
-			console.log($user);
 
 			if ($user.calorie_goal !== null) {
 				goto('/dashboard');
@@ -43,7 +41,12 @@
 				goto('/get-user-information');
 			}
 		} else {
-			toast.push('Invalod email or password');
+			toast.push('Invalod email or password', {
+				theme: {
+					'--toastBackground': '#F56565',
+					'--toastBarBackground': '#C53030'
+				}
+			});
 		}
 	};
 

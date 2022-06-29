@@ -4,6 +4,7 @@
 </script>
 
 <slot />
+<SvelteToast />
 
 <style>
 	:global(.btn-main) {
