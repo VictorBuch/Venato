@@ -177,12 +177,12 @@
 						<figure>
 							<slot />
 						</figure>
-						<main class="ml-6 flex w-60 flex-col items-start justify-center">
+						<div class="ml-6 flex w-60 flex-col items-start justify-center">
 							<h1 class="w-full text-base font-semibold">{food.name}</h1>
 							<p class="w-full truncate text-sm">
 								{food.portion}g
 							</p>
-						</main>
+						</div>
 					</div>
 					<hr class="border border-gray-200" />
 					<p class="flex h-max items-end justify-center  py-2 text-center text-sm">

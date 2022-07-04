@@ -11,17 +11,20 @@
 	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" width={radius} height={radius}>
 		<g id="circles" stroke-width={stroke}>
 			<circle class="stroke-gray-600" r="16" cx="18" cy="18" fill="none" />
-			<circle
-				class="stroke-accent -rotate-90"
-				style="	transform-origin: 50% 50%;
+			{#if percent > 0}
+				<circle
+					class="stroke-accent -rotate-90"
+					style="	transform-origin: 50% 50%;
 			stroke-dashoffset: {100 - percent}"
-				r="16"
-				cx="18"
-				cy="18"
-				fill="none"
-				stroke-dasharray="100 100"
-				id="circle-meter"
-			/>
+					r="16"
+					cx="18"
+					cy="18"
+					fill="none"
+					stroke-dasharray="100 100"
+					id="circle-meter"
+				/>
+			{/if}
+
 			{#if percentOver > 1}
 				<circle
 					class="-rotate-90   stroke-orange-400"

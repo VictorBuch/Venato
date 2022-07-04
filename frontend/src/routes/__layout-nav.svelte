@@ -13,12 +13,13 @@
 	import ChartLine from 'svelte-material-icons/ChartLine.svelte';
 	import Noodles from 'svelte-material-icons/Noodles.svelte';
 	import Account from 'svelte-material-icons/Account.svelte';
+	import { fly } from 'svelte/transition';
 </script>
 
 <slot />
 
 <footer
-	class="bg-accent container fixed bottom-0 right-auto flex w-full items-end justify-between rounded-t pt-3 pb-1"
+	class="bg-accent container fixed bottom-0 right-0 left-0 flex w-full items-end justify-between rounded-t pt-3 pb-1"
 >
 	<a
 		href="/dashboard"
