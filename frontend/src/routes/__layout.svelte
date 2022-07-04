@@ -1,3 +1,11 @@
+<script context="module">
+	import { authGuard, authGuardRedirect } from '../$lib/guards/index';
+	export const load = async ({ url }) => {
+		if (await authGuard(url)) return authGuardRedirect(url);
+		return {};
+	};
+</script>
+
 <script>
 	import '../app.css';
 	import { SvelteToast } from '@zerodevx/svelte-toast';

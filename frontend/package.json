@@ -17,6 +17,7 @@
 		"@mui/material": "^5.8.0",
 		"axios": "^0.27.2",
 		"daisyui": "^1.25.4",
+		"svelte-local-storage-store": "^0.2.6",
 		"svelte-material-icons": "^2.0.2"
 	},
 	"devDependencies": {

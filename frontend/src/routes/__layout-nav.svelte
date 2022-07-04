@@ -1,3 +1,11 @@
+<script context="module">
+	import { authGuard, authGuardRedirect } from '../$lib/guards/index';
+	export const load = async ({ url }) => {
+		if (await authGuard(url)) return authGuardRedirect(url);
+		return {};
+	};
+</script>
+
 <script>
 	import '../app.css';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
@@ -8,8 +16,9 @@
 </script>
 
 <slot />
+
 <footer
-	class="bg-accent container fixed bottom-0 flex w-full items-end justify-between rounded-t pt-3 pb-1"
+	class="bg-accent container fixed bottom-0 right-auto flex w-full items-end justify-between rounded-t pt-3 pb-1"
 >
 	<a
 		href="/dashboard"

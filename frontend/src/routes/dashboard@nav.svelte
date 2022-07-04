@@ -73,25 +73,13 @@
 	$consumedSnacks = consumedMeals.snacks;
 
 	const logout = async () => {
-		const response = await API.post('/auth/logout');
-		if (response.status == 200) {
-			$user = {
-				email: '',
-				password: '',
-				authed: false,
-				token: null,
-				goal: 'maintain',
-				calorie_goal: 0,
-				protein_goal: 0,
-				carb_goal: 0,
-				fat_goal: 0,
-				weight: 0,
-				height: 0,
-				age: 0,
-				sex: ''
-			};
-			goto('/');
-		}
+		$user = {};
+		goto('/');
+		// const response = await API.post('/auth/logout');
+		// if (response.status == 200) {
+		// 	$user = {};
+		// 	goto('/');
+		// }
 	};
 </script>
 
