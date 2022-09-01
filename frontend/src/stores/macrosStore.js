@@ -4,7 +4,7 @@ import { user } from './userStore';
 
 export const carbsEaten = derived(
 	combinedMeals,
-	($combinedMeals) => $combinedMeals.reduce((value, current) => value + current.carbs, 0),
+	($combinedMeals) => $combinedMeals.reduce((value, current) => value + current?.carbs, 0),
 	0
 );
 

@@ -19,6 +19,9 @@
 	import { toast } from '@zerodevx/svelte-toast';
 	import DotsVertical from 'svelte-material-icons/DotsVertical.svelte';
 	import ProgressRing from '../../components/ProgressRing.svelte';
+	import { supabase } from '$lib/supabaseClient';
+	import { user } from '../../stores/userStore';
+	import { get } from 'svelte/store';
 
 	export let mealType: string;
 
@@ -28,6 +31,12 @@
 	let tab = 1;
 
 	const fetchMeal = async () => {
+		if (Object.keys(food).length) {
+			food = {};
+			query = '';
+			queryRef.focus();
+			return;
+		}
 		if (query.length > 0) {
 			const response = await fetch(`https://api.calorieninjas.com/v1/nutrition?query=${query}`, {
 				method: 'GET',
@@ -38,11 +47,13 @@
 			});
 			const { items } = await response.json();
 			console.log(items);
-
+			if (items.length === 0) {
+				toast.push('No food found');
+			}
 			if (items.length > 1) {
 				// loop through items array and add up the serving_size_g and calories for each item
-				const totalCalories = items.reduce((acc, item) => acc + item.calories, 0);
-				const totalPortion = items.reduce((acc, item) => acc + item.serving_size_g, 0);
+				const totalCalories = Math.ceil(items.reduce((acc, item) => acc + item.calories, 0));
+				const totalPortion = Math.ceil(items.reduce((acc, item) => acc + item.serving_size_g, 0));
 				const totalProtein = items.reduce((acc, item) => acc + item.protein_g, 0);
 				const totalCarbs = items.reduce((acc, item) => acc + item.carbohydrates_total_g, 0);
 				const totalFiber = items.reduce((acc, item) => acc + item.fiber_g, 0);
@@ -71,7 +82,7 @@
 				food = finalFood;
 			}
 			if (items.length === 1) {
-				const {
+				let {
 					calories,
 					serving_size_g,
 					name,
@@ -85,6 +96,8 @@
 					potassium_mg,
 					fiber_g
 				} = items[0];
+				calories = Math.ceil(calories);
+				serving_size_g = Math.ceil(serving_size_g);
 				const finalFood = {
 					calories,
 					portion: serving_size_g,
@@ -106,7 +119,45 @@
 		}
 	};
 
-	const addFoodItem = () => {};
+	const addFoodItem = async () => {
+		try {
+			// TODO: fix nutrition grade
+			const { data, error } = await supabase.from('meals').insert([
+				{
+					name: food.name,
+					portion: food.portion,
+					calories: food.calories,
+					carbs: food.carbs,
+					protein: food.protein,
+					fat: food.fat,
+					sodium_mg: food?.sodium,
+					potassium_g: food?.potassium,
+					fat_saturated_g: food?.saturatedFat,
+					cholesterol_mg: food?.cholesterol,
+					nutrition_grade: 'A',
+					is_quick_tracked: true
+				}
+			]);
+			if (data) {
+				const { data: mealData, error: mealError } = await supabase.from('consumed_meals').insert([
+					{
+						meal_id: data[0].id,
+						user_id: get(user).id,
+						meal_type: mealType
+					}
+				]);
+				if (mealData) {
+					toast.push('Meal added');
+				} else {
+					toast.push('Error adding meal');
+				}
+			} else {
+				toast.push('Error adding meal');
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	const calculatePercentage = (amount: number, total: number): number => {
 		return Math.ceil((amount / total) * 100);
@@ -116,11 +167,11 @@
 <svelte:head>
 	<title>Fitness Journey | Quick Track</title>
 </svelte:head>
-<section class="bg-accent container mb-8 pt-8 drop-shadow-md">
+<section class="container mb-8 bg-accent pt-8 drop-shadow-md">
 	<div class=" flex h-full w-full  items-center  ">
 		<a href="/track-food/{mealType}">
 			<svg
-				class="!stroke-accent-content h-6 w-6"
+				class="h-6 w-6 !stroke-accent-content"
 				fill="none"
 				stroke-linecap="round"
 				stroke-linejoin="round"
@@ -131,7 +182,7 @@
 				<path d="M19 12H5M12 19l-7-7 7-7" />
 			</svg>
 		</a>
-		<h1 class="text-accent-content ml-24 w-max text-xl font-bold">Quick Track</h1>
+		<h1 class="ml-24 w-max text-xl font-bold text-accent-content">Quick Track</h1>
 	</div>
 	<div class="mt-6 flex items-center justify-center">
 		<div class="tabs  ">
@@ -141,7 +192,7 @@
 					food = {};
 				}}
 				class:tab-active={tab == 1}
-				class="tab !text-accent-content tab-bordered">Auto Track</button
+				class="tab tab-bordered !text-accent-content">Auto Track</button
 			>
 			<button
 				on:click={() => {
@@ -149,7 +200,7 @@
 					food = {};
 				}}
 				class:tab-active={tab == 2}
-				class="tab !text-accent-content tab-bordered">Manual Track</button
+				class="tab tab-bordered !text-accent-content">Manual Track</button
 			>
 		</div>
 	</div>
@@ -163,14 +214,14 @@
 					type="text"
 					placeholder="Describe meal with measurements (e.g. 200g of chicken)"
 					name="Meal"
-					class="input bg-neutral text-neutral-content w-full max-w-xs text-xl placeholder:text-xs placeholder:text-gray-400"
+					class="max-w-xs input w-full bg-neutral text-xl text-neutral-content placeholder:text-xs placeholder:text-gray-400"
 					bind:value={query}
 					bind:this={queryRef}
 				/>
 			</div>
 			{#if Object.keys(food).length > 0}
 				<div
-					class="bg-base-content text-neutral mt-6 flex h-max w-full flex-col rounded-md border border-gray-400 shadow-lg"
+					class="mt-6 flex h-max w-full flex-col rounded-md border border-gray-400 bg-base-content text-neutral shadow-lg"
 					on:click={addFoodItem}
 				>
 					<div class="flex h-full items-center py-3 px-4">
@@ -192,7 +243,7 @@
 				<div class="flex w-full items-center space-x-2">
 					<button
 						on:click={addFoodItem}
-						class="btn bg-accent from-accent to-accent-focus text-accent-content shadow-accent/30 hover:shadow-accent-focus/30 mt-8 w-1/2 border-0 bg-gradient-to-r shadow-lg"
+						class="btn mt-8 w-1/2 border-0 bg-accent bg-gradient-to-r from-accent to-accent-focus text-accent-content shadow-lg shadow-accent/30 hover:shadow-accent-focus/30"
 						>Add Food</button
 					>
 					<button
@@ -201,12 +252,12 @@
 							query = '';
 							queryRef.focus();
 						}}
-						class="btn bg-error text-accent-content shadow-error/30 hover:shadow-error-focus/30 mt-8 w-1/2 border-0 shadow-lg"
+						class="btn mt-8 w-1/2 border-0 bg-error bg-gradient-to-r from-error to-error text-accent-content shadow-lg shadow-error/30 hover:shadow-error/30"
 						>Clear food</button
 					>
 				</div>
 				<section class="my-8 space-y-6">
-					<p class="text-base-content text-lg font-semibold">Nutritional information</p>
+					<p class="text-lg font-semibold text-base-content">Nutritional information</p>
 					<div class="flex justify-center space-x-6">
 						<div class="flex flex-col items-center">
 							<ProgressRing
@@ -216,7 +267,7 @@
 								stroke={1}
 								text={`${calculatePercentage(food.carbs, food.carbs + food.protein + food.fat)}%`}
 							/>
-							<p class="text-base-content mt-2 text-xs uppercase">Carbs</p>
+							<p class="mt-2 text-xs uppercase text-base-content">Carbs</p>
 						</div>
 						<div class="flex flex-col items-center">
 							<ProgressRing
@@ -226,7 +277,7 @@
 								stroke={1}
 								text={`${calculatePercentage(food.protein, food.carbs + food.protein + food.fat)}%`}
 							/>
-							<p class="text-base-content mt-2 text-xs uppercase">Protein</p>
+							<p class="mt-2 text-xs uppercase text-base-content">Protein</p>
 						</div>
 						<div class="flex flex-col items-center">
 							<ProgressRing
@@ -236,12 +287,12 @@
 								stroke={1}
 								text={`${calculatePercentage(food.fat, food.carbs + food.protein + food.fat)}%`}
 							/>
-							<p class="text-base-content mt-2 text-xs uppercase">Fat</p>
+							<p class="mt-2 text-xs uppercase text-base-content">Fat</p>
 						</div>
 					</div>
 				</section>
 				<section class="w-full space-y-6">
-					<h1 class="font-semi-bold text-base-content text-lg">Other information</h1>
+					<h1 class="font-semi-bold text-lg text-base-content">Other information</h1>
 					<section class="space-y-2">
 						<div class="text-semi-bold flex w-full items-center justify-between text-lg">
 							<p>Carbs (g)</p>
@@ -307,7 +358,7 @@
 			{/if}
 		</form>
 		<div
-			class="text-md  from-base-100 container fixed bottom-0 bg-gradient-to-t to-transparent pb-4"
+			class="text-md  container fixed bottom-0 bg-gradient-to-t from-base-100 to-transparent pb-4"
 		>
 			<button on:click|preventDefault={fetchMeal} class="btn-main"> Search for food </button>
 		</div>
@@ -322,7 +373,7 @@
 						bind:value={food.calories}
 						type="text"
 						placeholder="Required"
-						class="input bg-neutral text-neutral-content w-full max-w-xs text-xl placeholder:text-xs placeholder:text-gray-400"
+						class="max-w-xs input w-full bg-neutral text-xl text-neutral-content placeholder:text-xs placeholder:text-gray-400"
 					/>
 				</label>
 				<label class="space-y-2">
@@ -331,7 +382,7 @@
 						bind:value={food.name}
 						type="text"
 						placeholder="Optional"
-						class="input bg-neutral text-neutral-content w-full max-w-xs text-xl placeholder:text-xs placeholder:text-gray-400"
+						class="max-w-xs input w-full bg-neutral text-xl text-neutral-content placeholder:text-xs placeholder:text-gray-400"
 					/>
 				</label>
 				<label class="space-y-2">
@@ -340,7 +391,7 @@
 						bind:value={food.portion}
 						type="text"
 						placeholder="Optional"
-						class="input bg-neutral text-neutral-content w-full max-w-xs text-xl placeholder:text-xs placeholder:text-gray-400"
+						class="max-w-xs input w-full bg-neutral text-xl text-neutral-content placeholder:text-xs placeholder:text-gray-400"
 					/>
 				</label>
 				<label class="space-y-2">
@@ -349,7 +400,7 @@
 						bind:value={food.carbs}
 						type="text"
 						placeholder="Optional"
-						class="input bg-neutral text-neutral-content w-full max-w-xs text-xl placeholder:text-xs placeholder:text-gray-400"
+						class="max-w-xs input w-full bg-neutral text-xl text-neutral-content placeholder:text-xs placeholder:text-gray-400"
 					/>
 				</label>
 				<label class="space-y-2">
@@ -358,7 +409,7 @@
 						bind:value={food.protein}
 						type="text"
 						placeholder="Optional"
-						class="input bg-neutral text-neutral-content w-full max-w-xs text-xl placeholder:text-xs placeholder:text-gray-400"
+						class="max-w-xs input w-full bg-neutral text-xl text-neutral-content placeholder:text-xs placeholder:text-gray-400"
 					/>
 				</label>
 				<label class="space-y-2">
@@ -367,13 +418,13 @@
 						bind:value={food.fat}
 						type="text"
 						placeholder="Optional"
-						class="input bg-neutral text-neutral-content w-full max-w-xs text-xl placeholder:text-xs placeholder:text-gray-400"
+						class="max-w-xs input w-full bg-neutral text-xl text-neutral-content placeholder:text-xs placeholder:text-gray-400"
 					/>
 				</label>
 			</div>
 		</form>
 		<div
-			class="text-md  from-base-100 container fixed bottom-0 bg-gradient-to-t to-transparent pb-4"
+			class="text-md  container fixed bottom-0 bg-gradient-to-t from-base-100 to-transparent pb-4"
 		>
 			<button on:click|preventDefault={addFoodItem} class="btn-main"> Add Food </button>
 		</div>

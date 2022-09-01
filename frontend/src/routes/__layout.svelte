@@ -1,11 +1,3 @@
-<script context="module">
-	import { authGuard, authGuardRedirect } from '../$lib/guards/index';
-	export const load = async ({ url }) => {
-		if (await authGuard(url)) return authGuardRedirect(url);
-		return {};
-	};
-</script>
-
 <script>
 	import '../app.css';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
@@ -16,6 +8,6 @@
 
 <style>
 	:global(.btn-main) {
-		@apply btn bg-accent btn-block from-accent to-accent-focus text-accent-content shadow-accent/30 mt-8 border-0 bg-gradient-to-r shadow-lg;
+		@apply btn btn-block mt-8 border-0 bg-accent bg-gradient-to-r from-accent to-accent-focus text-accent-content shadow-lg shadow-accent/30;
 	}
 </style>

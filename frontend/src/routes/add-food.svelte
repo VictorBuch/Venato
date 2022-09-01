@@ -13,7 +13,7 @@
 
 	let invalidInputs = false;
 
-	const handleSubmit = async (e: MouseEvent) => {
+	const handleSubmit = async () => {
 		if (name && portion) {
 			invalidInputs = false;
 			try {
@@ -44,11 +44,11 @@
 	};
 </script>
 
-<section class="bg-accent container py-8 drop-shadow-md">
+<section class="container bg-accent py-8 drop-shadow-md">
 	<div class=" flex h-full w-full items-center justify-center  ">
 		<a href="/dashboard" class="mr-auto">
 			<svg
-				class="!stroke-accent-content h-6 w-6"
+				class="h-6 w-6 !stroke-accent-content"
 				fill="none"
 				stroke-linecap="round"
 				stroke-linejoin="round"
@@ -59,7 +59,7 @@
 				<path d="M19 12H5M12 19l-7-7 7-7" />
 			</svg>
 		</a>
-		<h1 class="text-accent-content ml-24 w-full text-xl font-bold">Add Food</h1>
+		<h1 class="ml-24 w-full text-xl font-bold text-accent-content">Add Food</h1>
 	</div>
 </section>
 <div class="container mt-16 flex w-full flex-col items-center justify-center">
@@ -69,7 +69,7 @@
 			<input
 				type="text"
 				name="Meal"
-				class="input bg-neutral text-neutral-content w-full max-w-xs text-xl placeholder:text-xs placeholder:text-gray-400"
+				class="max-w-xs input w-full bg-neutral text-xl text-neutral-content placeholder:text-xs placeholder:text-gray-400"
 				bind:value={name}
 			/>
 		</div>
@@ -78,7 +78,7 @@
 			<input
 				type="text"
 				name="Kcal"
-				class="input bg-neutral text-neutral-content w-full max-w-xs text-xl placeholder:text-xs placeholder:text-gray-400"
+				class="max-w-xs input w-full bg-neutral text-xl text-neutral-content placeholder:text-xs placeholder:text-gray-400"
 				bind:value={calories}
 			/>
 		</div>
@@ -87,7 +87,7 @@
 			<input
 				type="text"
 				name="Carbs"
-				class="input bg-neutral text-neutral-content w-full max-w-xs text-xl placeholder:text-xs placeholder:text-gray-400"
+				class="max-w-xs input w-full bg-neutral text-xl text-neutral-content placeholder:text-xs placeholder:text-gray-400"
 				bind:value={carbs}
 			/>
 		</div>
@@ -96,7 +96,7 @@
 			<input
 				type="text"
 				name="Protein"
-				class="input bg-neutral text-neutral-content w-full max-w-xs text-xl placeholder:text-xs placeholder:text-gray-400"
+				class="max-w-xs input w-full bg-neutral text-xl text-neutral-content placeholder:text-xs placeholder:text-gray-400"
 				bind:value={protein}
 			/>
 		</div>
@@ -105,7 +105,7 @@
 			<input
 				type="text"
 				name="Fat"
-				class="input bg-neutral text-neutral-content w-full max-w-xs text-xl placeholder:text-xs placeholder:text-gray-400"
+				class="max-w-xs input w-full bg-neutral text-xl text-neutral-content placeholder:text-xs placeholder:text-gray-400"
 				bind:value={fat}
 			/>
 		</div>
@@ -114,12 +114,12 @@
 			<input
 				type="text"
 				name="barcode"
-				class="input bg-neutral text-neutral-content w-full max-w-xs text-xl placeholder:text-xs placeholder:text-gray-400"
+				class="max-w-xs input w-full bg-neutral text-xl text-neutral-content placeholder:text-xs placeholder:text-gray-400"
 				bind:value={barcode}
 			/>
 		</div>
 		<div
-			class="text-md  from-base-100 container fixed bottom-0 bg-gradient-to-t to-transparent pb-4"
+			class="text-md  container fixed bottom-0 bg-gradient-to-t from-base-100 to-transparent pb-4"
 		>
 			<button on:click|preventDefault={handleSubmit} class=" btn-main "> Submit Meal </button>
 		</div>

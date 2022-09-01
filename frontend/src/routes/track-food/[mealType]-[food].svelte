@@ -1,4 +1,7 @@
 <script lang="ts" context="module">
+	import { supabase } from '$lib/supabaseClient';
+	import { user } from '../../stores/userStore';
+	import { get } from 'svelte/store';
 	export const load: import('@sveltejs/kit').Load = async ({
 		params,
 		props,
@@ -10,13 +13,26 @@
 		// 	authorization: `Baerer ${token}`
 		// });
 
-		return {
-			props: {
-				mealType: params.mealType
-			}
-		};
+		const resp = await supabase.from('meals').select().match({ id: params.food }).single();
+		const isSavedResp = await supabase
+			.from('saved_meals')
+			.select()
+			.match({ meal_id: params.food, user_id: get(user).id })
+			.single();
+
+		const isSaved = isSavedResp.data ? true : false;
+		if (resp.data) {
+			return {
+				props: {
+					food: resp.data,
+					isSaved,
+					mealType: params.mealType
+				}
+			};
+		}
 
 		return {
+			status: resp.status || isSavedResp.status,
 			error: new Error(`Could not load url`)
 		};
 	};
@@ -26,9 +42,9 @@
 	import { goto } from '$app/navigation';
 	import { toast } from '@zerodevx/svelte-toast';
 	import axios from 'axios';
-	import { user } from '../../stores/userStore';
 	import ProgressRing from '../../components/ProgressRing.svelte';
 	import { fade } from 'svelte/transition';
+	import type { Meal } from '../../types/meals';
 
 	// Icons
 	import EmoticonExcited from 'svelte-material-icons/EmoticonExcited.svelte';
@@ -38,40 +54,55 @@
 	import EmoticonConfused from 'svelte-material-icons/EmoticonConfused.svelte';
 
 	export let mealType: string;
+	export let food: Meal;
+	export let isSaved: boolean;
 
-	// TEMP DATA
-	let food = {
-		name: 'Youghurt',
-		id: 1,
-		calories: 100,
-		portion: 200,
-		protein: 4,
-		carbs: 39,
-		fat: 3,
-		unit: 'g'
-	};
+	// TODO: make food rating work
 	let foodRating = 'A';
 
-	////
-
 	let portion = String(food.portion);
-	let unit = String(food.unit);
-	let isFavorite = false;
+	let unit = String(food.unit || 'g');
 
 	const handleSubmit = async (e: MouseEvent) => {
 		if (portion && unit) {
 			try {
-				const response = await axios.post(`http://fitness-journey.test/api/consumed_meals`, {
+				const { data } = await supabase.from('consumed_meals').insert({
 					meal_id: food.id,
+					user_id: get(user).id,
 					meal_type: mealType,
-					portion: portion,
+					portion,
 					portion_unit: unit
 				});
 
-				if (response.status === 200) {
+				if (data) {
 					toast.push('Meal added successfully!');
-					goto(`/add-food?meal=${mealType}`);
+					goto(`/track-food/${mealType}`);
 				}
+			} catch (error) {
+				console.log(error);
+				toast.push('Something went wrong!');
+			}
+		}
+	};
+
+	const toggleFavorite = async () => {
+		if (isSaved) {
+			try {
+				const { data, error } = await supabase
+					.from('saved_meals')
+					.delete()
+					.match({ meal_id: food.id, user_id: get(user).id });
+				isSaved = false;
+			} catch (error) {
+				console.log(error);
+				toast.push('Something went wrong!');
+			}
+		} else {
+			try {
+				const { data, error } = await supabase
+					.from('saved_meals')
+					.insert({ meal_id: food.id, user_id: get(user).id });
+				isSaved = true;
 			} catch (error) {
 				console.log(error);
 				toast.push('Something went wrong!');
@@ -93,11 +124,11 @@
 	<title>fitness Journey | {food.name}</title>
 </svelte:head>
 
-<section class="bg-accent flex  items-end  justify-between px-4 py-12 drop-shadow-md">
+<section class="flex items-end  justify-between  bg-accent px-4 py-12 drop-shadow-md">
 	<div class="flex items-center space-x-4">
 		<a href="/track-food/{mealType}">
 			<svg
-				class="!stroke-accent-content h-6 w-6"
+				class="h-6 w-6 !stroke-accent-content"
 				fill="none"
 				stroke-linecap="round"
 				stroke-linejoin="round"
@@ -108,13 +139,13 @@
 				<path d="M19 12H5M12 19l-7-7 7-7" />
 			</svg>
 		</a>
-		<h1 class="text-accent-content text-lg font-semibold ">
+		<h1 class="text-lg font-semibold text-accent-content ">
 			{food.name}
 		</h1>
 	</div>
-	<button on:click={() => (isFavorite = !isFavorite)}>
+	<button on:click={toggleFavorite}>
 		<div class="rounded-full bg-white p-2 drop-shadow-xl hover:drop-shadow-2xl">
-			{#if !isFavorite}
+			{#if !isSaved}
 				<svg
 					class="h-6 w-6"
 					fill="gray"
@@ -158,7 +189,7 @@
 				required
 				min={1}
 			/>
-			<select class="select select-bordered bg-neutral select-lg " name="Unit" bind:value={unit}>
+			<select class="select select-bordered select-lg bg-neutral " name="Unit" bind:value={unit}>
 				<option disabled selected>Pick one</option>
 				<option value={'g'}>grams</option>
 				<option value={'pound'}>pound</option>
@@ -189,13 +220,13 @@
 			</figure>
 		{/if}
 		<p class="text-md text-base-content">
-			<span class="text-base-content text-2xl font-semibold ">
+			<span class="text-2xl font-semibold text-base-content ">
 				{calculateFoodCalories()}
 			</span> kcal
 		</p>
 	</div>
 	<section class="my-8 space-y-6">
-		<p class="text-base-content text-lg font-semibold">Nutritional information</p>
+		<p class="text-lg font-semibold text-base-content">Nutritional information</p>
 		<div class="flex justify-center space-x-6">
 			<div class="flex flex-col items-center">
 				<ProgressRing
@@ -205,7 +236,7 @@
 					stroke={1}
 					text={`${calculatePercentage(food.carbs, food.carbs + food.protein + food.fat)}%`}
 				/>
-				<p class="text-base-content mt-2 text-xs uppercase">Carbs</p>
+				<p class="mt-2 text-xs uppercase text-base-content">Carbs</p>
 			</div>
 			<div class="flex flex-col items-center">
 				<ProgressRing
@@ -215,7 +246,7 @@
 					stroke={1}
 					text={`${calculatePercentage(food.protein, food.carbs + food.protein + food.fat)}%`}
 				/>
-				<p class="text-base-content mt-2 text-xs uppercase">Protein</p>
+				<p class="mt-2 text-xs uppercase text-base-content">Protein</p>
 			</div>
 			<div class="flex flex-col items-center">
 				<ProgressRing
@@ -225,12 +256,12 @@
 					stroke={1}
 					text={`${calculatePercentage(food.fat, food.carbs + food.protein + food.fat)}%`}
 				/>
-				<p class="text-base-content mt-2 text-xs uppercase">Fat</p>
+				<p class="mt-2 text-xs uppercase text-base-content">Fat</p>
 			</div>
 		</div>
 	</section>
 	<section class="space-y-6">
-		<h1 class="font-semi-bold text-base-content text-lg">Other information</h1>
+		<h1 class="font-semi-bold text-lg text-base-content">Other information</h1>
 		<section class="space-y-2">
 			<div class="text-semi-bold flex w-full items-center justify-between text-lg">
 				<p>Carbs</p>
@@ -296,6 +327,6 @@
 		</section>
 	</section>
 </div>
-<div class="text-md  from-base-100 container fixed bottom-0 bg-gradient-to-t to-transparent pb-4">
+<div class="text-md  container fixed bottom-0 bg-gradient-to-t from-base-100 to-transparent pb-4">
 	<button on:click|preventDefault={handleSubmit} class=" btn-main "> Track </button>
 </div>

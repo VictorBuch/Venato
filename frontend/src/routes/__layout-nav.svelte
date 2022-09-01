@@ -1,11 +1,3 @@
-<script context="module">
-	import { authGuard, authGuardRedirect } from '../$lib/guards/index';
-	export const load = async ({ url }) => {
-		if (await authGuard(url)) return authGuardRedirect(url);
-		return {};
-	};
-</script>
-
 <script>
 	import '../app.css';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
@@ -19,32 +11,32 @@
 <slot />
 
 <footer
-	class="bg-accent container fixed bottom-0 right-0 left-0 flex w-full items-end justify-between rounded-t pt-3 pb-1"
+	class="container fixed bottom-0 right-0 left-0 flex w-full items-end justify-between rounded-t bg-accent pt-3 pb-1"
 >
 	<a
 		href="/dashboard"
-		class="fill-accent-content flex flex-col items-center justify-end text-sm font-light"
+		class="flex flex-col items-center justify-end fill-accent-content text-sm font-light"
 	>
 		<CalendarToday size={'23'} color="inherit" />
 		Tracking
 	</a>
 	<a
 		href="/progress"
-		class="fill-accent-content flex flex-col items-center justify-end text-sm font-light"
+		class="flex flex-col items-center justify-end fill-accent-content text-sm font-light"
 	>
 		<ChartLine size={'23'} color="inherit" />
 		Progress
 	</a>
 	<a
 		href="/recipes"
-		class="fill-accent-content flex flex-col items-center justify-end text-sm font-light"
+		class="flex flex-col items-center justify-end fill-accent-content text-sm font-light"
 	>
 		<Noodles size={'23'} color="inherit" />
 		Recipes
 	</a>
 	<a
 		href="/my-account"
-		class="fill-accent-content flex flex-col items-center justify-end text-sm font-light"
+		class="flex flex-col items-center justify-end fill-accent-content text-sm font-light"
 	>
 		<Account size={'23'} color="inherit" />
 		My account
@@ -58,6 +50,6 @@
 	}
 
 	:global(.btn-main) {
-		@apply btn bg-accent btn-block from-accent to-accent-focus text-accent-content shadow-accent/30 mt-8 border-0 bg-gradient-to-r shadow-lg;
+		@apply btn btn-block mt-8 border-0 bg-accent bg-gradient-to-r from-accent to-accent-focus text-accent-content shadow-lg shadow-accent/30;
 	}
 </style>

@@ -2,8 +2,7 @@
 	// import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 	import { goto } from '$app/navigation';
 	import { toast } from '@zerodevx/svelte-toast';
-	import axios from 'axios';
-	import API from '../services/Api';
+	import { supabase } from '$lib/supabaseClient';
 
 	let user = {
 		height: undefined,
@@ -122,21 +121,27 @@
 
 		const { carbGoal, fatGoal, proteinGoal } = calculateCarbFatProteinRatio(calories);
 
-		const response = await API.put('/auth/user', {
-			age,
-			height,
-			weight,
-			sex,
-			goal: goal,
-			activity_level: activityLevel,
-			calorie_goal: calories,
-			carb_goal: carbGoal,
-			fat_goal: fatGoal,
-			protein_goal: proteinGoal
-		});
+		const { data, error } = await supabase
+			.from('profiles')
+			.update({
+				age,
+				height,
+				weight,
+				sex,
+				goal: goal,
+				activity_level: activityLevel,
+				calorie_goal: calories,
+				carb_goal: carbGoal,
+				fat_goal: fatGoal,
+				protein_goal: proteinGoal
+			})
+			.match({ id: 'f17ccf9d-7dfc-45d7-9901-b46b6fbcb6c3' });
 
-		if (response.status === 200) {
+		if (!error) {
+			toast.push('Success');
 			goto('/dashboard');
+		} else {
+			toast.push(error.message);
 		}
 	};
 </script>
@@ -151,7 +156,7 @@
 						type="number"
 						placeholder="Type your height (cm)"
 						name="height"
-						class="input bg-neutral text-neutral-content placeholder:text-neutral-content w-full max-w-xs"
+						class="max-w-xs input w-full bg-neutral text-neutral-content placeholder:text-neutral-content"
 						bind:value={user.height}
 					/>
 				</div>
@@ -161,7 +166,7 @@
 						type="number"
 						placeholder="Type your Weight (kgs)"
 						name="Weight"
-						class="input bg-neutral text-neutral-content placeholder:text-neutral-content w-full max-w-xs"
+						class="max-w-xs input w-full bg-neutral text-neutral-content placeholder:text-neutral-content"
 						bind:value={user.weight}
 					/>
 				</div>
@@ -171,11 +176,11 @@
 						type="number"
 						placeholder="Type your Age"
 						name="Age"
-						class="input bg-neutral text-neutral-content placeholder:text-neutral-content w-full max-w-xs"
+						class="max-w-xs input w-full bg-neutral text-neutral-content placeholder:text-neutral-content"
 						bind:value={user.age}
 					/>
 				</div>
-				<div class="form-control max-w-xs">
+				<div class="max-w-xs form-control">
 					<label class="label" for="Gender">
 						<span class="label-text">Pick your gender</span>
 					</label>
@@ -192,7 +197,7 @@
 	<div class="container fixed bottom-4">
 		<button
 			on:click={() => (step = 'goal')}
-			class="btn btn-block bg-accent from-accent to-accent-focus text-accent-content shadow-accent/30  hover:shadow-accent-focus/30 border-0 bg-gradient-to-r shadow-lg"
+			class="btn btn-block border-0 bg-accent bg-gradient-to-r from-accent to-accent-focus  text-accent-content shadow-lg shadow-accent/30 hover:shadow-accent-focus/30"
 		>
 			Next
 		</button>
@@ -237,7 +242,7 @@
 	<div class="container fixed bottom-4 ">
 		<button
 			on:click|preventDefault={handleSubmitUser}
-			class="btn btn-block bg-accent from-accent to-accent-focus text-accent-content shadow-accent/30  hover:shadow-accent-focus/30 border-0 bg-gradient-to-r shadow-lg"
+			class="btn btn-block border-0 bg-accent bg-gradient-to-r from-accent to-accent-focus  text-accent-content shadow-lg shadow-accent/30 hover:shadow-accent-focus/30"
 		>
 			Finish
 		</button>

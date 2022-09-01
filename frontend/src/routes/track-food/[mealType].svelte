@@ -1,4 +1,8 @@
 <script lang="ts" context="module">
+	import { supabase } from '$lib/supabaseClient';
+	import { get } from 'svelte/store';
+	import { user } from '../../stores/userStore';
+
 	export const load: import('@sveltejs/kit').Load = async ({
 		params,
 		props,
@@ -6,32 +10,47 @@
 		status,
 		error
 	}) => {
-		const res = await fetch('http://localhost:3004/consumedMeals');
+		const { data } = await supabase
+			.from('consumed_meals')
+			.select('meal_type, portion,meals(*)')
+			.match({ user_id: get(user)?.id });
 
-		if (res.ok) {
-			const data = await res.json();
-			const meals = data[params.mealType];
+		const { data: allMeals } = await supabase.from('meals').select('*');
+
+		const savedMealsResp = await supabase
+			.from('saved_meals')
+			.select('meals(*)')
+			.match({ user_id: get(user)?.id });
+
+		if (data && allMeals) {
+			const consumedMeals = data
+				.filter((meal) => meal.meal_type == params.mealType)
+				.map((meal) => {
+					return { ...meal.meals, portion: meal.portion };
+				});
+			const meals = allMeals.filter((meal) => !consumedMeals.some((cMeal) => cMeal.id == meal.id));
 			return {
-				status: res.status,
 				props: {
+					consumedMeals,
 					meals,
+					savedMeals: savedMealsResp.data
+						? savedMealsResp.data.map((mealObj) => mealObj.meals)
+						: [],
 					mealType: params.mealType
 				}
 			};
 		}
 
 		return {
-			status: res.status,
+			status: error,
 			error: new Error(`Could not load url`)
 		};
 	};
 </script>
 
 <script lang="ts">
-	import axios from 'axios';
 	import { goto } from '$app/navigation';
 	import type { Meal } from '../../types/meals';
-	import { fly } from 'svelte/transition';
 
 	import {
 		caloriesEaten,
@@ -57,66 +76,67 @@
 	import BarcodeScan from 'svelte-material-icons/BarcodeScan.svelte';
 	import DotsVertical from 'svelte-material-icons/DotsVertical.svelte';
 	import FoodCard from '../../components/FoodCard.svelte';
+	import { toast } from '@zerodevx/svelte-toast';
 
-	export let meals: [Object];
+	export let consumedMeals: [Object];
+	export let meals: [Meal];
 	export let mealType: string;
+	export let savedMeals: [Object];
 
 	let searchQuery = '';
+	let activeTab = 'meals';
+
 	$: filteredMeals = meals.filter((meal) => {
 		return meal.name.toLowerCase().includes(searchQuery.toLowerCase());
 	});
-	$: filteredSavedFoods = savedFoods.filter((food) => {
+	$: filteredSavedFoods = savedMeals.filter((food) => {
 		return food.name.toLowerCase().includes(searchQuery.toLowerCase());
 	});
 
 	const fetchData = async () => {
-		const response = await fetch(`http://localhost:3004/consumedMeals`);
-		const data = await response.json();
-		meals = data.meal_type;
+		const { data, error } = await supabase
+			.from('consumed_meals')
+			.select('meal_type, portion,meals(*)')
+			.match({ user_id: get(user)?.id, meal_type: mealType });
+
+		if (data) {
+			meals = data.map((meal) => {
+				return { ...meal.meals, portion: meal.portion };
+			});
+		} else if (error) {
+			console.log(error);
+			toast.push(error.message);
+		}
 	};
 
-	// // Spoof data for now id: number;
-	const savedFoods = [
-		{
-			id: Math.ceil(Math.random() * 1000),
-			name: 'Pizza',
-			description: '',
-			calories: 100,
-			carbs: 10,
-			protein: 10,
-			fat: 10,
-			portion: 1,
-			portion_unit: 'g'
-		},
-		{
-			id: Math.ceil(Math.random() * 1000),
-			name: 'Greek Yoghurt',
-			description: '',
-			calories: 100,
-			carbs: 10,
-			protein: 10,
-			fat: 10,
-			portion: 1,
-			portion_unit: 'g'
-		}
-	];
-
 	const handleAddMeal = async (meal: Meal) => {
-		const response = await axios.post(`/api/consumed_meals`, {
-			meal_id: meal.id,
-			meal_type: mealType,
-			portion: meal.portion,
-			portion_unit: meal.portion_unit
-		});
-		if (response.status === 200) {
+		const { data, error } = await supabase.from('consumed_meals').insert([
+			{
+				user_id: get(user)?.id,
+				meal_type: mealType,
+				meal_id: meal.id,
+				portion: meal.portion
+			}
+		]);
+		if (!error) {
 			await fetchData();
+		} else {
+			console.log(error);
+			toast.push(error.message);
 		}
 	};
 
 	const handleRemoveMeals = async (meal: Meal) => {
-		const response = await axios.delete(`/api/consumed_meals/${meal.id}`);
-		if (response.status === 200) {
+		const { data, error } = await supabase
+			.from('consumed_meals')
+			.delete()
+			.match({ user_id: get(user)?.id, meal_type: mealType, meal_id: meal.id })
+			.single();
+		if (!error) {
 			await fetchData();
+		} else {
+			console.log(error);
+			toast.push(error.message);
 		}
 	};
 
@@ -129,11 +149,11 @@
 	};
 </script>
 
-<section class="bg-accent container py-8 drop-shadow-md">
+<section class="container bg-accent py-8 drop-shadow-md">
 	<div class=" flex h-full w-full  items-center justify-between space-x-2">
 		<a href="/dashboard">
 			<svg
-				class="!stroke-accent-content h-6 w-6"
+				class="h-6 w-6 !stroke-accent-content"
 				fill="none"
 				stroke-linecap="round"
 				stroke-linejoin="round"
@@ -144,17 +164,17 @@
 				<path d="M19 12H5M12 19l-7-7 7-7" />
 			</svg>
 		</a>
-		<h1 class="text-accent-content w-max text-xl font-bold">
+		<h1 class="w-max text-xl font-bold text-accent-content">
 			{mealType.toUpperCase()}
 		</h1>
 		<div class="ml-auto h-max w-max">
-			<div class="dropdown dropdown-end">
+			<div class="dropdown-end dropdown">
 				<button tabindex="0">
 					<DotsVertical size="20" />
 				</button>
 				<ul
 					tabindex="0"
-					class="dropdown-content menu bg-base-content text-base-100 rounded-box w-52 p-2 shadow"
+					class="dropdown-content menu rounded-box w-52 bg-base-content p-2 text-base-100 shadow"
 				>
 					<li><a href="/quick-track/{mealType}">Quick track</a></li>
 					<li><a href="/add-food">Add food</a></li>
@@ -170,7 +190,7 @@
 					type="text"
 					placeholder="Search…"
 					bind:value={searchQuery}
-					class="input input-bordered bg-accent-content w-full !text-black placeholder:text-gray-700"
+					class="input input-bordered w-full bg-accent-content !text-black placeholder:text-gray-700"
 				/>
 				<button class="btn btn-square">
 					<svg
@@ -192,7 +212,7 @@
 		</div>
 		<figure
 			on:click={handleBarcodeScanning}
-			class="bg-accent-content text-neutral rounded-full p-2"
+			class="rounded-full bg-accent-content p-2 text-neutral"
 		>
 			<BarcodeScan size={'25'} color="inherit" />
 		</figure>
@@ -200,98 +220,117 @@
 </section>
 
 <div class="container mb-10 space-y-4">
-	{#if !searchQuery.length}
-		<section
-			class="border-accent-focus text-neutral-content my-8 flex w-full flex-col items-center space-y-4 rounded border p-4 shadow-lg"
-		>
-			<div class="flex w-full flex-col items-center justify-center space-y-2">
-				<div class="flex w-full items-center justify-between">
-					<h1 class="text-sm">Dalily intake</h1>
-					<h3 class="text-sm">
-						{$caloriesEaten}/{$caloriesGoal} kcal
-					</h3>
-				</div>
-				<progress class="progress progress-accent w-full" value={$caloriesPercent} max="100" />
-			</div>
+	<section
+		class="my-8 flex w-full flex-col items-center space-y-4 rounded border border-accent-focus p-4 text-neutral-content shadow-lg"
+	>
+		<div class="flex w-full flex-col items-center justify-center space-y-2">
 			<div class="flex w-full items-center justify-between">
-				<div class="flex w-1/4 flex-col items-center justify-center space-y-2">
-					<h3 class="text-sm">Carbs</h3>
-					<progress class="progress progress-accent w-full" value={$carbsPercent} max="100" />
-					<p class="text-sm">
-						{$carbsEaten}/{$carbsGoal}g
-					</p>
-				</div>
-				<div class="flex w-1/4 flex-col items-center justify-center space-y-2">
-					<h3 class="text-sm">Protein</h3>
-					<progress class="progress progress-accent w-full" value={$proteinPercent} max="100" />
-					<p class="text-sm">
-						{$proteinEaten}/{$proteinGoal}g
-					</p>
-				</div>
-				<div class="flex w-1/4 flex-col items-center justify-center space-y-2">
-					<h3 class="text-sm">fat</h3>
-					<progress class="progress progress-accent w-full" value={$fatPercent} max="100" />
-					<p class="text-sm">
-						{$fatEaten}/{$fatGoal}g
-					</p>
-				</div>
+				<h1 class="text-sm">Dalily intake</h1>
+				<h3 class="text-sm">
+					{$caloriesEaten}/{$caloriesGoal} kcal
+				</h3>
 			</div>
-		</section>
-	{/if}
-
-	{#if meals.length > 0 && !searchQuery.length}
-		<section class="my-8">
-			<h1>Consumed meals</h1>
-			<div class="space-y-4">
-				{#each meals as meal}
-					<FoodCard
-						title={meal.name}
-						calories={meal.calories}
-						servingSize={meal.portion}
-						on:clickFoodIcon={() => handleRemoveMeals(meal)}
-						on:customizeFoodItem={() => {
-							handleCustomizePortion(meal);
-						}}
-						remove
-					/>
-				{/each}
+			<progress class="progress progress-accent w-full" value={$caloriesPercent} max="100" />
+		</div>
+		<div class="flex w-full items-center justify-between">
+			<div class="flex w-1/4 flex-col items-center justify-center space-y-2">
+				<h3 class="text-sm">Carbs</h3>
+				<progress class="progress progress-accent w-full" value={$carbsPercent} max="100" />
+				<p class="text-sm">
+					{$carbsEaten}/{$carbsGoal}g
+				</p>
 			</div>
-		</section>
-	{/if}
-	{#if filteredSavedFoods.length > 0 && searchQuery.length > 0}
-		<section class="my-8">
-			<h1>Saved Foods</h1>
-			<div class="space-y-4">
-				{#each filteredSavedFoods as food}
-					<FoodCard
-						title={food.name}
-						calories={food.calories}
-						servingSize={food.portion}
-						on:clickFoodIcon={() => handleAddMeal(food)}
-						on:customizeFoodItem={() => {
-							handleCustomizePortion(food);
-						}}
-					/>
-				{/each}
+			<div class="flex w-1/4 flex-col items-center justify-center space-y-2">
+				<h3 class="text-sm">Protein</h3>
+				<progress class="progress progress-accent w-full" value={$proteinPercent} max="100" />
+				<p class="text-sm">
+					{$proteinEaten}/{$proteinGoal}g
+				</p>
 			</div>
-		</section>
-	{/if}
-	<section class="my-8">
-		<h1>Meals</h1>
-		<div class="space-y-4">
-			{#if filteredMeals.length > 0}
-				{#each filteredMeals as meal}
-					<FoodCard
-						title={meal.name}
-						calories={meal.calories}
-						servingSize={meal.portion}
-						on:clickFoodIcon={() => handleAddMeal(meal)}
-						on:customizeFoodItem={() => {
-							handleCustomizePortion(meal);
-						}}
-					/>
-				{/each}
-			{/if}
+			<div class="flex w-1/4 flex-col items-center justify-center space-y-2">
+				<h3 class="text-sm">fat</h3>
+				<progress class="progress progress-accent w-full" value={$fatPercent} max="100" />
+				<p class="text-sm">
+					{$fatEaten}/{$fatGoal}g
+				</p>
+			</div>
 		</div>
 	</section>
+	<div class="tabs justify-between ">
+		<button
+			on:click={() => (activeTab = 'meals')}
+			class:tab-active={activeTab === 'meals'}
+			class:!border-accent={activeTab === 'meals'}
+			class="tab tab-bordered w-1/3 ">All meals</button
+		>
+		<button
+			on:click={() => (activeTab = 'saved')}
+			class:tab-active={activeTab === 'saved'}
+			class:!border-accent={activeTab === 'saved'}
+			class="tab tab-bordered w-1/3">Saved meals</button
+		>
+		<button
+			on:click={() => (activeTab = 'recent')}
+			class:tab-active={activeTab === 'recent'}
+			class:!border-accent={activeTab === 'recent'}
+			class="tab tab-bordered w-1/3">Recent meals</button
+		>
+	</div>
+	{#if activeTab === 'meals'}
+		{#if consumedMeals.length > 0 && !searchQuery.length}
+			<section class="my-8">
+				<h1>Consumed meals</h1>
+				<div class="space-y-4">
+					{#each consumedMeals as meal}
+						<FoodCard
+							title={meal.name}
+							calories={meal.calories}
+							servingSize={meal.portion}
+							on:clickFoodIcon={() => handleRemoveMeals(meal)}
+							on:customizeFoodItem={() => handleCustomizePortion(meal)}
+							remove
+						/>
+					{/each}
+				</div>
+			</section>
+		{/if}
+		<section class="my-8">
+			<h1>Meals</h1>
+			<div class="space-y-4">
+				{#if filteredMeals.length > 0}
+					{#each filteredMeals as meal}
+						<FoodCard
+							title={meal.name}
+							calories={meal.calories}
+							servingSize={meal.portion}
+							on:clickFoodIcon={() => handleAddMeal(meal)}
+							on:customizeFoodItem={() => {
+								handleCustomizePortion(meal);
+							}}
+						/>
+					{/each}
+				{/if}
+			</div>
+		</section>
+	{/if}
+	{#if activeTab === 'saved'}
+		<section class="my-8">
+			<h1>Saved Foods</h1>
+			{#if filteredSavedFoods.length > 0}
+				<div class="space-y-4">
+					{#each filteredSavedFoods as food}
+						<FoodCard
+							title={food.name}
+							calories={food.calories}
+							servingSize={food.portion}
+							on:clickFoodIcon={() => handleAddMeal(food)}
+							on:customizeFoodItem={() => {
+								handleCustomizePortion(food);
+							}}
+						/>
+					{/each}
+				</div>
+			{/if}
+		</section>
+	{/if}
 </div>

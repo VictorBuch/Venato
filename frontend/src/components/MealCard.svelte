@@ -9,7 +9,7 @@
 </script>
 
 <div
-	class="bg-base-content flex h-28 flex-col rounded-md border border-gray-400 shadow-lg"
+	class="flex h-28 flex-col rounded-md border border-gray-400 bg-base-content shadow-lg"
 	on:click={addFoodItem}
 >
 	<div class="flex h-full items-center py-3 px-4">
@@ -19,7 +19,7 @@
 		<div class="ml-6 flex w-60 flex-col items-start justify-center">
 			<h1 class="w-full text-base font-semibold">{title}</h1>
 			<p class="w-full truncate text-sm">
-				{#if foodItems.length}
+				{#if foodItems?.length}
 					{#each foodItems as food, index}
 						{#if index == foodItems.length - 1}
 							{food.name}
