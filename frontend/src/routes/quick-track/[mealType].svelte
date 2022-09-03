@@ -46,7 +46,6 @@
 				}
 			});
 			const { items } = await response.json();
-			console.log(items);
 			if (items.length === 0) {
 				toast.push('No food found');
 			}

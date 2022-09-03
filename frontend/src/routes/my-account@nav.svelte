@@ -1,4 +1,36 @@
 <script lang="ts" context="module">
+	import { supabase } from '$lib/supabaseClient';
+	import { user } from '../stores/userStore';
+	import { get } from 'svelte/store';
+	export const load: import('@sveltejs/kit').Load = async ({
+		url,
+		params,
+		props,
+		fetch,
+		session,
+		stuff,
+		status,
+		error
+	}) => {
+		const date = new Date();
+		date.setDate(date.getDate() - 7);
+		const { data } = await supabase
+			.from('consumed_meals')
+			.select('portion,meals(*), created_at')
+			.match({ user_id: get(user)?.id })
+			.gt('created_at', date.toISOString());
+		console.log(data);
+		if (data) {
+			return {
+				props: {
+					consumed: data
+				}
+			};
+		}
+		return {
+			error: new Error(`Could not load url`)
+		};
+	};
 </script>
 
 <script lang="ts">
@@ -6,8 +38,15 @@
 	import WeightKilogram from 'svelte-material-icons/WeightKilogram.svelte';
 	import Fire from 'svelte-material-icons/Fire.svelte';
 	import CalendarToday from 'svelte-material-icons/CalendarToday.svelte';
-	import { supabase } from '$lib/supabaseClient';
-	import { user } from '../stores/userStore';
+	import type { Meal } from '../types/meals';
+	import { getCaloriesProportionateToPortion } from '$lib/helpers';
+
+	export let consumed: [Meal];
+
+	$: averageCalories =
+		consumed.reduce((acc, meal) => {
+			return acc + getCaloriesProportionateToPortion(meal.meals, meal.portion);
+		}, 0) / consumed.length || 0;
 
 	function handleLogout() {
 		supabase.auth.signOut();
@@ -31,17 +70,17 @@
 		</a>
 		<h1 class="w-max text-xl font-bold text-accent-content">Profile</h1>
 		<div class="ml-auto h-max w-max">
-			<div class="dropdown-end dropdown z-50">
+			<div class="dropdown-end dropdown ">
 				<button tabindex="0">
 					<CogOutline size="30" />
 				</button>
 				<ul
 					tabindex="0"
-					class="dropdown-content menu rounded-box z-50 w-52 bg-base-content p-2 text-base-100 shadow"
+					class="dropdown-content menu rounded-box w-52 bg-base-content p-2 text-base-100 shadow"
 				>
 					<a
+						class="cursor-pointer rounded-lg px-4 py-2 hover:bg-gray-300"
 						href="/get-user-information"
-						class="z-50 cursor-pointer rounded-lg px-4 py-2 hover:bg-gray-300"
 					>
 						Change User Information
 					</a>
@@ -50,7 +89,7 @@
 		</div>
 	</div>
 </section>
-<main class="container z-20">
+<main class="container ">
 	<div class="card my-8 w-full bg-neutral shadow-xl">
 		<div class="card-body h-max">
 			<div class="flex items-center space-x-8">
@@ -73,8 +112,8 @@
 					</div>
 					<div class="stat-title">Weight</div>
 					<div class="stat-value">{$user.weight} Kgs</div>
-					{#if $user?.weight_goal}
-						<div class="stat-value">Goal: {$user?.weight_goal} Kgs</div>
+					{#if $user?.goal}
+						<div class="stat-desc">Goal: {$user?.goal}</div>
 					{/if}
 				</div>
 
@@ -83,7 +122,7 @@
 						<Fire size="30" />
 					</div>
 					<div class="stat-title">Average Calories Eaten</div>
-					<div class="stat-value">4,200 Kcal</div>
+					<div class="stat-value">{averageCalories}</div>
 					<div class="stat-desc">↗︎ 400 (22%)</div>
 				</div>
 

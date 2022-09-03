@@ -12,12 +12,19 @@
 		status,
 		error
 	}) => {
+		const start = new Date();
+		start.setHours(0, 0, 0, 0);
 		const { data } = await supabase
 			.from('consumed_meals')
 			.select('meal_type, portion,meals(*)')
-			.match({ user_id: get(user)?.id });
+			.match({ user_id: get(user)?.id })
+			.gt('created_at', start.toISOString());
 
-		if (data) {
+		const { data: mealsData } = await supabase
+			.from('meals')
+			.select('*')
+			.match({ is_quick_tracked: false });
+		if (data && mealsData) {
 			const meals = {
 				breakfast: data
 					.filter((meal) => meal.meal_type === 'breakfast')
@@ -54,7 +61,8 @@
 			};
 			return {
 				props: {
-					consumedMeals: meals
+					consumedMeals: meals,
+					mealsData
 				}
 			};
 		}
@@ -97,15 +105,18 @@
 		consumedBreakfast,
 		consumedLunch,
 		consumedDinner,
-		consumedSnacks
+		consumedSnacks,
+		meals
 	} from '../stores/consumedMeals';
 
 	export let consumedMeals;
+	export let mealsData;
 
 	$consumedBreakfast = consumedMeals.breakfast;
 	$consumedLunch = consumedMeals.lunch;
 	$consumedDinner = consumedMeals.dinner;
 	$consumedSnacks = consumedMeals.snacks;
+	$meals = mealsData;
 
 	const logout = async () => {
 		const { error } = await supabase.auth.signOut();
@@ -196,7 +207,7 @@
 				<MealCard
 					title="Breakfast"
 					foodItems={$consumedBreakfast}
-					calories={$consumedBreakfast.reduce((acc, food) => acc + food.calories, 0)}
+					calories={$consumedBreakfast?.reduce((acc, food) => acc + food.calories, 0) || 0}
 					reccomendedCalories={400}
 					addFoodItem={() => goto('/track-food/breakfast')}
 				>
@@ -205,7 +216,7 @@
 				<MealCard
 					title="Lunch"
 					foodItems={$consumedLunch}
-					calories={$consumedBreakfast.reduce((acc, food) => acc + food.calories, 0)}
+					calories={$consumedLunch?.reduce((acc, food) => acc + food.calories, 0) || 0}
 					reccomendedCalories={700}
 					addFoodItem={() => goto('/track-food/lunch')}
 				>
@@ -214,7 +225,7 @@
 				<MealCard
 					title="Dinner"
 					foodItems={$consumedDinner}
-					calories={$consumedBreakfast.reduce((acc, food) => acc + food.calories, 0)}
+					calories={$consumedDinner?.reduce((acc, food) => acc + food.calories, 0) || 0}
 					reccomendedCalories={900}
 					addFoodItem={() => goto('/track-food/dinner')}
 				>
@@ -223,7 +234,7 @@
 				<MealCard
 					title="Snack"
 					foodItems={$consumedSnacks}
-					calories={$consumedBreakfast.reduce((acc, food) => acc + food.calories, 0)}
+					calories={$consumedSnacks?.reduce((acc, food) => acc + food.calories, 0) || 0}
 					reccomendedCalories={300}
 					addFoodItem={() => goto('/track-food/snack')}
 				>

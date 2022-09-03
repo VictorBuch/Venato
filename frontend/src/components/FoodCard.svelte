@@ -26,7 +26,7 @@
 				{calories} kcal
 			</p>
 			<p class="w-full truncate text-xs text-base-100 ">
-				{servingSize}
+				{servingSize} g
 			</p>
 		</div>
 		<figure

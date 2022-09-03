@@ -46,7 +46,7 @@
 
 <section class="container bg-accent py-8 drop-shadow-md">
 	<div class=" flex h-full w-full items-center justify-center  ">
-		<a href="/dashboard" class="mr-auto">
+		<button on:click={() => history.back()} class="mr-auto">
 			<svg
 				class="h-6 w-6 !stroke-accent-content"
 				fill="none"
@@ -58,7 +58,7 @@
 			>
 				<path d="M19 12H5M12 19l-7-7 7-7" />
 			</svg>
-		</a>
+		</button>
 		<h1 class="ml-24 w-full text-xl font-bold text-accent-content">Add Food</h1>
 	</div>
 </section>

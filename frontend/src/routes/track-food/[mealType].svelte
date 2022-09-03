@@ -10,32 +10,24 @@
 		status,
 		error
 	}) => {
-		const { data } = await supabase
-			.from('consumed_meals')
-			.select('meal_type, portion,meals(*)')
-			.match({ user_id: get(user)?.id });
-
-		const { data: allMeals } = await supabase.from('meals').select('*');
-
-		const savedMealsResp = await supabase
+		const start = new Date();
+		start.setHours(0, 0, 0, 0);
+		const { data: savedMeals } = await supabase
 			.from('saved_meals')
 			.select('meals(*)')
 			.match({ user_id: get(user)?.id });
 
-		if (data && allMeals) {
-			const consumedMeals = data
-				.filter((meal) => meal.meal_type == params.mealType)
-				.map((meal) => {
-					return { ...meal.meals, portion: meal.portion };
-				});
-			const meals = allMeals.filter((meal) => !consumedMeals.some((cMeal) => cMeal.id == meal.id));
+		const { data: recentMeals } = await supabase
+			.from('consumed_meals')
+			.select('meals(*)')
+			.match({ user_id: get(user)?.id, meal_type: params.mealType })
+			.lt('created_at', start.toISOString());
+
+		if (savedMeals && recentMeals) {
 			return {
 				props: {
-					consumedMeals,
-					meals,
-					savedMeals: savedMealsResp.data
-						? savedMealsResp.data.map((mealObj) => mealObj.meals)
-						: [],
+					savedMeals: savedMeals ? savedMeals.map((mealObj) => mealObj.meals) : [],
+					recentMeals: recentMeals ? recentMeals.map((mealObj) => mealObj.meals) : [],
 					mealType: params.mealType
 				}
 			};
@@ -53,6 +45,15 @@
 	import type { Meal } from '../../types/meals';
 
 	import {
+		consumedBreakfast,
+		consumedLunch,
+		consumedDinner,
+		consumedSnacks,
+		combinedMealsObj,
+		meals
+	} from '../../stores/consumedMeals';
+
+	import {
 		caloriesEaten,
 		caloriesGoal,
 		caloriesPercent,
@@ -66,48 +67,35 @@
 		proteinGoal,
 		proteinPercent
 	} from '../../stores/macrosStore.js';
-	import {
-		consumedBreakfast,
-		consumedLunch,
-		consumedDinner,
-		consumedSnacks
-	} from '../../stores/consumedMeals';
 
 	import BarcodeScan from 'svelte-material-icons/BarcodeScan.svelte';
 	import DotsVertical from 'svelte-material-icons/DotsVertical.svelte';
 	import FoodCard from '../../components/FoodCard.svelte';
 	import { toast } from '@zerodevx/svelte-toast';
 
-	export let consumedMeals: [Object];
-	export let meals: [Meal];
 	export let mealType: string;
-	export let savedMeals: [Object];
+	export let savedMeals: [Meal];
+	export let recentMeals: [Meal];
 
 	let searchQuery = '';
-	let activeTab = 'meals';
+	let activeTab = 'recent';
 
-	$: filteredMeals = meals.filter((meal) => {
-		return meal.name.toLowerCase().includes(searchQuery.toLowerCase());
-	});
+	$: filteredMeals = $meals
+		.filter(
+			(meal) =>
+				!get(combinedMealsObj)[mealType].includes(
+					get(combinedMealsObj)[mealType].find((comMeal) => comMeal.id === meal.id)
+				)
+		)
+		.filter((meal) => {
+			return meal.name.toLowerCase().includes(searchQuery.toLowerCase());
+		});
 	$: filteredSavedFoods = savedMeals.filter((food) => {
 		return food.name.toLowerCase().includes(searchQuery.toLowerCase());
 	});
-
-	const fetchData = async () => {
-		const { data, error } = await supabase
-			.from('consumed_meals')
-			.select('meal_type, portion,meals(*)')
-			.match({ user_id: get(user)?.id, meal_type: mealType });
-
-		if (data) {
-			meals = data.map((meal) => {
-				return { ...meal.meals, portion: meal.portion };
-			});
-		} else if (error) {
-			console.log(error);
-			toast.push(error.message);
-		}
-	};
+	$: filteredRecentFoods = recentMeals.filter((food) => {
+		return food.name.toLowerCase().includes(searchQuery.toLowerCase());
+	});
 
 	const handleAddMeal = async (meal: Meal) => {
 		const { data, error } = await supabase.from('consumed_meals').insert([
@@ -118,11 +106,9 @@
 				portion: meal.portion
 			}
 		]);
-		if (!error) {
-			await fetchData();
-		} else {
+		if (error) {
+			toast.push('Could not add meal');
 			console.log(error);
-			toast.push(error.message);
 		}
 	};
 
@@ -130,13 +116,10 @@
 		const { data, error } = await supabase
 			.from('consumed_meals')
 			.delete()
-			.match({ user_id: get(user)?.id, meal_type: mealType, meal_id: meal.id })
-			.single();
-		if (!error) {
-			await fetchData();
-		} else {
+			.match({ user_id: get(user)?.id, meal_type: mealType, meal_id: meal.id });
+		if (error) {
+			toast.push('Could not remove meal');
 			console.log(error);
-			toast.push(error.message);
 		}
 	};
 
@@ -258,10 +241,10 @@
 	</section>
 	<div class="tabs justify-between ">
 		<button
-			on:click={() => (activeTab = 'meals')}
-			class:tab-active={activeTab === 'meals'}
-			class:!border-accent={activeTab === 'meals'}
-			class="tab tab-bordered w-1/3 ">All meals</button
+			on:click={() => (activeTab = 'recent')}
+			class:tab-active={activeTab === 'recent'}
+			class:!border-accent={activeTab === 'recent'}
+			class="tab tab-bordered w-1/3">Recent meals</button
 		>
 		<button
 			on:click={() => (activeTab = 'saved')}
@@ -270,18 +253,18 @@
 			class="tab tab-bordered w-1/3">Saved meals</button
 		>
 		<button
-			on:click={() => (activeTab = 'recent')}
-			class:tab-active={activeTab === 'recent'}
-			class:!border-accent={activeTab === 'recent'}
-			class="tab tab-bordered w-1/3">Recent meals</button
+			on:click={() => (activeTab = 'meals')}
+			class:tab-active={activeTab === 'meals'}
+			class:!border-accent={activeTab === 'meals'}
+			class="tab tab-bordered w-1/3 ">All meals</button
 		>
 	</div>
-	{#if activeTab === 'meals'}
-		{#if consumedMeals.length > 0 && !searchQuery.length}
+	{#if activeTab === 'recent'}
+		{#if $combinedMealsObj[mealType].length > 0 && !searchQuery.length}
 			<section class="my-8">
 				<h1>Consumed meals</h1>
 				<div class="space-y-4">
-					{#each consumedMeals as meal}
+					{#each $combinedMealsObj[mealType] as meal}
 						<FoodCard
 							title={meal.name}
 							calories={meal.calories}
@@ -295,22 +278,22 @@
 			</section>
 		{/if}
 		<section class="my-8">
-			<h1>Meals</h1>
-			<div class="space-y-4">
-				{#if filteredMeals.length > 0}
-					{#each filteredMeals as meal}
+			<h1>Recent Foods</h1>
+			{#if filteredRecentFoods.length > 0}
+				<div class="space-y-4">
+					{#each filteredRecentFoods as food}
 						<FoodCard
-							title={meal.name}
-							calories={meal.calories}
-							servingSize={meal.portion}
-							on:clickFoodIcon={() => handleAddMeal(meal)}
+							title={food.name}
+							calories={food.calories}
+							servingSize={food.portion}
+							on:clickFoodIcon={() => handleAddMeal(food)}
 							on:customizeFoodItem={() => {
-								handleCustomizePortion(meal);
+								handleCustomizePortion(food);
 							}}
 						/>
 					{/each}
-				{/if}
-			</div>
+				</div>
+			{/if}
 		</section>
 	{/if}
 	{#if activeTab === 'saved'}
@@ -331,6 +314,26 @@
 					{/each}
 				</div>
 			{/if}
+		</section>
+	{/if}
+	{#if activeTab === 'meals'}
+		<section class="my-8">
+			<h1>Meals</h1>
+			<div class="h-max space-y-4 overflow-auto">
+				{#if filteredMeals.length > 0}
+					{#each filteredMeals as meal}
+						<FoodCard
+							title={meal.name}
+							calories={meal.calories}
+							servingSize={meal.portion}
+							on:clickFoodIcon={() => handleAddMeal(meal)}
+							on:customizeFoodItem={() => {
+								handleCustomizePortion(meal);
+							}}
+						/>
+					{/each}
+				{/if}
+			</div>
 		</section>
 	{/if}
 </div>

@@ -4,7 +4,8 @@ import { user } from './userStore';
 
 export const carbsEaten = derived(
 	combinedMeals,
-	($combinedMeals) => $combinedMeals.reduce((value, current) => value + current?.carbs, 0),
+	($combinedMeals) =>
+		Math.ceil($combinedMeals.reduce((value, current) => value + current?.carbs, 0)),
 	0
 );
 
@@ -31,7 +32,7 @@ export const carbsPercent = derived(
 );
 export const fatEaten = derived(
 	combinedMeals,
-	($combinedMeals) => $combinedMeals.reduce((value, current) => value + current.fat, 0),
+	($combinedMeals) => Math.ceil($combinedMeals.reduce((value, current) => value + current.fat, 0)),
 	0
 );
 
@@ -58,7 +59,8 @@ export const fatPercent = derived(
 );
 export const proteinEaten = derived(
 	combinedMeals,
-	($combinedMeals) => $combinedMeals.reduce((value, current) => value + current.protein, 0),
+	($combinedMeals) =>
+		Math.ceil($combinedMeals.reduce((value, current) => value + current.protein, 0)),
 	0
 );
 
