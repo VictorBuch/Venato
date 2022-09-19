@@ -1,0 +1,212 @@
+<script lang="ts">
+	import { onMount } from 'svelte';
+	import CogOutline from 'svelte-material-icons/CogOutline.svelte';
+	import WeightKilogram from 'svelte-material-icons/WeightKilogram.svelte';
+	import Fire from 'svelte-material-icons/Fire.svelte';
+	import CalendarToday from 'svelte-material-icons/CalendarToday.svelte';
+	import type { Meal } from '../types/meals';
+	import { getCaloriesProportionateToPortion } from '$lib/helpers';
+	import { supabase } from '$lib/supabaseClient';
+	import { user } from '../stores/userStore';
+	import { get } from 'svelte/store';
+
+	onMount(async () => {
+		const seven = new Date();
+		seven.setDate(seven.getDate() - 7);
+		const six = new Date();
+		six.setDate(six.getDate() - 6);
+		const five = new Date();
+		five.setDate(five.getDate() - 5);
+		const four = new Date();
+		four.setDate(four.getDate() - 4);
+		const three = new Date();
+		three.setDate(three.getDate() - 3);
+		const two = new Date();
+		two.setDate(two.getDate() - 2);
+		const one = new Date();
+		one.setDate(one.getDate() - 1);
+		const { data } = await supabase
+			.from('consumed_meals')
+			.select('portion,meals(*), created_at')
+			.match({ user_id: $user?.id })
+			.gt('created_at', seven.toISOString());
+
+		// make a new object with numbers one to seven where each entry is withing the date range of the day before and after
+		const week = {
+			seven: data?.filter((item) => {
+				return new Date(item.created_at) > seven && new Date(item.created_at) < six;
+			}),
+			six: data?.filter((item) => {
+				return new Date(item.created_at) > six && new Date(item.created_at) < five;
+			}),
+			five: data?.filter((item) => {
+				return new Date(item.created_at) > five && new Date(item.created_at) < four;
+			}),
+			four: data?.filter((item) => {
+				return new Date(item.created_at) > four && new Date(item.created_at) < three;
+			}),
+			three: data?.filter((item) => {
+				return new Date(item.created_at) > three && new Date(item.created_at) < two;
+			}),
+			two: data?.filter((item) => {
+				return new Date(item.created_at) > two && new Date(item.created_at) < one;
+			}),
+			one: data?.filter((item) => {
+				return new Date(item.created_at) > one && new Date(item.created_at) < new Date();
+			})
+		};
+
+		// create an object with the average calories for each day
+		const calories = {
+			seven: week.seven?.reduce((acc, item) => {
+				return acc + (item.portion / item.meals.portion) * item.meals.calories;
+			}, 0),
+			six: week.six?.reduce((acc, item) => {
+				return acc + (item.portion / item.meals.portion) * item.meals.calories;
+			}, 0),
+			five: week.five?.reduce((acc, item) => {
+				return acc + (item.portion / item.meals.portion) * item.meals.calories;
+			}, 0),
+			four: week.four?.reduce((acc, item) => {
+				return acc + (item.portion / item.meals.portion) * item.meals.calories;
+			}, 0),
+			three: week.three?.reduce((acc, item) => {
+				return acc + (item.portion / item.meals.portion) * item.meals.calories;
+			}, 0),
+			two: week.two?.reduce((acc, item) => {
+				return acc + (item.portion / item.meals.portion) * item.meals.calories;
+			}, 0),
+			one: week.one?.reduce((acc, item) => {
+				return acc + (item.portion / item.meals.portion) * item.meals.calories;
+			}, 0)
+		};
+
+		// create a new object with the average of the overall calories
+		const averages = {
+			seven: calories.seven / week.seven?.length,
+			six: calories.six / week.six?.length,
+			five: calories.five / week.five?.length,
+			four: calories.four / week.four?.length,
+			three: calories.three / week.three?.length,
+			two: calories.two / week.two?.length,
+			one: calories.one / week.one?.length
+		};
+
+		const totalAverage = [];
+
+		for (const key in averages) {
+			if (!isNaN(averages[key])) {
+				totalAverage.push(averages[key]);
+			}
+		}
+
+		const total =
+			totalAverage.reduce((acc, item) => {
+				return acc + item;
+			}, 0) / totalAverage.length;
+
+		// find out how many days since the user last tracked a meal
+		const last = new Date(data?.[data.length - 1]?.created_at);
+		const today = new Date();
+		const diff = Math.floor((today.getTime() - last.getTime()) / (1000 * 3600 * 24));
+		if (data) {
+			consumed = data;
+			average = isNaN(total) ? 'No data' : total;
+			days = isNaN(diff) ? 'No data' : diff;
+		}
+	});
+
+	let consumed: [Meal];
+	let average: number | string;
+	let days: number | string;
+
+	function handleLogout() {
+		supabase.auth.signOut();
+	}
+</script>
+
+<section class="container bg-accent py-8 drop-shadow-md">
+	<div class=" flex h-full w-full  items-center justify-between space-x-2">
+		<a href="/dashboard">
+			<svg
+				class="h-6 w-6 !stroke-accent-content"
+				fill="none"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				stroke-width="2"
+				viewBox="0 0 24 24"
+				stroke="currentColor"
+			>
+				<path d="M19 12H5M12 19l-7-7 7-7" />
+			</svg>
+		</a>
+		<h1 class="w-max text-xl font-bold text-accent-content">Profile</h1>
+		<div class="ml-auto h-max w-max">
+			<div class="dropdown-end dropdown ">
+				<button tabindex="0">
+					<CogOutline size="30" />
+				</button>
+				<ul
+					tabindex="0"
+					class="dropdown-content menu rounded-box w-52 bg-base-content p-2 text-base-100 shadow"
+				>
+					<a
+						class="cursor-pointer rounded-lg px-4 py-2 hover:bg-gray-300"
+						href="/get-user-information"
+					>
+						Change User Information
+					</a>
+				</ul>
+			</div>
+		</div>
+	</div>
+</section>
+<main class="container ">
+	<div class="card -z-10 my-8 w-full bg-neutral shadow-xl">
+		<div class="card-body h-max">
+			<div class="flex items-center space-x-8">
+				<div class="avatar">
+					<div class="mask mask-hexagon w-24">
+						<img alt="avatar" src="https://api.lorem.space/image/face?hash=55350" />
+					</div>
+				</div>
+				<div>
+					<h2 class="card-title">{$user?.username || 'Simon'}</h2>
+					<p>{$user?.age} years old</p>
+				</div>
+			</div>
+			<div class="divider my-4" />
+
+			<div class="stats !grid-flow-row shadow">
+				<div class="stat place-items-center">
+					<div class="stat-figure">
+						<WeightKilogram size="30" />
+					</div>
+					<div class="stat-title">Weight</div>
+					<div class="stat-value">{$user.weight} Kgs</div>
+					{#if $user?.goal}
+						<div class="stat-desc">Goal: {$user?.goal}</div>
+					{/if}
+				</div>
+
+				<div class="stat place-items-center">
+					<div class="stat-figure">
+						<Fire size="30" />
+					</div>
+					<div class="stat-title">Average Calories Eaten</div>
+					<div class="stat-value">{average}</div>
+					<!-- <div class="stat-desc">↗︎ 400 (22%)</div> -->
+				</div>
+
+				<div class="stat place-items-center">
+					<div class="stat-figure">
+						<CalendarToday size="30" />
+					</div>
+					<div class="stat-title">Days Not Tracked</div>
+					<div class="stat-value">{days}</div>
+					<!-- <div class="stat-desc">↘︎ 3 (14%)</div> -->
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
