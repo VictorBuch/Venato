@@ -1,20 +1,4 @@
 <!-- TODO: make this card pretty and the page usefull -->
-<script lang="ts" context="module">
-	export const load: import('@sveltejs/kit').Load = async ({
-		params,
-		props,
-		fetch,
-		status,
-		error
-	}) => {
-		return {
-			props: {
-				mealType: params.mealType
-			}
-		};
-	};
-</script>
-
 <script lang="ts">
 	import { toast } from '@zerodevx/svelte-toast';
 	import DotsVertical from 'svelte-material-icons/DotsVertical.svelte';
@@ -24,8 +8,9 @@
 	import { get } from 'svelte/store';
 	import { goto } from '$app/navigation';
 	import type { Meal } from '../../types/meals';
+	import { page } from '$app/stores';
 
-	export let mealType: string;
+	let mealType = $page.params.mealType;
 
 	let query = '';
 	let queryRef;
