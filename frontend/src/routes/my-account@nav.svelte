@@ -1,52 +1,124 @@
-<script lang="ts" context="module">
-	import { supabase } from '$lib/supabaseClient';
-	import { user } from '../stores/userStore';
-	import { get } from 'svelte/store';
-	export const load: import('@sveltejs/kit').Load = async ({
-		url,
-		params,
-		props,
-		fetch,
-		session,
-		stuff,
-		status,
-		error
-	}) => {
-		const date = new Date();
-		date.setDate(date.getDate() - 7);
-		const { data } = await supabase
-			.from('consumed_meals')
-			.select('portion,meals(*), created_at')
-			.match({ user_id: get(user)?.id })
-			.gt('created_at', date.toISOString());
-		console.log(data);
-		if (data) {
-			return {
-				props: {
-					consumed: data
-				}
-			};
-		}
-		return {
-			error: new Error(`Could not load url`)
-		};
-	};
-</script>
-
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import CogOutline from 'svelte-material-icons/CogOutline.svelte';
 	import WeightKilogram from 'svelte-material-icons/WeightKilogram.svelte';
 	import Fire from 'svelte-material-icons/Fire.svelte';
 	import CalendarToday from 'svelte-material-icons/CalendarToday.svelte';
 	import type { Meal } from '../types/meals';
 	import { getCaloriesProportionateToPortion } from '$lib/helpers';
+	import { supabase } from '$lib/supabaseClient';
+	import { user } from '../stores/userStore';
+	import { get } from 'svelte/store';
 
-	export let consumed: [Meal];
+	onMount(async () => {
+		const seven = new Date();
+		seven.setDate(seven.getDate() - 7);
+		const six = new Date();
+		six.setDate(six.getDate() - 6);
+		const five = new Date();
+		five.setDate(five.getDate() - 5);
+		const four = new Date();
+		four.setDate(four.getDate() - 4);
+		const three = new Date();
+		three.setDate(three.getDate() - 3);
+		const two = new Date();
+		two.setDate(two.getDate() - 2);
+		const one = new Date();
+		one.setDate(one.getDate() - 1);
+		const { data } = await supabase
+			.from('consumed_meals')
+			.select('portion,meals(*), created_at')
+			.match({ user_id: $user?.id })
+			.gt('created_at', seven.toISOString());
 
-	$: averageCalories =
-		consumed.reduce((acc, meal) => {
-			return acc + getCaloriesProportionateToPortion(meal.meals, meal.portion);
-		}, 0) / consumed.length || 0;
+		// make a new object with numbers one to seven where each entry is withing the date range of the day before and after
+		const week = {
+			seven: data?.filter((item) => {
+				return new Date(item.created_at) > seven && new Date(item.created_at) < six;
+			}),
+			six: data?.filter((item) => {
+				return new Date(item.created_at) > six && new Date(item.created_at) < five;
+			}),
+			five: data?.filter((item) => {
+				return new Date(item.created_at) > five && new Date(item.created_at) < four;
+			}),
+			four: data?.filter((item) => {
+				return new Date(item.created_at) > four && new Date(item.created_at) < three;
+			}),
+			three: data?.filter((item) => {
+				return new Date(item.created_at) > three && new Date(item.created_at) < two;
+			}),
+			two: data?.filter((item) => {
+				return new Date(item.created_at) > two && new Date(item.created_at) < one;
+			}),
+			one: data?.filter((item) => {
+				return new Date(item.created_at) > one && new Date(item.created_at) < new Date();
+			})
+		};
+
+		// create an object with the average calories for each day
+		const calories = {
+			seven: week.seven?.reduce((acc, item) => {
+				return acc + (item.portion / item.meals.portion) * item.meals.calories;
+			}, 0),
+			six: week.six?.reduce((acc, item) => {
+				return acc + (item.portion / item.meals.portion) * item.meals.calories;
+			}, 0),
+			five: week.five?.reduce((acc, item) => {
+				return acc + (item.portion / item.meals.portion) * item.meals.calories;
+			}, 0),
+			four: week.four?.reduce((acc, item) => {
+				return acc + (item.portion / item.meals.portion) * item.meals.calories;
+			}, 0),
+			three: week.three?.reduce((acc, item) => {
+				return acc + (item.portion / item.meals.portion) * item.meals.calories;
+			}, 0),
+			two: week.two?.reduce((acc, item) => {
+				return acc + (item.portion / item.meals.portion) * item.meals.calories;
+			}, 0),
+			one: week.one?.reduce((acc, item) => {
+				return acc + (item.portion / item.meals.portion) * item.meals.calories;
+			}, 0)
+		};
+
+		// create a new object with the average of the overall calories
+		const averages = {
+			seven: calories.seven / week.seven?.length,
+			six: calories.six / week.six?.length,
+			five: calories.five / week.five?.length,
+			four: calories.four / week.four?.length,
+			three: calories.three / week.three?.length,
+			two: calories.two / week.two?.length,
+			one: calories.one / week.one?.length
+		};
+
+		const totalAverage = [];
+
+		for (const key in averages) {
+			if (!isNaN(averages[key])) {
+				totalAverage.push(averages[key]);
+			}
+		}
+
+		const total =
+			totalAverage.reduce((acc, item) => {
+				return acc + item;
+			}, 0) / totalAverage.length;
+
+		// find out how many days since the user last tracked a meal
+		const last = new Date(data?.[data.length - 1]?.created_at);
+		const today = new Date();
+		const diff = Math.floor((today.getTime() - last.getTime()) / (1000 * 3600 * 24));
+		if (data) {
+			consumed = data;
+			average = isNaN(total) ? 'No data' : total;
+			days = isNaN(diff) ? 'No data' : diff;
+		}
+	});
+
+	let consumed: [Meal];
+	let average: number | string;
+	let days: number | string;
 
 	function handleLogout() {
 		supabase.auth.signOut();
@@ -90,7 +162,7 @@
 	</div>
 </section>
 <main class="container ">
-	<div class="card my-8 w-full bg-neutral shadow-xl">
+	<div class="card -z-10 my-8 w-full bg-neutral shadow-xl">
 		<div class="card-body h-max">
 			<div class="flex items-center space-x-8">
 				<div class="avatar">
@@ -122,8 +194,8 @@
 						<Fire size="30" />
 					</div>
 					<div class="stat-title">Average Calories Eaten</div>
-					<div class="stat-value">{averageCalories}</div>
-					<div class="stat-desc">↗︎ 400 (22%)</div>
+					<div class="stat-value">{average}</div>
+					<!-- <div class="stat-desc">↗︎ 400 (22%)</div> -->
 				</div>
 
 				<div class="stat place-items-center">
@@ -131,8 +203,8 @@
 						<CalendarToday size="30" />
 					</div>
 					<div class="stat-title">Days Not Tracked</div>
-					<div class="stat-value">17</div>
-					<div class="stat-desc">↘︎ 3 (14%)</div>
+					<div class="stat-value">{days}</div>
+					<!-- <div class="stat-desc">↘︎ 3 (14%)</div> -->
 				</div>
 			</div>
 		</div>

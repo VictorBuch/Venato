@@ -1,23 +1,52 @@
-<script lang="ts" context="module">
-	import { supabase } from '$lib/supabaseClient';
+<script lang="ts">
+	import { goto } from '$app/navigation';
+	import ProgressRing from '../components/ProgressRing.svelte';
+	import MealCard from '../components/MealCard.svelte';
+	import { onMount } from 'svelte';
 	import { user } from '../stores/userStore';
-	import { get } from 'svelte/store';
-	export const load: import('@sveltejs/kit').Load = async ({
-		url,
-		params,
-		props,
-		fetch,
-		session,
-		stuff,
-		status,
-		error
-	}) => {
+	import { supabase } from '../lib/supabaseClient';
+
+	// SVG ICONS
+	import DotsVertical from 'svelte-material-icons/DotsVertical.svelte';
+	import FoodCroissant from 'svelte-material-icons/FoodCroissant.svelte';
+	import Noodles from 'svelte-material-icons/Noodles.svelte';
+	import Pasta from 'svelte-material-icons/Pasta.svelte';
+	import FoodApple from 'svelte-material-icons/FoodApple.svelte';
+
+	import {
+		caloriesBurned,
+		caloriesEaten,
+		caloriesGoal,
+		caloriesPercent,
+		caloriesLeft,
+		carbsEaten,
+		carbsGoal,
+		carbsPercent,
+		fatEaten,
+		fatGoal,
+		fatPercent,
+		proteinEaten,
+		proteinGoal,
+		proteinPercent
+	} from '../stores/macrosStore.js';
+	import {
+		consumedBreakfast,
+		consumedLunch,
+		consumedDinner,
+		consumedSnacks,
+		meals
+	} from '../stores/consumedMeals';
+
+	let consumedMeals;
+	let fetchedMeals;
+
+	onMount(async () => {
 		const start = new Date();
 		start.setHours(0, 0, 0, 0);
 		const { data } = await supabase
 			.from('consumed_meals')
 			.select('meal_type, portion,meals(*)')
-			.match({ user_id: get(user)?.id })
+			.match({ user_id: $user?.id })
 			.gt('created_at', start.toISOString());
 
 		const { data: mealsData } = await supabase
@@ -25,7 +54,7 @@
 			.select('*')
 			.match({ is_quick_tracked: false });
 		if (data && mealsData) {
-			const meals = {
+			const consumedMeals = {
 				breakfast: data
 					.filter((meal) => meal.meal_type === 'breakfast')
 					.map((meal) => {
@@ -59,64 +88,13 @@
 						};
 					})
 			};
-			return {
-				props: {
-					consumedMeals: meals,
-					mealsData
-				}
-			};
+			$consumedBreakfast = consumedMeals?.breakfast;
+			$consumedLunch = consumedMeals?.lunch;
+			$consumedDinner = consumedMeals?.dinner;
+			$consumedSnacks = consumedMeals?.snack;
+			$meals = mealsData;
 		}
-
-		return {
-			error: new Error(`Could not load url`)
-		};
-	};
-</script>
-
-<script lang="ts">
-	import { goto } from '$app/navigation';
-	import ProgressRing from '../components/ProgressRing.svelte';
-	import MealCard from '../components/MealCard.svelte';
-
-	// SVG ICONS
-	import DotsVertical from 'svelte-material-icons/DotsVertical.svelte';
-	import FoodCroissant from 'svelte-material-icons/FoodCroissant.svelte';
-	import Noodles from 'svelte-material-icons/Noodles.svelte';
-	import Pasta from 'svelte-material-icons/Pasta.svelte';
-	import FoodApple from 'svelte-material-icons/FoodApple.svelte';
-
-	import {
-		caloriesBurned,
-		caloriesEaten,
-		caloriesGoal,
-		caloriesPercent,
-		caloriesLeft,
-		carbsEaten,
-		carbsGoal,
-		carbsPercent,
-		fatEaten,
-		fatGoal,
-		fatPercent,
-		proteinEaten,
-		proteinGoal,
-		proteinPercent
-	} from '../stores/macrosStore.js';
-	import {
-		consumedBreakfast,
-		consumedLunch,
-		consumedDinner,
-		consumedSnacks,
-		meals
-	} from '../stores/consumedMeals';
-
-	export let consumedMeals;
-	export let mealsData;
-
-	$consumedBreakfast = consumedMeals.breakfast;
-	$consumedLunch = consumedMeals.lunch;
-	$consumedDinner = consumedMeals.dinner;
-	$consumedSnacks = consumedMeals.snacks;
-	$meals = mealsData;
+	});
 
 	const logout = async () => {
 		const { error } = await supabase.auth.signOut();

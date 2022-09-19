@@ -6,7 +6,6 @@ import { user } from '../stores/userStore';
 const handleConsumedMealsChange = async () => {
 	const start = new Date();
 	start.setHours(0, 0, 0, 0);
-	console.log('start', start.toISOString());
 	const { data: consumedMeals } = await supabase
 		.from('consumed_meals')
 		.select('meal_type, portion,meals(*)')
@@ -58,6 +57,13 @@ const handleConsumedMealsChange = async () => {
 		consumedDinner.set(consumed.dinner);
 		consumedSnacks.set(consumed.snack);
 		meals.set(mealsData);
+		console.log(
+			'comsumed updated',
+			get(consumedBreakfast),
+			get(consumedLunch),
+			get(consumedDinner),
+			get(consumedSnacks)
+		);
 	}
 };
 

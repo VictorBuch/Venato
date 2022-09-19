@@ -22,21 +22,23 @@
 	import { supabase } from '$lib/supabaseClient';
 	import { user } from '../../stores/userStore';
 	import { get } from 'svelte/store';
+	import { goto } from '$app/navigation';
+	import type { Meal } from '../../types/meals';
 
 	export let mealType: string;
 
 	let query = '';
 	let queryRef;
-	let food = {};
+	let food = <Meal>{};
 	let tab = 1;
 
 	const fetchMeal = async () => {
-		if (Object.keys(food).length) {
-			food = {};
-			query = '';
-			queryRef.focus();
-			return;
-		}
+		// if (Object.keys(food).length) {
+		// 	food = {};
+		// 	query = '';
+		// 	queryRef.focus();
+		// 	return;
+		// }
 		if (query.length > 0) {
 			const response = await fetch(`https://api.calorieninjas.com/v1/nutrition?query=${query}`, {
 				method: 'GET',
@@ -142,11 +144,13 @@
 					{
 						meal_id: data[0].id,
 						user_id: get(user).id,
-						meal_type: mealType
+						meal_type: mealType,
+						portion: food.portion
 					}
 				]);
 				if (mealData) {
 					toast.push('Meal added');
+					goto(`/track-food/${mealType}`);
 				} else {
 					toast.push('Error adding meal');
 				}
