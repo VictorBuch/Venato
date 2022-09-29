@@ -193,7 +193,7 @@
 					<div class="stat-value">{$user.weight} Kgs</div>
 					{#if $user?.goal}
 						<div class="stat-desc">
-							Goal: {$user?.goal === 'maintain' ? 'maintain' : $user?.desired_weight} kgs
+							Goal: {$user?.goal === 'maintain' ? 'maintain' : $user?.desired_weight + 'Kgs'}
 						</div>
 					{/if}
 				</div>
