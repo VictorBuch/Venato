@@ -1,25 +1,21 @@
 type User = {
-	activity_level: string
+	activity_level: 'sedentary'|'lightly active'|'moderately active'|'active'|'very active'
 	age: number
-	authed: boolean
+	goal: 'maintain' | 'loss' | 'gain'
 	calorie_goal: number
 	carb_goal: number
-	created_at: string
-	email: string
-	email_verified_at: null
 	fat_goal: number
-	goal: string
-	height: number
-	height_unit: null
-	id: number
-	name: null
 	protein_goal: number
-	sex: string
+	height: number
+	id: number
+	username: null | string
+	sex: 'male' | 'female'
 	updated_at: string
 	weight: number
-	weight_unit: null
+	weight_loss_amount: null | 0.25 | 0.5 | 1
+  desired_weight: null | number
 }
 
 import { writable } from 'svelte-local-storage-store'
 
-export const user = writable('user', {})
+export const user = writable<User>('user', {})

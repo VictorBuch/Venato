@@ -120,12 +120,16 @@
 	let average: number | string;
 	let days: number | string;
 
-	function handleLogout() {
-		supabase.auth.signOut();
-	}
+	const logout = async () => {
+		const { error } = await supabase.auth.signOut();
+		if (!error) {
+			$user = null;
+			goto('/');
+		}
+	};
 </script>
 
-<section class="container bg-accent py-8 drop-shadow-md">
+<section class="container z-20 bg-accent py-8 drop-shadow-md">
 	<div class=" flex h-full w-full  items-center justify-between space-x-2">
 		<a href="/dashboard">
 			<svg
@@ -142,27 +146,30 @@
 		</a>
 		<h1 class="w-max text-xl font-bold text-accent-content">Profile</h1>
 		<div class="ml-auto h-max w-max">
-			<div class="dropdown-end dropdown ">
+			<div class="dropdown-end dropdown z-50 ">
 				<button tabindex="0">
 					<CogOutline size="30" />
 				</button>
 				<ul
 					tabindex="0"
-					class="dropdown-content menu rounded-box w-52 bg-base-content p-2 text-base-100 shadow"
+					class="dropdown-content menu rounded-box !z-50 w-52 bg-base-content p-2 text-base-100 shadow"
 				>
 					<a
-						class="cursor-pointer rounded-lg px-4 py-2 hover:bg-gray-300"
-						href="/get-user-information"
+						class="block cursor-pointer rounded-lg px-4 py-2 text-center hover:bg-gray-300"
+						href="/get-user-information/goal"
 					>
 						Change User Information
 					</a>
+					<button on:click={logout} class="cursor-pointer rounded-lg px-4 py-2 hover:bg-gray-300">
+						Logout
+					</button>
 				</ul>
 			</div>
 		</div>
 	</div>
 </section>
 <main class="container ">
-	<div class="card -z-10 my-8 w-full bg-neutral shadow-xl">
+	<div class="card my-8 block w-full bg-neutral shadow-xl">
 		<div class="card-body h-max">
 			<div class="flex items-center space-x-8">
 				<div class="avatar">
@@ -175,8 +182,8 @@
 					<p>{$user?.age} years old</p>
 				</div>
 			</div>
-			<div class="divider my-4" />
-
+			<div class="divider mt-4 mb-2" />
+			<p class="text-md mb-2 font-semibold text-neutral-content">Stats</p>
 			<div class="stats !grid-flow-row shadow">
 				<div class="stat place-items-center">
 					<div class="stat-figure">
@@ -185,7 +192,9 @@
 					<div class="stat-title">Weight</div>
 					<div class="stat-value">{$user.weight} Kgs</div>
 					{#if $user?.goal}
-						<div class="stat-desc">Goal: {$user?.goal}</div>
+						<div class="stat-desc">
+							Goal: {$user?.goal === 'maintain' ? 'maintain' : $user?.desired_weight} kgs
+						</div>
 					{/if}
 				</div>
 
@@ -206,6 +215,25 @@
 					<div class="stat-value">{days}</div>
 					<!-- <div class="stat-desc">↘︎ 3 (14%)</div> -->
 				</div>
+			</div>
+			<p class="text-md mt-4 mb-2 font-semibold text-neutral-content">Customization</p>
+			<div class="rounded-md bg-base-100 p-3 shadow">
+				<a
+					class="flex w-full cursor-pointer select-none items-center justify-between p-1 text-left"
+					href="/get-user-information/goal"
+				>
+					<p>Goal:</p>
+					<p class="text-sm font-light text-gray-400">{$user.goal}</p>
+				</a>
+				<div class="divider m-0" />
+
+				<a
+					class="flex w-full cursor-pointer select-none items-center justify-between p-1 text-left"
+					href="/get-user-information/activity"
+				>
+					<p>Activity Level</p>
+					<p class="text-sm font-light text-gray-400">{$user.activity_level}</p>
+				</a>
 			</div>
 		</div>
 	</div>

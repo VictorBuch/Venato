@@ -146,9 +146,19 @@
 	};
 </script>
 
+<title>Firness Journey | My account</title>
+
+<div class="flex items-center justify-center">
+	<ul class="steps scale-90 pt-8">
+		<li class="step step-primary">Basic information</li>
+		<li class="step step-primary">Goal</li>
+		<li class="step">Activity levels</li>
+		<li class="step">Final touch</li>
+	</ul>
+</div>
 {#if step === 'basic'}
 	<div class="container">
-		<div class="mt-32 flex flex-col items-center">
+		<div class="mt-12 flex flex-col items-center">
 			<form class="form-control space-y-6">
 				<div>
 					<label for="height">Height</label>

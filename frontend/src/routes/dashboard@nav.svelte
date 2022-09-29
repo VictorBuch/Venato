@@ -95,14 +95,6 @@
 			$meals = mealsData;
 		}
 	});
-
-	const logout = async () => {
-		const { error } = await supabase.auth.signOut();
-		if (!error) {
-			$user = null;
-			goto('/');
-		}
-	};
 </script>
 
 <svelte:head>
@@ -111,22 +103,7 @@
 
 <main class=" w-screen overflow-x-hidden">
 	<nav class="container mt-6 flex h-max w-full items-center justify-evenly">
-		<div class="w-1/4" />
-		<h1 class="w-2/4 text-2xl font-bold text-accent  ">Fitness journey</h1>
-		<div class="ml-auto flex w-1/4 items-center justify-end">
-			<div class="dropdown-end dropdown">
-				<button tabindex="0">
-					<DotsVertical />
-				</button>
-				<ul
-					tabindex="0"
-					class="dropdown-content menu rounded-box w-52 bg-base-content p-2 text-base-100 shadow"
-				>
-					<li><a href="/my-account">My Account</a></li>
-					<li><button on:click={logout} class="rounded-lg">Logout</button></li>
-				</ul>
-			</div>
-		</div>
+		<h1 class="text-2xl font-bold text-accent">Fitness journey</h1>
 	</nav>
 	<div class="flex w-full flex-col items-center ">
 		<div class="container py-8">
