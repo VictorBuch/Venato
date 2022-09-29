@@ -40,6 +40,10 @@
 	let consumedMeals;
 	let fetchedMeals;
 
+	const calculateRecommendedAmountOfCalories = (percentage: number) => {
+		return Math.round((percentage / 100) * $caloriesLeft);
+	};
+
 	onMount(async () => {
 		const start = new Date();
 		start.setHours(0, 0, 0, 0);
@@ -79,8 +83,8 @@
 							portion: meal.portion
 						};
 					}),
-				snack: data
-					.filter((meal) => meal.meal_type === 'snack')
+				snacks: data
+					.filter((meal) => meal.meal_type === 'snacks')
 					.map((meal) => {
 						return {
 							...meal.meals,
@@ -91,7 +95,7 @@
 			$consumedBreakfast = consumedMeals?.breakfast;
 			$consumedLunch = consumedMeals?.lunch;
 			$consumedDinner = consumedMeals?.dinner;
-			$consumedSnacks = consumedMeals?.snack;
+			$consumedSnacks = consumedMeals?.snacks;
 			$meals = mealsData;
 		}
 	});
@@ -139,7 +143,7 @@
 					</p>
 				</div>
 				<div class="flex w-1/4 flex-col items-center justify-center space-y-2">
-					<h3>Potein</h3>
+					<h3>Protein</h3>
 					<progress class="progress progress-accent w-full " value={$proteinPercent} max="100" />
 					<p class="text-sm">
 						{$proteinEaten} / {$proteinGoal}g
@@ -163,7 +167,7 @@
 					title="Breakfast"
 					foodItems={$consumedBreakfast}
 					calories={$consumedBreakfast?.reduce((acc, food) => acc + food.calories, 0) || 0}
-					reccomendedCalories={400}
+					recommendedCalories={calculateRecommendedAmountOfCalories(22)}
 					addFoodItem={() => goto('/track-food/breakfast')}
 				>
 					<FoodCroissant size={'30'} />
@@ -172,7 +176,7 @@
 					title="Lunch"
 					foodItems={$consumedLunch}
 					calories={$consumedLunch?.reduce((acc, food) => acc + food.calories, 0) || 0}
-					reccomendedCalories={700}
+					recommendedCalories={calculateRecommendedAmountOfCalories(33)}
 					addFoodItem={() => goto('/track-food/lunch')}
 				>
 					<Noodles size={'30'} />
@@ -181,17 +185,17 @@
 					title="Dinner"
 					foodItems={$consumedDinner}
 					calories={$consumedDinner?.reduce((acc, food) => acc + food.calories, 0) || 0}
-					reccomendedCalories={900}
+					recommendedCalories={calculateRecommendedAmountOfCalories(35)}
 					addFoodItem={() => goto('/track-food/dinner')}
 				>
 					<Pasta size={'30'} />
 				</MealCard>
 				<MealCard
-					title="Snack"
+					title="Snacks"
 					foodItems={$consumedSnacks}
 					calories={$consumedSnacks?.reduce((acc, food) => acc + food.calories, 0) || 0}
-					reccomendedCalories={300}
-					addFoodItem={() => goto('/track-food/snack')}
+					recommendedCalories={calculateRecommendedAmountOfCalories(10)}
+					addFoodItem={() => goto('/track-food/snacks')}
 				>
 					<FoodApple size={'30'} />
 				</MealCard>

@@ -111,7 +111,7 @@
 		const diff = Math.floor((today.getTime() - last.getTime()) / (1000 * 3600 * 24));
 		if (data) {
 			consumed = data;
-			average = isNaN(total) ? 'No data' : total;
+			average = isNaN(total) ? 'No data' : Math.ceil(total);
 			days = isNaN(diff) ? 'No data' : diff;
 		}
 	});

@@ -4,7 +4,7 @@
 	export let title: string;
 	export let foodItems: [];
 	export let calories: number;
-	export let reccomendedCalories: number;
+	export let recommendedCalories: number;
 	export let addFoodItem;
 </script>
 
@@ -28,7 +28,7 @@
 						{/if}
 					{/each}
 				{:else}
-					{`reccomended amount: ${reccomendedCalories} kcal`}
+					{`reccomended amount: ${recommendedCalories} kcal`}
 				{/if}
 			</p>
 		</div>

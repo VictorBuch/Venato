@@ -43,8 +43,8 @@ const handleConsumedMealsChange = async () => {
 						portion: meal.portion
 					};
 				}),
-			snack: consumedMeals
-				.filter((meal) => meal.meal_type === 'snack')
+			snacks: consumedMeals
+				.filter((meal) => meal.meal_type === 'snacks')
 				.map((meal) => {
 					return {
 						...meal.meals,
@@ -55,7 +55,7 @@ const handleConsumedMealsChange = async () => {
 		consumedBreakfast.set(consumed.breakfast);
 		consumedLunch.set(consumed.lunch);
 		consumedDinner.set(consumed.dinner);
-		consumedSnacks.set(consumed.snack);
+		consumedSnacks.set(consumed.snacks);
 		meals.set(mealsData);
 		console.log(
 			'comsumed updated',
