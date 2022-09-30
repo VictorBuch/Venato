@@ -131,7 +131,7 @@
 </script>
 
 {#await fetchData then data}
-	<section class="container bg-accent py-8 drop-shadow-md">
+	<section class="container bg-accent-focus py-4 drop-shadow-md">
 		<div class=" flex h-full w-full  items-center justify-between space-x-2">
 			<a href="/dashboard">
 				<svg

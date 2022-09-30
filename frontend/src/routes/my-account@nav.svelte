@@ -164,7 +164,7 @@
 	};
 </script>
 
-<section class="container z-20 bg-accent py-8 drop-shadow-md">
+<section class="container z-20 bg-accent-focus py-4 drop-shadow-md">
 	<div class=" flex h-full w-full  items-center justify-between space-x-2">
 		<a href="/dashboard">
 			<svg
@@ -189,12 +189,6 @@
 					tabindex="0"
 					class="dropdown-content menu rounded-box !z-50 w-52 bg-base-content p-2 text-base-100 shadow"
 				>
-					<a
-						class="block cursor-pointer rounded-lg px-4 py-2 text-center hover:bg-gray-300"
-						href="/get-user-information/goal"
-					>
-						Change User Information
-					</a>
 					<button on:click={logout} class="cursor-pointer rounded-lg px-4 py-2 hover:bg-gray-300">
 						Logout
 					</button>
@@ -213,7 +207,12 @@
 					</div>
 				</div>
 				<div>
-					<h2 class="card-title">{$user?.username || 'Simon'}</h2>
+					<input
+						type="text"
+						bind:value={$user.username}
+						on:blur={() => updateUserCaloriesAndMacros()}
+						class="card-title w-full appearance-none truncate bg-transparent text-neutral-content outline-none ring-transparent focus:outline-none focus:ring-transparent"
+					/>
 					<p>{$user?.age} years old</p>
 				</div>
 			</div>
