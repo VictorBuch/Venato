@@ -13,7 +13,7 @@
 			<circle class="stroke-gray-600" r="16" cx="18" cy="18" fill="none" />
 			{#if percent > 0}
 				<circle
-					class="stroke-accent -rotate-90"
+					class="-rotate-90 stroke-primary"
 					style="	transform-origin: 50% 50%;
 			stroke-dashoffset: {100 - percent}"
 					r="16"
@@ -41,7 +41,7 @@
 		</g>
 	</svg>
 	<div
-		class="text-neutral-content absolute inset-0 flex flex-col items-center justify-center text-2xl"
+		class="absolute inset-0 flex flex-col items-center justify-center text-2xl text-neutral-content"
 	>
 		{#if number}
 			<p>{number}</p>

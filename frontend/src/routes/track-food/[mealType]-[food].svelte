@@ -121,11 +121,11 @@
 	<title>fitness Journey | {food?.name}</title>
 </svelte:head>
 {#await promise then data}
-	<section class="flex items-end  justify-between  bg-accent-focus px-4 py-8 drop-shadow-md">
+	<section class="flex items-end  justify-between  bg-primary px-4 py-8 drop-shadow-md">
 		<div class="flex items-center space-x-4">
 			<a href="/track-food/{mealType}">
 				<svg
-					class="h-6 w-6 !stroke-accent-content"
+					class="h-6 w-6 !stroke-primary-content"
 					fill="none"
 					stroke-linecap="round"
 					stroke-linejoin="round"
@@ -136,7 +136,7 @@
 					<path d="M19 12H5M12 19l-7-7 7-7" />
 				</svg>
 			</a>
-			<h1 class="text-lg font-semibold text-accent-content ">
+			<h1 class="text-lg font-semibold text-primary-content ">
 				{food?.name}
 			</h1>
 		</div>

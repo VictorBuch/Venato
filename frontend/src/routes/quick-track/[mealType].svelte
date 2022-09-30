@@ -1,7 +1,6 @@
 <!-- TODO: make this card pretty and the page usefull -->
 <script lang="ts">
 	import { toast } from '@zerodevx/svelte-toast';
-	import DotsVertical from 'svelte-material-icons/DotsVertical.svelte';
 	import ProgressRing from '$lib/components/ProgressRing.svelte';
 	import { supabase } from '$lib/supabaseClient';
 	import { user } from '$lib/stores/userStore';
@@ -155,11 +154,11 @@
 <svelte:head>
 	<title>Fitness Journey | Quick Track</title>
 </svelte:head>
-<section class="container mb-8 bg-accent pt-8 drop-shadow-md">
+<section class="container mb-8 bg-primary-focus pt-4 drop-shadow-md">
 	<div class=" flex h-full w-full  items-center  ">
 		<a href="/track-food/{mealType}">
 			<svg
-				class="h-6 w-6 !stroke-accent-content"
+				class="h-6 w-6 !stroke-primary-content"
 				fill="none"
 				stroke-linecap="round"
 				stroke-linejoin="round"
@@ -170,7 +169,7 @@
 				<path d="M19 12H5M12 19l-7-7 7-7" />
 			</svg>
 		</a>
-		<h1 class="ml-24 w-max text-xl font-bold text-accent-content">Quick Track</h1>
+		<h1 class="ml-24 w-max text-xl font-bold text-primary-content">Quick Track</h1>
 	</div>
 	<div class="mt-6 flex items-center justify-center">
 		<div class="tabs  ">
@@ -180,7 +179,7 @@
 					food = {};
 				}}
 				class:tab-active={tab == 1}
-				class="tab tab-bordered !text-accent-content">Auto Track</button
+				class="tab tab-bordered !text-primary-content">Auto Track</button
 			>
 			<button
 				on:click={() => {
@@ -188,7 +187,7 @@
 					food = {};
 				}}
 				class:tab-active={tab == 2}
-				class="tab tab-bordered !text-accent-content">Manual Track</button
+				class="tab tab-bordered !text-primary-content">Manual Track</button
 			>
 		</div>
 	</div>
@@ -231,7 +230,7 @@
 				<div class="flex w-full items-center space-x-2">
 					<button
 						on:click={addFoodItem}
-						class="btn mt-8 w-1/2 border-0 bg-accent bg-gradient-to-r from-accent to-accent-focus text-accent-content shadow-lg shadow-accent/30 hover:shadow-accent-focus/30"
+						class="btn mt-8 w-1/2 border-0 bg-primary bg-gradient-to-r from-primary to-primary-focus text-primary-content shadow-lg shadow-primary/30 hover:shadow-primary-focus/30"
 						>Add Food</button
 					>
 					<button
@@ -240,7 +239,7 @@
 							query = '';
 							queryRef.focus();
 						}}
-						class="btn mt-8 w-1/2 border-0 bg-error bg-gradient-to-r from-error to-error text-accent-content shadow-lg shadow-error/30 hover:shadow-error/30"
+						class="btn mt-8 w-1/2 border-0 bg-error bg-gradient-to-r from-error to-error text-primary-content shadow-lg shadow-error/30 hover:shadow-error/30"
 						>Clear food</button
 					>
 				</div>

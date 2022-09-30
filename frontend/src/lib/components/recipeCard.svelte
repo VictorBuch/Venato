@@ -5,11 +5,13 @@
 	export let recipieId: number;
 </script>
 
-<div class="card bg-neutral h-max w-44 shadow">
+<div class="card h-max w-44 bg-neutral shadow">
 	<figure><img src="https://api.lorem.space/image/shoes?w=400&h=300" alt="Shoes" /></figure>
 	<div class="card-body !p-4">
-		<h2 class="font-ligh w-fullt line-clamp-2  mb-2 break-all  text-sm text-gray-200">{title}</h2>
-		<p class="font-semi-bold text-neutral-content text-base">{calories} Kcal</p>
+		<h2 class="font-ligh w-fullt mb-2  break-all text-sm  text-neutral-content line-clamp-2">
+			{title}
+		</h2>
+		<p class="font-semi-bold text-base text-neutral-content">{calories} Kcal</p>
 		{#if tags && tags.length}
 			<div class="card-actions !mt-2 justify-start truncate">
 				{#each tags as tag}
