@@ -11,7 +11,7 @@
 <slot />
 
 <footer
-	class="container fixed bottom-0 right-0 left-0 flex w-full items-end justify-between rounded-t bg-accent pt-3 pb-1"
+	class="container fixed -bottom-[0.5px] right-0 left-0 flex w-full items-end justify-between rounded-t bg-accent pt-3 pb-1"
 >
 	<a
 		href="/dashboard"

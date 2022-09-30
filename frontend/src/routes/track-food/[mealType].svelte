@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { supabase } from '$lib/supabaseClient';
-	import { user } from '../../stores/userStore';
+	import { user } from '$lib/stores/userStore';
 	import { goto } from '$app/navigation';
-	import type { Meal } from '../../types/meals';
+	import type { Meal } from '$lib/types/meals';
 
 	import {
 		consumedBreakfast,
@@ -11,7 +11,7 @@
 		consumedSnacks,
 		combinedMealsObj,
 		meals
-	} from '../../stores/consumedMeals';
+	} from '$lib/stores/consumedMeals';
 
 	import {
 		caloriesEaten,
@@ -26,11 +26,11 @@
 		proteinEaten,
 		proteinGoal,
 		proteinPercent
-	} from '../../stores/macrosStore.js';
+	} from '$lib/stores/macrosStore.js';
 
 	import BarcodeScan from 'svelte-material-icons/BarcodeScan.svelte';
 	import DotsVertical from 'svelte-material-icons/DotsVertical.svelte';
-	import FoodCard from '../../components/FoodCard.svelte';
+	import FoodCard from '$lib/components/FoodCard.svelte';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
@@ -131,7 +131,7 @@
 </script>
 
 {#await fetchData then data}
-	<section class="container bg-accent py-8 drop-shadow-md">
+	<section class="container bg-accent-focus py-4 drop-shadow-md">
 		<div class=" flex h-full w-full  items-center justify-between space-x-2">
 			<a href="/dashboard">
 				<svg

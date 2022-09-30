@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import ProgressRing from '../components/ProgressRing.svelte';
-	import MealCard from '../components/MealCard.svelte';
+	import ProgressRing from '$lib/components/ProgressRing.svelte';
+	import MealCard from '$lib/components/MealCard.svelte';
 	import { onMount } from 'svelte';
-	import { user } from '../stores/userStore';
-	import { supabase } from '../lib/supabaseClient';
+	import { user } from '$lib/stores/userStore';
+	import { supabase } from '$lib/supabaseClient';
 
 	// SVG ICONS
 	import DotsVertical from 'svelte-material-icons/DotsVertical.svelte';
@@ -28,17 +28,21 @@
 		proteinEaten,
 		proteinGoal,
 		proteinPercent
-	} from '../stores/macrosStore.js';
+	} from '$lib/stores/macrosStore.js';
 	import {
 		consumedBreakfast,
 		consumedLunch,
 		consumedDinner,
 		consumedSnacks,
 		meals
-	} from '../stores/consumedMeals';
+	} from '$lib/stores/consumedMeals';
 
 	let consumedMeals;
 	let fetchedMeals;
+
+	const calculateRecommendedAmountOfCalories = (percentage: number) => {
+		return Math.round((percentage / 100) * $caloriesLeft);
+	};
 
 	onMount(async () => {
 		const start = new Date();
@@ -79,8 +83,8 @@
 							portion: meal.portion
 						};
 					}),
-				snack: data
-					.filter((meal) => meal.meal_type === 'snack')
+				snacks: data
+					.filter((meal) => meal.meal_type === 'snacks')
 					.map((meal) => {
 						return {
 							...meal.meals,
@@ -91,18 +95,10 @@
 			$consumedBreakfast = consumedMeals?.breakfast;
 			$consumedLunch = consumedMeals?.lunch;
 			$consumedDinner = consumedMeals?.dinner;
-			$consumedSnacks = consumedMeals?.snack;
+			$consumedSnacks = consumedMeals?.snacks;
 			$meals = mealsData;
 		}
 	});
-
-	const logout = async () => {
-		const { error } = await supabase.auth.signOut();
-		if (!error) {
-			$user = null;
-			goto('/');
-		}
-	};
 </script>
 
 <svelte:head>
@@ -111,22 +107,7 @@
 
 <main class=" w-screen overflow-x-hidden">
 	<nav class="container mt-6 flex h-max w-full items-center justify-evenly">
-		<div class="w-1/4" />
-		<h1 class="w-2/4 text-2xl font-bold text-accent  ">Fitness journey</h1>
-		<div class="ml-auto flex w-1/4 items-center justify-end">
-			<div class="dropdown-end dropdown">
-				<button tabindex="0">
-					<DotsVertical />
-				</button>
-				<ul
-					tabindex="0"
-					class="dropdown-content menu rounded-box w-52 bg-base-content p-2 text-base-100 shadow"
-				>
-					<li><a href="/my-account">My Account</a></li>
-					<li><button on:click={logout} class="rounded-lg">Logout</button></li>
-				</ul>
-			</div>
-		</div>
+		<h1 class="text-2xl font-bold text-accent">Fitness journey</h1>
 	</nav>
 	<div class="flex w-full flex-col items-center ">
 		<div class="container py-8">
@@ -162,7 +143,7 @@
 					</p>
 				</div>
 				<div class="flex w-1/4 flex-col items-center justify-center space-y-2">
-					<h3>Potein</h3>
+					<h3>Protein</h3>
 					<progress class="progress progress-accent w-full " value={$proteinPercent} max="100" />
 					<p class="text-sm">
 						{$proteinEaten} / {$proteinGoal}g
@@ -186,7 +167,7 @@
 					title="Breakfast"
 					foodItems={$consumedBreakfast}
 					calories={$consumedBreakfast?.reduce((acc, food) => acc + food.calories, 0) || 0}
-					reccomendedCalories={400}
+					recommendedCalories={calculateRecommendedAmountOfCalories(22)}
 					addFoodItem={() => goto('/track-food/breakfast')}
 				>
 					<FoodCroissant size={'30'} />
@@ -195,7 +176,7 @@
 					title="Lunch"
 					foodItems={$consumedLunch}
 					calories={$consumedLunch?.reduce((acc, food) => acc + food.calories, 0) || 0}
-					reccomendedCalories={700}
+					recommendedCalories={calculateRecommendedAmountOfCalories(33)}
 					addFoodItem={() => goto('/track-food/lunch')}
 				>
 					<Noodles size={'30'} />
@@ -204,17 +185,17 @@
 					title="Dinner"
 					foodItems={$consumedDinner}
 					calories={$consumedDinner?.reduce((acc, food) => acc + food.calories, 0) || 0}
-					reccomendedCalories={900}
+					recommendedCalories={calculateRecommendedAmountOfCalories(35)}
 					addFoodItem={() => goto('/track-food/dinner')}
 				>
 					<Pasta size={'30'} />
 				</MealCard>
 				<MealCard
-					title="Snack"
+					title="Snacks"
 					foodItems={$consumedSnacks}
 					calories={$consumedSnacks?.reduce((acc, food) => acc + food.calories, 0) || 0}
-					reccomendedCalories={300}
-					addFoodItem={() => goto('/track-food/snack')}
+					recommendedCalories={calculateRecommendedAmountOfCalories(10)}
+					addFoodItem={() => goto('/track-food/snacks')}
 				>
 					<FoodApple size={'30'} />
 				</MealCard>

@@ -1,4 +1,4 @@
-import { user } from '../../stores/userStore'; // stores related to app state, auth state
+import { user } from '$lib/stores/userStore'; // stores related to app state, auth state
 import { get } from 'svelte/store';
 
 export async function authGuardRedirect(url: { pathname: string }) {

@@ -1,5 +1,5 @@
 <script>
-	import { user } from '../stores/userStore';
+	import { user } from '$lib/stores/userStore';
 	import { get } from 'svelte/store';
 	import { supabase } from '$lib/supabaseClient';
 	import { goto } from '$app/navigation';

@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { supabase } from '$lib/supabaseClient';
-	import { user } from '../../stores/userStore';
+	import { user } from '$lib/stores/userStore';
 	import { goto } from '$app/navigation';
 	import { toast } from '@zerodevx/svelte-toast';
-	import ProgressRing from '../../components/ProgressRing.svelte';
+	import ProgressRing from '$lib/components/ProgressRing.svelte';
 	import { fade } from 'svelte/transition';
-	import type { Meal } from '../../types/meals';
+	import type { Meal } from '$lib/types/meals';
 	import { page } from '$app/stores';
 
 	// Icons
@@ -18,35 +18,47 @@
 
 	let mealType: string;
 	let food: Meal;
-	let isSaved: boolean;
+	let isSaved = false;
+	let portion = '';
+	let unit = 'g';
+
+	// TODO: make food rating work
+	let foodRating = 'A';
 
 	const getMealData = async () => {
 		try {
-			const resp = await supabase.from('meals').select().match({ id: $page.params.food }).single();
-			const isSavedResp = await supabase
-				.from('saved_meals')
+			const { data, error } = await supabase
+				.from('meals')
 				.select()
-				.match({ meal_id: $page.params.food, user_id: $user.id })
+				.match({ id: $page.params.food })
 				.single();
-
-			if (resp.data) {
-				food = resp.data;
-				isSaved = isSavedResp.data ? true : false;
+			if (data) {
+				food = data;
 				mealType = $page.params.mealType;
+				portion = String(food.portion);
+				console.log(food);
 			}
 		} catch (error) {
 			console.log(error);
 			throw new Error('Error fetching meal data');
 		}
+		try {
+			const { data, error } = await supabase
+				.from('saved_meals')
+				.select()
+				.match({ meal_id: $page.params.food, user_id: $user.id })
+				.single();
+
+			if (data) {
+				isSaved = true;
+			}
+		} catch (err) {
+			console.log(err);
+			throw new Error('Error fetching meal data');
+		}
 	};
 
 	let promise = getMealData();
-
-	// TODO: make food rating work
-	let foodRating = 'A';
-
-	let portion = String(food?.portion);
-	let unit = String(food?.unit || 'g');
 
 	const handleSubmit = async (e: MouseEvent) => {
 		if (portion && unit) {
@@ -109,7 +121,7 @@
 	<title>fitness Journey | {food?.name}</title>
 </svelte:head>
 {#await promise then data}
-	<section class="flex items-end  justify-between  bg-accent px-4 py-12 drop-shadow-md">
+	<section class="flex items-end  justify-between  bg-accent-focus px-4 py-8 drop-shadow-md">
 		<div class="flex items-center space-x-4">
 			<a href="/track-food/{mealType}">
 				<svg

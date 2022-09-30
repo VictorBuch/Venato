@@ -2,12 +2,12 @@
 <script lang="ts">
 	import { toast } from '@zerodevx/svelte-toast';
 	import DotsVertical from 'svelte-material-icons/DotsVertical.svelte';
-	import ProgressRing from '../../components/ProgressRing.svelte';
+	import ProgressRing from '$lib/components/ProgressRing.svelte';
 	import { supabase } from '$lib/supabaseClient';
-	import { user } from '../../stores/userStore';
+	import { user } from '$lib/stores/userStore';
 	import { get } from 'svelte/store';
 	import { goto } from '$app/navigation';
-	import type { Meal } from '../../types/meals';
+	import type { Meal } from '$lib/types/meals';
 	import { page } from '$app/stores';
 
 	let mealType = $page.params.mealType;

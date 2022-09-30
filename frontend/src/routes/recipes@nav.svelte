@@ -2,7 +2,7 @@
 </script>
 
 <script lang="ts">
-	import RecipeCard from '../components/recipeCard.svelte';
+	import RecipeCard from '$lib/components/RecipeCard.svelte';
 	import DotsVertical from 'svelte-material-icons/DotsVertical.svelte';
 	import { fly } from 'svelte/transition';
 
@@ -11,11 +11,11 @@
 	let searchQuery = '';
 </script>
 
-<section class="bg-accent container py-8 drop-shadow-md">
+<section class="container bg-accent py-8 drop-shadow-md">
 	<div class=" flex h-full w-full  items-center justify-between space-x-2">
 		<a href="/dashboard">
 			<svg
-				class="!stroke-accent-content h-6 w-6"
+				class="h-6 w-6 !stroke-accent-content"
 				fill="none"
 				stroke-linecap="round"
 				stroke-linejoin="round"
@@ -26,7 +26,7 @@
 				<path d="M19 12H5M12 19l-7-7 7-7" />
 			</svg>
 		</a>
-		<h1 class="text-accent-content w-max text-xl font-bold">Find Recipes</h1>
+		<h1 class="w-max text-xl font-bold text-accent-content">Find Recipes</h1>
 		<div class="ml-auto h-max w-max" />
 	</div>
 	<div class="mt-6 flex items-center justify-center space-x-2">
@@ -36,7 +36,7 @@
 					type="text"
 					placeholder="Search…"
 					bind:value={searchQuery}
-					class="input input-bordered bg-accent-content w-full !text-black placeholder:text-gray-700"
+					class="input input-bordered w-full bg-accent-content !text-black placeholder:text-gray-700"
 				/>
 				<button class="btn btn-square">
 					<svg
@@ -94,11 +94,11 @@
 	{:else}
 		{#each mealTypes as meal}
 			<div class="container flex items-center justify-between">
-				<h1 class="text-base-content font-semibold uppercase">{meal}</h1>
+				<h1 class="font-semibold uppercase text-base-content">{meal}</h1>
 				<a class="flex items-center space-x-4" href="/recipes/{meal}">
-					<p class="text-accent font-semibold">See All</p>
+					<p class="font-semibold text-accent">See All</p>
 					<svg
-						class="!stroke-accent  h-6 w-6 rotate-180"
+						class="h-6  w-6 rotate-180 !stroke-accent"
 						fill="none"
 						stroke-linecap="round"
 						stroke-linejoin="round"
@@ -110,7 +110,7 @@
 					</svg>
 				</a>
 			</div>
-			<div class="carousel carousel-center rounded-box m-2 max-w-md space-x-2 pb-4 pt-2">
+			<div class="max-w-md carousel carousel-center rounded-box m-2 space-x-2 pb-4 pt-2">
 				{#each recipes as recipe}
 					<div class="carousel-item">
 						<RecipeCard title={recipe} calories={300} recipieId={Math.ceil(Math.random() * 1000)} />
