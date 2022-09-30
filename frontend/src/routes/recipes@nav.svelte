@@ -1,6 +1,3 @@
-<script lang="ts" context="module">
-</script>
-
 <script lang="ts">
 	import RecipeCard from '$lib/components/RecipeCard.svelte';
 	import DotsVertical from 'svelte-material-icons/DotsVertical.svelte';
