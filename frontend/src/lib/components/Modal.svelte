@@ -23,7 +23,7 @@
 >
 	<div on:click|stopPropagation class="min-h-16  h-max w-full">
 		<div
-			class="flex flex-col items-center justify-center rounded-t-md bg-gradient-to-bl from-accent-focus to-primary-focus p-2 text-accent-content"
+			class="flex flex-col items-center justify-center rounded-t-md bg-gradient-to-bl from-primary-focus to-primary-focus p-2 text-primary-content"
 		>
 			<span class="text-md mb-4 font-light text-primary-content">
 				<slot name="title" />

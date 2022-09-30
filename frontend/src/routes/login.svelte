@@ -24,7 +24,7 @@
 		<div class="max-w-md w-full space-y-8">
 			<div>
 				<img
-					class="mx-auto h-12 w-auto rounded-full bg-accent !fill-accent p-2"
+					class="mx-auto h-12 w-auto rounded-full bg-primary !fill-primary p-2"
 					src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
 					alt="Workflow"
 				/>
@@ -32,7 +32,7 @@
 					Sign in to your account
 				</h2>
 			</div>
-			<form on:submit|preventDefault={handleLogin} class="mt-8 space-y-6">
+			<form on:submit|preventDefault={handleLogin} class="mt-8 space-y-4">
 				<input type="hidden" name="remember" default={true} />
 				<div class="-space-y-px rounded-md shadow-md">
 					<div>
@@ -43,7 +43,7 @@
 							type="email"
 							bind:value={email}
 							autoComplete="email"
-							class="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-3 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+							class="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-3 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
 							placeholder="Email address"
 						/>
 					</div>
@@ -55,7 +55,7 @@
 				<!-- </div> -->
 				<!-- <a -->
 				<!-- 	href="/signup" -->
-				<!-- 	class=" flex items-start justify-center text-center text-sm text-accent-focus" -->
+				<!-- 	class=" flex items-start justify-center text-center text-sm text-primary-focus" -->
 				<!-- > -->
 				<!-- 	Sign up -->
 				<!-- </a> -->

@@ -164,11 +164,11 @@
 	};
 </script>
 
-<section class="container z-20 bg-accent-focus py-4 drop-shadow-md">
+<section class="container z-20 bg-primary py-4 drop-shadow-md">
 	<div class=" flex h-full w-full  items-center justify-between space-x-2">
 		<a href="/dashboard">
 			<svg
-				class="h-6 w-6 !stroke-accent-content"
+				class="h-6 w-6 !stroke-primary-content"
 				fill="none"
 				stroke-linecap="round"
 				stroke-linejoin="round"
@@ -179,7 +179,7 @@
 				<path d="M19 12H5M12 19l-7-7 7-7" />
 			</svg>
 		</a>
-		<h1 class="w-max text-xl font-bold text-accent-content">Profile</h1>
+		<h1 class="w-max text-xl font-bold text-primary-content">Profile</h1>
 		<div class="ml-auto h-max w-max">
 			<div class="dropdown-end dropdown z-50 ">
 				<button tabindex="0">
@@ -197,7 +197,7 @@
 		</div>
 	</div>
 </section>
-<main class="container ">
+<main class="container bg-base-100">
 	<div class="card static my-8 block w-full bg-neutral shadow-xl">
 		<div class="card-body h-max">
 			<div class="flex items-center space-x-8">
@@ -318,7 +318,7 @@
 				</div>
 			</div>
 			<button
-				class="rounded-lg bg-gradient-to-tl from-accent to-accent-focus px-8 py-2"
+				class=" rounded-lg bg-gradient-to-tl from-primary to-primary px-8 py-2"
 				slot="footer"
 				on:click={() => handleSaveChanges()}
 			>
@@ -354,7 +354,7 @@
 				</div>
 			</div>
 			<button
-				class="rounded-lg bg-gradient-to-tl from-accent to-accent-focus px-8 py-2"
+				class="rounded-lg bg-gradient-to-tl from-primary to-primary px-8 py-2"
 				slot="footer"
 				on:click={() => handleSaveChanges()}
 			>

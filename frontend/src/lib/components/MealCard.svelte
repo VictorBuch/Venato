@@ -9,7 +9,7 @@
 </script>
 
 <div
-	class="flex h-28 flex-col rounded-md border border-gray-400 bg-base-content shadow-lg"
+	class="flex h-28 flex-col rounded-md border border-base-300 bg-base-content shadow-lg"
 	on:click={addFoodItem}
 >
 	<div class="flex h-full items-center py-3 px-4">
@@ -34,7 +34,7 @@
 		</div>
 		<PlusCircle size={'25'} />
 	</div>
-	<hr class="border border-gray-200" />
+	<hr class="border border-base-300" />
 	<p class="flex h-max items-end justify-center  py-2 text-center text-sm">
 		{calories} kcal
 	</p>

@@ -44,11 +44,11 @@
 	};
 </script>
 
-<section class="container bg-accent py-8 drop-shadow-md">
+<section class="container bg-primary py-8 drop-shadow-md">
 	<div class=" flex h-full w-full items-center justify-center  ">
 		<button on:click={() => history.back()} class="mr-auto">
 			<svg
-				class="h-6 w-6 !stroke-accent-content"
+				class="h-6 w-6 !stroke-primary-content"
 				fill="none"
 				stroke-linecap="round"
 				stroke-linejoin="round"
@@ -59,7 +59,7 @@
 				<path d="M19 12H5M12 19l-7-7 7-7" />
 			</svg>
 		</button>
-		<h1 class="ml-24 w-full text-xl font-bold text-accent-content">Add Food</h1>
+		<h1 class="ml-24 w-full text-xl font-bold text-primary-content">Add Food</h1>
 	</div>
 </section>
 <div class="container mt-16 flex w-full flex-col items-center justify-center">
