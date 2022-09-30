@@ -4,11 +4,13 @@
 	import WeightKilogram from 'svelte-material-icons/WeightKilogram.svelte';
 	import Fire from 'svelte-material-icons/Fire.svelte';
 	import CalendarToday from 'svelte-material-icons/CalendarToday.svelte';
-	import type { Meal } from '../types/meals';
-	import { getCaloriesProportionateToPortion } from '$lib/helpers';
+	import type { Meal } from '$lib/types/meals';
 	import { supabase } from '$lib/supabaseClient';
-	import { user } from '../stores/userStore';
-	import { get } from 'svelte/store';
+	import { user } from '$lib/stores/userStore';
+	import { goto } from '$app/navigation';
+	import { isOverlayOpen } from '$lib/stores/overlayStore';
+	import Modal from '$lib/components/Modal.svelte';
+	import { updateUserCaloriesAndMacros } from '$lib/calculateCaloricIntake';
 
 	onMount(async () => {
 		const seven = new Date();
@@ -127,6 +129,39 @@
 			goto('/');
 		}
 	};
+
+	let weightModal = false;
+	let heightModal = false;
+	let backupWeight = 0;
+	let backupHeight = 0;
+	const toggleWeightModal = () => {
+		if (weightModal) {
+			$user.weight = backupWeight;
+		} else {
+			backupWeight = $user.weight;
+		}
+		weightModal = !weightModal;
+		$isOverlayOpen = weightModal;
+	};
+
+	const toggleHeightModal = () => {
+		if (heightModal) {
+			$user.height = backupHeight;
+		} else {
+			backupHeight = $user.height;
+		}
+		heightModal = !heightModal;
+		$isOverlayOpen = heightModal;
+	};
+
+	const handleSaveChanges = async () => {
+		const { data, error } = await updateUserCaloriesAndMacros();
+		if (!error) {
+			weightModal = false;
+			heightModal = false;
+			$isOverlayOpen = false;
+		}
+	};
 </script>
 
 <section class="container z-20 bg-accent py-8 drop-shadow-md">
@@ -169,7 +204,7 @@
 	</div>
 </section>
 <main class="container ">
-	<div class="card my-8 block w-full bg-neutral shadow-xl">
+	<div class="card static my-8 block w-full bg-neutral shadow-xl">
 		<div class="card-body h-max">
 			<div class="flex items-center space-x-8">
 				<div class="avatar">
@@ -234,7 +269,98 @@
 					<p>Activity Level</p>
 					<p class="text-sm font-light text-gray-400">{$user.activity_level}</p>
 				</a>
+				<div class="divider m-0" />
+				<button
+					on:click={() => toggleWeightModal()}
+					class="flex w-full cursor-pointer select-none items-center justify-between p-1 text-left"
+				>
+					<p>Weight</p>
+					<p class="text-sm font-light text-gray-400">{$user.weight} kgs</p>
+				</button>
+				<div class="divider m-0" />
+				<button
+					on:click={() => toggleHeightModal()}
+					class="flex w-full cursor-pointer select-none items-center justify-between p-1 text-left"
+				>
+					<p>Height</p>
+					<p class="text-sm font-light text-gray-400">{$user.height} cm</p>
+				</button>
 			</div>
 		</div>
 	</div>
 </main>
+{#if $isOverlayOpen}
+	{#if weightModal}
+		<Modal on:close={() => toggleWeightModal()}>
+			<h1 slot="title">Track weight</h1>
+			<div slot="content" class="flex w-full items-center justify-between px-4">
+				<div
+					on:click={() => {
+						$user.weight -= 0.2;
+						// fix floating point math inaccuracy
+						$user.weight = Math.round($user.weight * 10) / 10;
+					}}
+					class="flex aspect-square h-7 w-7 items-center justify-center rounded-full border border-solid border-primary-content "
+				>
+					-
+				</div>
+				<p class="text-3xl font-semibold text-primary-content">
+					{$user.weight}
+				</p>
+				<div
+					on:click={() => {
+						$user.weight += 0.2;
+						// fix floating point math inaccuracy
+						$user.weight = Math.round($user.weight * 10) / 10;
+					}}
+					class="flex aspect-square h-7 w-7 items-center justify-center rounded-full border border-solid border-primary-content "
+				>
+					+
+				</div>
+			</div>
+			<button
+				class="rounded-lg bg-gradient-to-tl from-accent to-accent-focus px-8 py-2"
+				slot="footer"
+				on:click={() => handleSaveChanges()}
+			>
+				Save changes
+			</button>
+		</Modal>
+	{:else if heightModal}
+		<Modal on:close={() => toggleHeightModal()}>
+			<h1 slot="title">Height</h1>
+			<div slot="content" class="flex w-full items-center justify-between px-4">
+				<div
+					on:click={() => {
+						$user.height -= 1;
+						// fix floating point math inaccuracy
+						$user.height = Math.round($user.height * 10) / 10;
+					}}
+					class="flex aspect-square h-7 w-7 items-center justify-center rounded-full border border-solid border-primary-content "
+				>
+					-
+				</div>
+				<p class="text-3xl font-semibold text-primary-content">
+					{$user.height}
+				</p>
+				<div
+					on:click={() => {
+						$user.height += 1;
+						// fix floating point math inaccuracy
+						$user.height = Math.round($user.height * 10) / 10;
+					}}
+					class="flex aspect-square h-7 w-7 items-center justify-center rounded-full border border-solid border-primary-content "
+				>
+					+
+				</div>
+			</div>
+			<button
+				class="rounded-lg bg-gradient-to-tl from-accent to-accent-focus px-8 py-2"
+				slot="footer"
+				on:click={() => handleSaveChanges()}
+			>
+				Save changes
+			</button>
+		</Modal>
+	{/if}
+{/if}

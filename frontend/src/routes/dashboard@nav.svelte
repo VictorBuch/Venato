@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import ProgressRing from '../components/ProgressRing.svelte';
-	import MealCard from '../components/MealCard.svelte';
+	import ProgressRing from '$lib/components/ProgressRing.svelte';
+	import MealCard from '$lib/components/MealCard.svelte';
 	import { onMount } from 'svelte';
-	import { user } from '../stores/userStore';
-	import { supabase } from '../lib/supabaseClient';
+	import { user } from '$lib/stores/userStore';
+	import { supabase } from '$lib/supabaseClient';
 
 	// SVG ICONS
 	import DotsVertical from 'svelte-material-icons/DotsVertical.svelte';
@@ -28,14 +28,14 @@
 		proteinEaten,
 		proteinGoal,
 		proteinPercent
-	} from '../stores/macrosStore.js';
+	} from '$lib/stores/macrosStore.js';
 	import {
 		consumedBreakfast,
 		consumedLunch,
 		consumedDinner,
 		consumedSnacks,
 		meals
-	} from '../stores/consumedMeals';
+	} from '$lib/stores/consumedMeals';
 
 	let consumedMeals;
 	let fetchedMeals;

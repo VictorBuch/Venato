@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { supabase } from '$lib/supabaseClient';
-	import { user } from '../../stores/userStore';
+	import { user } from '$lib/stores/userStore';
 	import { goto } from '$app/navigation';
 	import { toast } from '@zerodevx/svelte-toast';
-	import ProgressRing from '../../components/ProgressRing.svelte';
+	import ProgressRing from '$lib/components/ProgressRing.svelte';
 	import { fade } from 'svelte/transition';
-	import type { Meal } from '../../types/meals';
+	import type { Meal } from '$lib/types/meals';
 	import { page } from '$app/stores';
 
 	// Icons

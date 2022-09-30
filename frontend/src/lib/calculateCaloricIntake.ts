@@ -1,3 +1,38 @@
+import { supabase } from '$lib/supabaseClient';
+import { user } from '$lib/stores/userStore';
+import { get } from 'svelte/store';
+import type { PostgrestError, User } from '@supabase/supabase-js';
+export const updateUserCaloriesAndMacros = async (): Promise<{data: User | null, error: PostgrestError| null}> => {
+  const calories = calculateCaloricIntake(
+    get(user).weight,
+    get(user).height,
+    get(user).age,
+    get(user).sex,
+    get(user).goal,
+    get(user).weight_loss_amount,
+    get(user).activity_level,
+  );
+  console.log('calories', calories);
+  const { carbGoal, fatGoal, proteinGoal } = calculateCarbFatProteinRatio(calories);
+  console.log(carbGoal, fatGoal, proteinGoal);
+  const { data, error } = await supabase
+    .from('profiles')
+    .update({
+      ...get(user),
+      calorie_goal: calories,
+      carb_goal: carbGoal,
+      fat_goal: fatGoal,
+      protein_goal: proteinGoal
+    })
+    .match({ id: get(user).id })
+    .single();
+
+  if (!error) {
+    user.set(data);
+  } 
+  return { data, error }
+};
+
 export const calculateCaloricIntake = (
 	weight: number,
 	height: number,

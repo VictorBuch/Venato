@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { supabase } from '$lib/supabaseClient';
-	import { user } from '../../stores/userStore';
+	import { user } from '$lib/stores/userStore';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { goto } from '$app/navigation';
 

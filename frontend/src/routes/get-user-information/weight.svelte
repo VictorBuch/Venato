@@ -1,13 +1,9 @@
 <script lang="ts">
-	import { supabase } from '$lib/supabaseClient';
-	import { user } from '../../stores/userStore';
+	import { user } from '$lib/stores/userStore';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { goto } from '$app/navigation';
 	import { onMount, onDestroy } from 'svelte';
-	import {
-		calculateCaloricIntake,
-		calculateCarbFatProteinRatio
-	} from '$lib/calculateCaloricIntake';
+	import { updateUserCaloriesAndMacros } from '$lib/calculateCaloricIntake';
 
 	let weight = '';
 	let desiredWeight = '';
@@ -26,55 +22,41 @@
 		}
 	};
 
-	const updateUserCaloriesAndMacros = async () => {
-		const calories = calculateCaloricIntake(
-			$user.weight,
-			$user.height,
-			$user.age,
-			$user.sex,
-			$user.goal,
-			$user.weight_loss_amount,
-			$user.activityLevel
-		);
-		console.log('calories', calories);
-		const { carbGoal, fatGoal, proteinGoal } = calculateCarbFatProteinRatio(calories);
-		console.log(carbGoal, fatGoal, proteinGoal);
-		const { data, error } = await supabase
-			.from('profiles')
-			.update({
-				...$user,
-				calorie_goal: calories,
-				carb_goal: carbGoal,
-				fat_goal: fatGoal,
-				protein_goal: proteinGoal
-			})
-			.match({ id: $user.id })
-			.single();
-
+	const updateWeightLossAmount = async () => {
+		// @ts-ignore
+		$user = { ...$user, weight_loss_amount: lossPerWeek };
+		const { data, error } = await updateUserCaloriesAndMacros();
 		if (!error) {
-			$user = data;
 			toast.push('Success');
 			goto('/dashboard');
 		} else {
 			toast.push(error.message);
 		}
 	};
-
-	const updateWeightLossAmount = async () => {
-		$user = { ...$user, weight_loss_amount: lossPerWeek };
-		await updateUserCaloriesAndMacros();
-	};
 	const updateDesiredWeight = async () => {
-		$user = { ...$user, desired_weight: desiredWeight };
+		if ($user.goal == 'loss' && parseInt(desiredWeight) > $user.weight) {
+			toast.push('Desired weight must be less than current weight');
+			return;
+		} else if ($user.goal == 'gain' && parseInt(desiredWeight) < $user.weight) {
+			toast.push('Desired weight must be greater than current weight');
+			return;
+		}
+		$user = { ...$user, desired_weight: parseInt(desiredWeight) };
 		step = 'weightLossAmount';
 	};
 	const updateWeight = async () => {
-		$user = { ...$user, weight };
+		$user = { ...$user, weight: parseInt(weight) };
 		if ($user?.goal !== 'maintain') {
 			step = 'desiredWeight';
 		} else {
-			$user = { ...$user, weight_loss_amount: null, desired_weight: null };
-			await updateUserCaloriesAndMacros();
+			$user = { ...$user, weight_loss_amount: null };
+			const { data, error } = await updateUserCaloriesAndMacros();
+			if (!error) {
+				toast.push('Success');
+				goto('/dashboard');
+			} else {
+				toast.push(error.message);
+			}
 		}
 	};
 
