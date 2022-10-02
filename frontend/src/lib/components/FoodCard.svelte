@@ -26,7 +26,7 @@
 			<div class="flex items-center space-x-1">
 				<h1 class=" w-full font-semibold text-base-300">{title}</h1>
 				{#if isQuickTracked}
-					<TimerOutline size={'20'} color={'primary'} />
+					<TimerOutline size={'20'} color={'accent'} />
 				{/if}
 			</div>
 			<p class="w-full truncate text-xs text-base-100 ">

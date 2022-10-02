@@ -24,7 +24,7 @@
 		<div class="max-w-md w-full space-y-8">
 			<div>
 				<img
-					class="mx-auto h-12 w-auto rounded-full bg-primary !fill-primary p-2"
+					class="mx-auto h-12 w-auto rounded-full bg-accent !fill-accent p-2"
 					src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
 					alt="Workflow"
 				/>
@@ -55,7 +55,7 @@
 				<!-- </div> -->
 				<!-- <a -->
 				<!-- 	href="/signup" -->
-				<!-- 	class=" flex items-start justify-center text-center text-sm text-primary-focus" -->
+				<!-- 	class=" flex items-start justify-center text-center text-sm text-accent-focus" -->
 				<!-- > -->
 				<!-- 	Sign up -->
 				<!-- </a> -->

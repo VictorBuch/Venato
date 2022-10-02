@@ -34,7 +34,7 @@
 		</div>
 		<PlusCircle size={'25'} />
 	</div>
-	<hr class="border border-base-300" />
+	<hr class="border border-neutral/10" />
 	<p class="flex h-max items-end justify-center  py-2 text-center text-sm">
 		{calories} kcal
 	</p>

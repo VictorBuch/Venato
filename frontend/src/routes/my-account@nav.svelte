@@ -12,7 +12,7 @@
 	import Modal from '$lib/components/Modal.svelte';
 	import { updateUserCaloriesAndMacros } from '$lib/calculateCaloricIntake';
 
-	onMount(async () => {
+	const fetchStats = async () => {
 		const seven = new Date();
 		seven.setDate(seven.getDate() - 7);
 		const six = new Date();
@@ -116,7 +116,9 @@
 			average = isNaN(total) ? 'No data' : Math.ceil(total);
 			days = isNaN(diff) ? 'No data' : diff;
 		}
-	});
+	};
+
+	let statsPromise = fetchStats();
 
 	let consumed: [Meal];
 	let average: number | string;
@@ -164,11 +166,11 @@
 	};
 </script>
 
-<section class="container z-20 bg-primary py-4 drop-shadow-md">
+<section class="container z-20 bg-accent py-4 drop-shadow-md">
 	<div class=" flex h-full w-full  items-center justify-between space-x-2">
 		<a href="/dashboard">
 			<svg
-				class="h-6 w-6 !stroke-primary-content"
+				class="h-6 w-6 !stroke-accent-content"
 				fill="none"
 				stroke-linecap="round"
 				stroke-linejoin="round"
@@ -179,7 +181,7 @@
 				<path d="M19 12H5M12 19l-7-7 7-7" />
 			</svg>
 		</a>
-		<h1 class="w-max text-xl font-bold text-primary-content">Profile</h1>
+		<h1 class="w-max text-xl font-bold text-accent-content">Profile</h1>
 		<div class="ml-auto h-max w-max">
 			<div class="dropdown-end dropdown z-50 ">
 				<button tabindex="0">
@@ -224,7 +226,7 @@
 						<WeightKilogram size="30" />
 					</div>
 					<div class="stat-title">Weight</div>
-					<div class="stat-value">{$user.weight} Kgs</div>
+					<div class="stat-value ">{$user.weight}</div>
 					{#if $user?.goal}
 						<div class="stat-desc">
 							Goal: {$user?.goal === 'maintain' ? 'maintain' : $user?.desired_weight + 'Kgs'}
@@ -232,23 +234,45 @@
 					{/if}
 				</div>
 
-				<div class="stat place-items-center">
-					<div class="stat-figure">
-						<Fire size="30" />
+				{#await statsPromise}
+					<div class="stat place-items-center">
+						<div class="stat-figure">
+							<Fire size="30" />
+						</div>
+						<div class="stat-title">Average Calories Eaten</div>
+						<div class="stat-value animate-pulse h-12 w-32 bg-gray-500 rounded-md" />
+						<!-- <div class="stat-desc">↗︎ 400 (22%)</div> -->
 					</div>
-					<div class="stat-title">Average Calories Eaten</div>
-					<div class="stat-value">{average}</div>
-					<!-- <div class="stat-desc">↗︎ 400 (22%)</div> -->
-				</div>
 
-				<div class="stat place-items-center">
-					<div class="stat-figure">
-						<CalendarToday size="30" />
+					<div class="stat place-items-center">
+						<div class="stat-figure">
+							<CalendarToday size="30" />
+						</div>
+						<div class="stat-title">Days Not Tracked</div>
+						<div class="stat-value animate-pulse  h-12 w-32 bg-gray-500 rounded-md" />
+						<!-- <div class="stat-desc">↘︎ 3 (14%)</div> -->
 					</div>
-					<div class="stat-title">Days Not Tracked</div>
-					<div class="stat-value">{days}</div>
-					<!-- <div class="stat-desc">↘︎ 3 (14%)</div> -->
-				</div>
+				{:then stats}
+					<div class="stat place-items-center">
+						<div class="stat-figure">
+							<Fire size="30" />
+						</div>
+						<div class="stat-title">Average Calories Eaten</div>
+						<div class="stat-value">{average}</div>
+						<!-- <div class="stat-desc">↗︎ 400 (22%)</div> -->
+					</div>
+
+					<div class="stat place-items-center">
+						<div class="stat-figure">
+							<CalendarToday size="30" />
+						</div>
+						<div class="stat-title">Days Not Tracked</div>
+						<div class="stat-value">{days}</div>
+						<!-- <div class="stat-desc">↘︎ 3 (14%)</div> -->
+					</div>
+				{:catch error}
+					<p>Error: {error.message}</p>
+				{/await}
 			</div>
 			<p class="text-md mt-4 mb-2 font-semibold text-neutral-content">Customization</p>
 			<div class="rounded-md bg-base-100 p-3 shadow">
@@ -299,11 +323,11 @@
 						// fix floating point math inaccuracy
 						$user.weight = Math.round($user.weight * 10) / 10;
 					}}
-					class="flex aspect-square h-7 w-7 items-center justify-center rounded-full border border-solid border-primary-content "
+					class="flex aspect-square h-7 w-7 items-center justify-center rounded-full border border-solid border-accent-content "
 				>
 					-
 				</div>
-				<p class="text-3xl font-semibold text-primary-content">
+				<p class="text-3xl font-semibold text-accent-content">
 					{$user.weight}
 				</p>
 				<div
@@ -312,13 +336,13 @@
 						// fix floating point math inaccuracy
 						$user.weight = Math.round($user.weight * 10) / 10;
 					}}
-					class="flex aspect-square h-7 w-7 items-center justify-center rounded-full border border-solid border-primary-content "
+					class="flex aspect-square h-7 w-7 items-center justify-center rounded-full border border-solid border-accent-content "
 				>
 					+
 				</div>
 			</div>
 			<button
-				class=" rounded-lg bg-gradient-to-tl from-primary to-primary px-8 py-2"
+				class=" rounded-lg bg-gradient-to-tl from-accent to-accent px-8 py-2"
 				slot="footer"
 				on:click={() => handleSaveChanges()}
 			>
@@ -335,11 +359,11 @@
 						// fix floating point math inaccuracy
 						$user.height = Math.round($user.height * 10) / 10;
 					}}
-					class="flex aspect-square h-7 w-7 items-center justify-center rounded-full border border-solid border-primary-content "
+					class="flex aspect-square h-7 w-7 items-center justify-center rounded-full border border-solid border-accent-content "
 				>
 					-
 				</div>
-				<p class="text-3xl font-semibold text-primary-content">
+				<p class="text-3xl font-semibold text-accent-content">
 					{$user.height}
 				</p>
 				<div
@@ -348,13 +372,13 @@
 						// fix floating point math inaccuracy
 						$user.height = Math.round($user.height * 10) / 10;
 					}}
-					class="flex aspect-square h-7 w-7 items-center justify-center rounded-full border border-solid border-primary-content "
+					class="flex aspect-square h-7 w-7 items-center justify-center rounded-full border border-solid border-accent-content "
 				>
 					+
 				</div>
 			</div>
 			<button
-				class="rounded-lg bg-gradient-to-tl from-primary to-primary px-8 py-2"
+				class="rounded-lg bg-gradient-to-tl from-accent to-accent px-8 py-2"
 				slot="footer"
 				on:click={() => handleSaveChanges()}
 			>

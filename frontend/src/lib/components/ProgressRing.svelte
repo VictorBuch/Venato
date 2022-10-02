@@ -13,7 +13,7 @@
 			<circle class="stroke-gray-600" r="16" cx="18" cy="18" fill="none" />
 			{#if percent > 0}
 				<circle
-					class="-rotate-90 stroke-primary"
+					class="-rotate-90 stroke-accent"
 					style="	transform-origin: 50% 50%;
 			stroke-dashoffset: {100 - percent}"
 					r="16"

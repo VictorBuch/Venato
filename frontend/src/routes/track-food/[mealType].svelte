@@ -3,6 +3,7 @@
 	import { user } from '$lib/stores/userStore';
 	import { goto } from '$app/navigation';
 	import type { Meal } from '$lib/types/meals';
+	import autoAnimate from '@formkit/auto-animate';
 
 	import {
 		consumedBreakfast,
@@ -34,10 +35,13 @@
 	import { toast } from '@zerodevx/svelte-toast';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
+	import FoodCardSkeleton from '$lib/components/FoodCardSkeleton.svelte';
 
 	let mealType = $page?.params?.mealType;
 	let savedMeals: [Meal];
 	let recentMeals: [Meal];
+	let searchQuery = '';
+	let activeTab = 'recent';
 
 	const fetchMealData = async () => {
 		try {
@@ -66,9 +70,6 @@
 	};
 
 	let fetchData = fetchMealData();
-
-	let searchQuery = '';
-	let activeTab = 'recent';
 
 	$: filteredMeals =
 		$meals && mealType
@@ -130,11 +131,11 @@
 </script>
 
 <div class="h-screen w-screen overflow-hidden text-neutral-content">
-	<section class="container bg-primary py-4 drop-shadow-md">
+	<section class="container bg-accent py-4 drop-shadow-md">
 		<div class=" flex h-full w-full  items-center justify-between space-x-2">
 			<a href="/dashboard">
 				<svg
-					class="h-6 w-6 !stroke-primary-content"
+					class="h-6 w-6 !stroke-accent-content"
 					fill="none"
 					stroke-linecap="round"
 					stroke-linejoin="round"
@@ -145,7 +146,7 @@
 					<path d="M19 12H5M12 19l-7-7 7-7" />
 				</svg>
 			</a>
-			<h1 class="w-max text-xl font-bold text-primary-content">
+			<h1 class="w-max text-xl font-bold text-accent-content">
 				{mealType?.toUpperCase()}
 			</h1>
 			<div class="ml-auto h-max w-max">
@@ -171,7 +172,7 @@
 						type="text"
 						placeholder="Search…"
 						bind:value={searchQuery}
-						class="input input-bordered w-full bg-primary-content !text-black placeholder:text-gray-700"
+						class="input input-bordered w-full bg-accent-content !text-black placeholder:text-gray-700"
 					/>
 					<button class="btn btn-square">
 						<svg
@@ -193,7 +194,7 @@
 			</div>
 			<figure
 				on:click={handleBarcodeScanning}
-				class="rounded-full bg-primary-content p-2 text-neutral"
+				class="rounded-full bg-accent-content p-2 text-neutral"
 			>
 				<BarcodeScan size={'25'} color="inherit" />
 			</figure>
@@ -201,7 +202,7 @@
 	</section>
 	<div class="container h-full space-y-4 overflow-auto pb-10">
 		<section
-			class="my-8 flex w-full flex-col items-center space-y-4 rounded border border-primary p-4 text-neutral-content shadow-lg"
+			class="my-8 flex w-full flex-col items-center space-y-4 rounded border border-accent p-4 text-neutral-content shadow-lg"
 		>
 			<div class="flex w-full flex-col items-center justify-center space-y-2">
 				<div class="flex w-full items-center justify-between">
@@ -210,26 +211,26 @@
 						{$caloriesEaten}/{$caloriesGoal} kcal
 					</h3>
 				</div>
-				<progress class="progress progress-primary w-full" value={$caloriesPercent} max="100" />
+				<progress class="progress progress-accent w-full" value={$caloriesPercent} max="100" />
 			</div>
 			<div class="flex w-full items-center justify-between">
 				<div class="flex w-1/4 flex-col items-center justify-center space-y-2">
 					<h3 class="text-sm">Carbs</h3>
-					<progress class="progress progress-primary w-full" value={$carbsPercent} max="100" />
+					<progress class="progress progress-accent w-full" value={$carbsPercent} max="100" />
 					<p class="text-sm">
 						{$carbsEaten}/{$carbsGoal}g
 					</p>
 				</div>
 				<div class="flex w-1/4 flex-col items-center justify-center space-y-2">
 					<h3 class="text-sm">Protein</h3>
-					<progress class="progress progress-primary w-full" value={$proteinPercent} max="100" />
+					<progress class="progress progress-accent w-full" value={$proteinPercent} max="100" />
 					<p class="text-sm">
 						{$proteinEaten}/{$proteinGoal}g
 					</p>
 				</div>
 				<div class="flex w-1/4 flex-col items-center justify-center space-y-2">
 					<h3 class="text-sm">fat</h3>
-					<progress class="progress progress-primary w-full" value={$fatPercent} max="100" />
+					<progress class="progress progress-accent w-full" value={$fatPercent} max="100" />
 					<p class="text-sm">
 						{$fatEaten}/{$fatGoal}g
 					</p>
@@ -240,44 +241,44 @@
 			<button
 				on:click={() => (activeTab = 'recent')}
 				class:tab-active={activeTab === 'recent'}
-				class:!border-primary={activeTab === 'recent'}
+				class:!border-accent={activeTab === 'recent'}
 				class="tab tab-bordered w-1/3">Recent meals</button
 			>
 			<button
 				on:click={() => (activeTab = 'saved')}
 				class:tab-active={activeTab === 'saved'}
-				class:!border-primary={activeTab === 'saved'}
+				class:!border-accent={activeTab === 'saved'}
 				class="tab tab-bordered w-1/3">Saved meals</button
 			>
 			<button
 				on:click={() => (activeTab = 'meals')}
 				class:tab-active={activeTab === 'meals'}
-				class:!border-primary={activeTab === 'meals'}
+				class:!border-accent={activeTab === 'meals'}
 				class="tab tab-bordered w-1/3 ">All meals</button
 			>
 		</div>
-		{#await fetchData then data}
-			{#if activeTab === 'recent'}
-				{#if $combinedMealsObj[mealType]?.length > 0 && !searchQuery.length}
-					<section class="my-8">
-						<h1>Consumed meals</h1>
-						<div class="space-y-4">
-							{#each $combinedMealsObj[mealType] as meal}
-								<FoodCard
-									title={meal.name}
-									calories={meal.calories}
-									servingSize={meal.portion}
-									isQuickTracked={meal.is_quick_tracked}
-									on:clickFoodIcon={() => handleRemoveMeals(meal)}
-									on:customizeFoodItem={() => handleCustomizePortion(meal)}
-									remove
-								/>
-							{/each}
-						</div>
-					</section>
-				{/if}
+		{#if activeTab === 'recent'}
+			{#if $combinedMealsObj[mealType]?.length > 0 && !searchQuery.length}
 				<section class="my-8">
-					<h1>Recent Foods</h1>
+					<h1>Consumed meals</h1>
+					<div class="space-y-4">
+						{#each $combinedMealsObj[mealType] as meal}
+							<FoodCard
+								title={meal.name}
+								calories={meal.calories}
+								servingSize={meal.portion}
+								isQuickTracked={meal.is_quick_tracked}
+								on:clickFoodIcon={() => handleRemoveMeals(meal)}
+								on:customizeFoodItem={() => handleCustomizePortion(meal)}
+								remove
+							/>
+						{/each}
+					</div>
+				</section>
+			{/if}
+			<section class="my-8">
+				<h1>Recent Foods</h1>
+				<div use:autoAnimate>
 					{#if filteredRecentFoods?.length > 0}
 						<div class="space-y-4">
 							{#each filteredRecentFoods as food}
@@ -292,9 +293,17 @@
 								/>
 							{/each}
 						</div>
+					{:else}
+						<div class="space-y-4">
+							{#each Array(3) as food}
+								<FoodCardSkeleton />
+							{/each}
+						</div>
 					{/if}
-				</section>
-			{/if}
+				</div>
+			</section>
+		{/if}
+		{#await fetchData then data}
 			{#if activeTab === 'saved'}
 				<section class="my-8">
 					<h1>Saved Foods</h1>

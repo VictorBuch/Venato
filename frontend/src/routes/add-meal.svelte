@@ -116,7 +116,7 @@
 			<div>
 				<button
 					on:click|preventDefault={handleSubmit}
-					class=" !mt-8 w-full rounded-md bg-primary px-4 py-3"
+					class=" !mt-8 w-full rounded-md bg-accent px-4 py-3"
 				>
 					Submit meal
 				</button>

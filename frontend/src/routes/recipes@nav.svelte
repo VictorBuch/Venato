@@ -8,11 +8,11 @@
 	let searchQuery = '';
 </script>
 
-<section class="container bg-primary py-8 drop-shadow-md">
+<section class="container bg-accent py-8 drop-shadow-md">
 	<div class=" flex h-full w-full  items-center justify-between space-x-2">
 		<a href="/dashboard">
 			<svg
-				class="h-6 w-6 !stroke-primary-content"
+				class="h-6 w-6 !stroke-accent-content"
 				fill="none"
 				stroke-linecap="round"
 				stroke-linejoin="round"
@@ -23,7 +23,7 @@
 				<path d="M19 12H5M12 19l-7-7 7-7" />
 			</svg>
 		</a>
-		<h1 class="w-max text-xl font-bold text-primary-content">Find Recipes</h1>
+		<h1 class="text-content w-max text-xl font-bold">Find Recipes</h1>
 		<div class="ml-auto h-max w-max" />
 	</div>
 	<div class="mt-6 flex items-center justify-center space-x-2">
@@ -33,7 +33,7 @@
 					type="text"
 					placeholder="Search…"
 					bind:value={searchQuery}
-					class="input input-bordered w-full bg-primary-content !text-black placeholder:text-gray-700"
+					class="input input-bordered w-full bg-accent-content !text-black placeholder:text-gray-700"
 				/>
 				<button class="btn btn-square">
 					<svg
@@ -93,9 +93,9 @@
 			<div class="container flex items-center justify-between">
 				<h1 class="font-semibold uppercase text-base-content">{meal}</h1>
 				<a class="flex items-center space-x-4" href="/recipes/{meal}">
-					<p class="font-semibold text-primary">See All</p>
+					<p class="font-semibold text-accent">See All</p>
 					<svg
-						class="h-6  w-6 rotate-180 !stroke-primary"
+						class="h-6  w-6 rotate-180 !stroke-accent"
 						fill="none"
 						stroke-linecap="round"
 						stroke-linejoin="round"
