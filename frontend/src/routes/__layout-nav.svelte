@@ -5,7 +5,6 @@
 	import ChartLine from 'svelte-material-icons/ChartLine.svelte';
 	import Noodles from 'svelte-material-icons/Noodles.svelte';
 	import Account from 'svelte-material-icons/Account.svelte';
-	import { fly } from 'svelte/transition';
 </script>
 
 <slot />

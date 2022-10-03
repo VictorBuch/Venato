@@ -1,5 +1,5 @@
 <svelte:head>
-	<title>Fitness Journey | 404</title>
+	<title>Venato | 404</title>
 </svelte:head>
 
 <div class="flex h-screen w-full flex-col items-center justify-center space-y-4">

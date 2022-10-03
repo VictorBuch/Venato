@@ -6,19 +6,28 @@
 	const updateUserActivity = async (
 		activity_level: 'sedentary' | 'lightly active' | 'moderately active' | 'active' | 'very active'
 	) => {
-		console.log(activity_level);
 		$user = { ...$user, activity_level };
-		const { data, error } = await updateUserCaloriesAndMacros();
-		if (!error) {
-			goto('/my-account');
+		if ($user.firstTimeSetup) {
+			delete $user.firstTimeSetup;
+			const { data, error } = await updateUserCaloriesAndMacros();
+			if (!error) {
+				goto('/get-user-information/completed');
+			} else {
+				console.log(error);
+			}
 		} else {
-			console.log(error);
+			const { data, error } = await updateUserCaloriesAndMacros();
+			if (!error) {
+				goto('/my-account');
+			} else {
+				console.log(error);
+			}
 		}
 	};
 </script>
 
 <svelte:head>
-	<title>Firness Journey | Set Activity</title>
+	<title>Venato | Set Activity</title>
 </svelte:head>
 <template>
 	<section class="container z-20 bg-accent-focus py-4 drop-shadow-md">

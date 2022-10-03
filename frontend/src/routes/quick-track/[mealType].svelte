@@ -155,7 +155,7 @@
 </script>
 
 <svelte:head>
-	<title>Fitness Journey | Quick Track</title>
+	<title>Venato | Quick Track</title>
 </svelte:head>
 <section class="container mb-8 bg-accent pt-4 drop-shadow-md">
 	<div class=" flex h-full w-full  items-center  ">

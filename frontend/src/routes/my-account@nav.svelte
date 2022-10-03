@@ -166,6 +166,9 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Venato | My Account</title>
+</svelte:head>
 <section class="container z-20 bg-accent py-4 drop-shadow-md">
 	<div class=" flex h-full w-full  items-center justify-between space-x-2">
 		<a href="/dashboard">

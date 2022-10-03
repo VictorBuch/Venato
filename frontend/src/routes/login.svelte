@@ -19,17 +19,17 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Venato | Login</title>
+</svelte:head>
+
 <div class="mx-auto h-screen w-3/4 ">
 	<div class="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
 		<div class="max-w-md w-full space-y-8">
 			<div>
-				<img
-					class="mx-auto h-12 w-auto rounded-full bg-accent !fill-accent p-2"
-					src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
-					alt="Workflow"
-				/>
+				<h1 class="text-center text-6xl font-semibold text-accent">Venato</h1>
 				<h2 class="mt-6 text-center text-2xl font-extrabold text-gray-100">
-					Sign in to your account
+					Sign in to start getting healthier
 				</h2>
 			</div>
 			<form on:submit|preventDefault={handleLogin} class="mt-8 space-y-4">
