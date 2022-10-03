@@ -14,6 +14,7 @@ type User = {
 	weight: number
 	weight_loss_amount: null | 0.25 | 0.5 | 1
   desired_weight: null | number
+  firstTimeSetup?: null | boolean
 }
 
 import { writable } from 'svelte-local-storage-store'

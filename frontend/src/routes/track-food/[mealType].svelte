@@ -130,6 +130,9 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Venato | Track Food</title>
+</svelte:head>
 <div class="h-screen w-screen overflow-hidden text-neutral-content">
 	<section class="container bg-accent py-4 drop-shadow-md">
 		<div class=" flex h-full w-full  items-center justify-between space-x-2">

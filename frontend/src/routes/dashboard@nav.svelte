@@ -7,7 +7,6 @@
 	import { supabase } from '$lib/supabaseClient';
 
 	// SVG ICONS
-	import DotsVertical from 'svelte-material-icons/DotsVertical.svelte';
 	import FoodCroissant from 'svelte-material-icons/FoodCroissant.svelte';
 	import Noodles from 'svelte-material-icons/Noodles.svelte';
 	import Pasta from 'svelte-material-icons/Pasta.svelte';
@@ -102,12 +101,12 @@
 </script>
 
 <svelte:head>
-	<title>Firness Journey | Dashboard</title>
+	<title>Venato | Dashboard</title>
 </svelte:head>
 
 <main class=" w-screen overflow-x-hidden">
 	<nav class="container mt-6 flex h-max w-full items-center justify-evenly">
-		<h1 class="text-2xl font-bold text-accent">Fitness journey</h1>
+		<h1 class="text-2xl font-bold text-accent">Venato</h1>
 	</nav>
 	<div class="flex w-full flex-col items-center ">
 		<div class="container py-8">

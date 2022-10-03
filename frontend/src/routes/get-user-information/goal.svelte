@@ -1,23 +1,25 @@
 <script lang="ts">
-	import { supabase } from '$lib/supabaseClient';
 	import { user } from '$lib/stores/userStore';
-	import { toast } from '@zerodevx/svelte-toast';
 	import { goto } from '$app/navigation';
 
-	const updateUserGoal = async (goal: string) => {
+	const updateUserGoal = async (goal: 'maintain' | 'gain' | 'loss') => {
 		console.log(goal);
 		$user = { ...$user, goal };
-		goto('/get-user-information/weight');
+		if ($user.firstTimeSetup) {
+			goto('/get-user-information/basic-information');
+		} else {
+			goto('/get-user-information/weight');
+		}
 	};
 </script>
 
 <svelte:head>
-	<title>Firness Journey | Set goal</title>
+	<title>Venato | Set Goal</title>
 </svelte:head>
 <template>
 	<section class="container z-20 bg-accent-focus py-4 drop-shadow-md">
 		<div class=" flex h-full w-full  items-center space-x-2">
-			<a href="/my-account">
+			<button on:click={() => window.history.back()}>
 				<svg
 					class="h-6 w-6 !stroke-accent-content"
 					fill="none"
@@ -29,7 +31,7 @@
 				>
 					<path d="M19 12H5M12 19l-7-7 7-7" />
 				</svg>
-			</a>
+			</button>
 			<h1 class="w-max text-xl font-bold text-accent-content">My Goal</h1>
 		</div>
 	</section>

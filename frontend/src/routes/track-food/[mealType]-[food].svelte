@@ -39,7 +39,6 @@
 			}
 		} catch (error) {
 			console.log(error);
-			throw new Error('Error fetching meal data');
 		}
 	};
 
@@ -54,9 +53,8 @@
 			if (data) {
 				isSaved = true;
 			}
-		} catch (err) {
-			console.log(err);
-			throw new Error('Error fetching meal data');
+		} catch (error) {
+			console.log(error);
 		}
 	};
 
@@ -121,7 +119,7 @@
 </script>
 
 <svelte:head>
-	<title>fitness Journey | {food?.name}</title>
+	<title>Venato | {food?.name}</title>
 </svelte:head>
 <section class="flex items-end  justify-between  bg-accent px-4 py-8 drop-shadow-md">
 	<div use:autoAnimate class="flex items-center space-x-4">

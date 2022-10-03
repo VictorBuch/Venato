@@ -22,16 +22,24 @@
 		}
 	};
 
+	const handleNextStep = async (weightLossAmount: null | 0.25 | 0.5 | 1) => {
+		$user = { ...$user, weight_loss_amount: weightLossAmount };
+		if ($user.firstTimeSetup) {
+			goto('/get-user-information/activity');
+		} else {
+			const { data, error } = await updateUserCaloriesAndMacros();
+			if (!error) {
+				toast.push('Success');
+				goto('/dashboard');
+			} else {
+				toast.push(error.message);
+			}
+		}
+	};
+
 	const updateWeightLossAmount = async () => {
 		// @ts-ignore
-		$user = { ...$user, weight_loss_amount: lossPerWeek };
-		const { data, error } = await updateUserCaloriesAndMacros();
-		if (!error) {
-			toast.push('Success');
-			goto('/dashboard');
-		} else {
-			toast.push(error.message);
-		}
+		await handleNextStep(lossPerWeek);
 	};
 	const updateDesiredWeight = async () => {
 		if ($user.goal == 'loss' && parseInt(desiredWeight) > $user.weight) {
@@ -49,14 +57,7 @@
 		if ($user?.goal !== 'maintain') {
 			step = 'desiredWeight';
 		} else {
-			$user = { ...$user, weight_loss_amount: null };
-			const { data, error } = await updateUserCaloriesAndMacros();
-			if (!error) {
-				toast.push('Success');
-				goto('/dashboard');
-			} else {
-				toast.push(error.message);
-			}
+			await handleNextStep(null);
 		}
 	};
 
@@ -75,12 +76,12 @@
 </script>
 
 <svelte:head>
-	<title>Firness Journey | Set weight</title>
+	<title>Venato | Set weight</title>
 </svelte:head>
 <template>
 	<section class="container z-20 bg-accent-focus py-4 drop-shadow-md">
 		<div class=" flex h-full w-full  items-center space-x-2">
-			<a href="/get-user-information/goal">
+			<button on:click={() => window.history.back()}>
 				<svg
 					class="h-6 w-6 !stroke-accent-content"
 					fill="none"
@@ -92,7 +93,7 @@
 				>
 					<path d="M19 12H5M12 19l-7-7 7-7" />
 				</svg>
-			</a>
+			</button>
 			<h1 class="w-max text-xl font-bold text-accent-content">Get Started</h1>
 		</div>
 	</section>
@@ -158,11 +159,6 @@
 		</main>
 	</div>
 	<div class="text-md  container fixed bottom-0  pb-4">
-		<button
-			on:click|preventDefault={handleClick}
-			class=" btn-main !from-accent-focus !to-teal-500 "
-		>
-			Confirm
-		</button>
+		<button on:click|preventDefault={handleClick} class=" btn-main "> Confirm </button>
 	</div>
 </template>
