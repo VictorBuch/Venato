@@ -20,10 +20,10 @@
     "axios": "^0.27.2",
     "daisyui": "^1.25.4",
     "svelte-local-storage-store": "^0.2.6",
-    "svelte-material-icons": "^2.0.2",
-    "vite": "^3.1.4"
+    "svelte-material-icons": "^2.0.2"
   },
   "devDependencies": {
+    "vite": "^3.1.4",
     "@sveltejs/adapter-auto": "next",
     "@sveltejs/adapter-netlify": "^1.0.0-next.78",
     "@sveltejs/kit": "next",

@@ -1,5 +1,5 @@
 <script>
-	import '../app.css';
+	import '../../app.css';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import CalendarToday from 'svelte-material-icons/CalendarToday.svelte';
 	import ChartLine from 'svelte-material-icons/ChartLine.svelte';
