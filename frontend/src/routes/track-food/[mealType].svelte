@@ -34,7 +34,6 @@
 	import FoodCard from '$lib/components/FoodCard.svelte';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
 	import FoodCardSkeleton from '$lib/components/FoodCardSkeleton.svelte';
 
 	let mealType = $page?.params?.mealType;
@@ -70,6 +69,7 @@
 	};
 
 	let fetchData = fetchMealData();
+	console.log($combinedMealsObj[mealType]);
 
 	$: filteredMeals =
 		$meals && mealType
@@ -277,29 +277,35 @@
 				</section>
 			{/if}
 			<section class="my-8">
-				<h1>Recent Foods</h1>
+				<h1>Recent Meals</h1>
 				<div use:autoAnimate>
-					{#if filteredRecentFoods?.length > 0}
-						<div class="space-y-4">
-							{#each filteredRecentFoods as food}
-								<FoodCard
-									title={food.name}
-									calories={food.calories}
-									servingSize={food.portion}
-									on:clickFoodIcon={() => handleAddMeal(food)}
-									on:customizeFoodItem={() => {
-										handleCustomizePortion(food);
-									}}
-								/>
-							{/each}
-						</div>
-					{:else}
+					{#await fetchData}
 						<div class="space-y-4">
 							{#each Array(3) as food}
 								<FoodCardSkeleton />
 							{/each}
 						</div>
-					{/if}
+					{:then data}
+						{#if filteredRecentFoods?.length > 0}
+							<div class="space-y-4">
+								{#each filteredRecentFoods as food}
+									<FoodCard
+										title={food.name}
+										calories={food.calories}
+										servingSize={food.portion}
+										on:clickFoodIcon={() => handleAddMeal(food)}
+										on:customizeFoodItem={() => {
+											handleCustomizePortion(food);
+										}}
+									/>
+								{/each}
+							</div>
+						{:else}
+							<div class="mt-4 flex w-full items-center justify-center">
+								<h3 class="text-sm">No recent meals</h3>
+							</div>
+						{/if}
+					{/await}
 				</div>
 			</section>
 		{/if}

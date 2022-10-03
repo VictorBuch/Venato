@@ -7,6 +7,7 @@
 	import { fade } from 'svelte/transition';
 	import type { Meal } from '$lib/types/meals';
 	import { page } from '$app/stores';
+	import autoAnimate from '@formkit/auto-animate';
 
 	// Icons
 	import EmoticonExcited from 'svelte-material-icons/EmoticonExcited.svelte';
@@ -16,7 +17,7 @@
 	import EmoticonConfused from 'svelte-material-icons/EmoticonConfused.svelte';
 	import { onMount } from 'svelte';
 
-	let mealType: string;
+	let mealType = $page.params.mealType;
 	let food: Meal;
 	let isSaved = false;
 	let portion = '';
@@ -25,7 +26,7 @@
 	// TODO: make food rating work
 	let foodRating = 'A';
 
-	const getMealData = async () => {
+	const getFood = async () => {
 		try {
 			const { data, error } = await supabase
 				.from('meals')
@@ -34,14 +35,15 @@
 				.single();
 			if (data) {
 				food = data;
-				mealType = $page.params.mealType;
 				portion = String(food.portion);
-				console.log(food);
 			}
 		} catch (error) {
 			console.log(error);
 			throw new Error('Error fetching meal data');
 		}
+	};
+
+	const getIsFoodSaved = async () => {
 		try {
 			const { data, error } = await supabase
 				.from('saved_meals')
@@ -58,7 +60,8 @@
 		}
 	};
 
-	let promise = getMealData();
+	let foodPromise = getFood();
+	let savedPromise = getIsFoodSaved();
 
 	const handleSubmit = async (e: MouseEvent) => {
 		if (portion && unit) {
@@ -120,65 +123,71 @@
 <svelte:head>
 	<title>fitness Journey | {food?.name}</title>
 </svelte:head>
-{#await promise then data}
-	<section class="flex items-end  justify-between  bg-accent px-4 py-8 drop-shadow-md">
-		<div class="flex items-center space-x-4">
-			<a href="/track-food/{mealType}">
+<section class="flex items-end  justify-between  bg-accent px-4 py-8 drop-shadow-md">
+	<div use:autoAnimate class="flex items-center space-x-4">
+		<a href="/track-food/{mealType}">
+			<svg
+				class="h-6 w-6 !stroke-accent-content"
+				fill="none"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				stroke-width="2"
+				viewBox="0 0 24 24"
+				stroke="currentColor"
+			>
+				<path d="M19 12H5M12 19l-7-7 7-7" />
+			</svg>
+		</a>
+		{#await foodPromise}
+			<div class="text-lg font-semibold text-accent-content loading w-32 h-5  " />
+		{:then data}
+			<h1 class="text-lg font-semibold text-accent-content ">
+				{food?.name}
+			</h1>
+		{/await}
+	</div>
+	<button on:click={toggleFavorite}>
+		<div use:autoAnimate class="rounded-full bg-white p-2 drop-shadow-xl hover:drop-shadow-2xl">
+			{#if !isSaved}
 				<svg
-					class="h-6 w-6 !stroke-accent-content"
-					fill="none"
+					class="h-6 w-6"
+					fill="gray"
+					stroke="gray"
 					stroke-linecap="round"
 					stroke-linejoin="round"
 					stroke-width="2"
 					viewBox="0 0 24 24"
-					stroke="currentColor"
 				>
-					<path d="M19 12H5M12 19l-7-7 7-7" />
+					<path
+						in:fade
+						d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"
+					/>
 				</svg>
-			</a>
-			<h1 class="text-lg font-semibold text-accent-content ">
-				{food?.name}
-			</h1>
+			{:else}
+				<svg
+					class="h-6 w-6"
+					fill="red"
+					stroke="red"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					viewBox="0 0 24 24"
+				>
+					<path
+						in:fade
+						d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"
+					/>
+				</svg>
+			{/if}
 		</div>
-		<button on:click={toggleFavorite}>
-			<div class="rounded-full bg-white p-2 drop-shadow-xl hover:drop-shadow-2xl">
-				{#if !isSaved}
-					<svg
-						class="h-6 w-6"
-						fill="gray"
-						stroke="gray"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						viewBox="0 0 24 24"
-					>
-						<path
-							in:fade
-							d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"
-						/>
-					</svg>
-				{:else}
-					<svg
-						class="h-6 w-6"
-						fill="red"
-						stroke="red"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						viewBox="0 0 24 24"
-					>
-						<path
-							in:fade
-							d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"
-						/>
-					</svg>
-				{/if}
-			</div>
-		</button>
-	</section>
-	<div class="container relative mb-24 h-max">
-		<form class="mt-8 space-y-2">
-			<div class="flex space-x-2">
+	</button>
+</section>
+<div class="container relative mb-24 h-max">
+	<form class="mt-8 space-y-2">
+		<div use:autoAnimate class="flex space-x-2">
+			{#await foodPromise}
+				<div class="text-lg font-semibold text-accent-content loading w-full h-16  " />
+			{:then data}
 				<input
 					class="w-full  rounded border border-gray-400 p-2 text-gray-800 outline-none ring-0"
 					type="number"
@@ -192,9 +201,15 @@
 					<option value={'pound'}>pound</option>
 					<option value={'tbs'}>Tbs</option>
 				</select>
-			</div>
-		</form>
-		<div class="my-8 flex items-center space-x-3">
+			{/await}
+		</div>
+	</form>
+	<div use:autoAnimate class="my-8 flex items-center space-x-3">
+		{#await foodPromise}
+			<div class="text-lg font-semibold text-accent-content loading !rounded-full w-10 h-10" />
+
+			<div class="text-lg font-semibold text-accent-content loading w-32 h-10  " />
+		{:then data}
 			{#if foodRating === 'A'}
 				<figure class=" fill-info">
 					<EmoticonExcited color="inherit" size="40" />
@@ -221,10 +236,25 @@
 					{calculateFoodCalories()}
 				</span> kcal
 			</p>
-		</div>
-		<section class="my-8 space-y-6">
-			<p class="text-lg font-semibold text-base-content">Nutritional information</p>
-			<div class="flex justify-center space-x-6">
+		{/await}
+	</div>
+	<section class="my-8 space-y-6">
+		<p class="text-lg font-semibold text-base-content">Nutritional information</p>
+		<div use:autoAnimate class="flex justify-center space-x-6">
+			{#await foodPromise}
+				<div class="flex flex-col items-center">
+					<div class="loading w-20 h-20 !rounded-full" />
+					<p class="mt-2 text-xs uppercase text-base-content">Carbs</p>
+				</div>
+				<div class="flex flex-col items-center">
+					<div class="loading w-20 h-20 !rounded-full" />
+					<p class="mt-2 text-xs uppercase text-base-content">Protein</p>
+				</div>
+				<div class="flex flex-col items-center">
+					<div class="loading w-20 h-20 !rounded-full" />
+					<p class="mt-2 text-xs uppercase text-base-content">Fat</p>
+				</div>
+			{:then data}
 				<div class="flex flex-col items-center">
 					<ProgressRing
 						radius={75}
@@ -255,47 +285,62 @@
 					/>
 					<p class="mt-2 text-xs uppercase text-base-content">Fat</p>
 				</div>
+			{/await}
+		</div>
+	</section>
+	<section use:autoAnimate class="space-y-6">
+		<h1 class="font-semi-bold text-lg text-base-content">Other information</h1>
+		{#await foodPromise}
+			<div class="space-y-2">
+				<div class="loading w-full h-7" />
+				<div class="loading w-full h-5" />
+				<div class="loading w-full h-5" />
 			</div>
-		</section>
-		<section class="space-y-6">
-			<h1 class="font-semi-bold text-lg text-base-content">Other information</h1>
+			<div class="space-y-2">
+				<div class="loading w-full h-7" />
+			</div>
+			<div class="space-y-2">
+				<div class="loading w-full h-7" />
+				<div class="loading w-full h-5" />
+			</div>
+			<div class="space-y-2">
+				<div class="loading w-full h-7" />
+				<div class="loading w-full h-5" />
+				<div class="loading w-full h-5" />
+				<div class="loading w-full h-5" />
+			</div>
+		{:then data}
 			<section class="space-y-2">
 				<div class="text-semi-bold flex w-full items-center justify-between text-lg">
 					<p>Carbs</p>
-					<p>{food.carbs}</p>
+					<p>{food.carbs} g</p>
 				</div>
-				{#if Object.hasOwn(food, 'fiber')}
+				{#if Object.hasOwn(food, 'fiber_g')}
 					<div class="flex w-full items-center justify-between text-sm font-light">
 						<p>Fiber</p>
-						<p>{food.fiber}</p>
+						<p>{food.fiber_g} g</p>
 					</div>
 				{/if}
-				{#if Object.hasOwn(food, 'sugars')}
+				{#if Object.hasOwn(food, 'sugar_g')}
 					<div class="flex w-full items-center justify-between text-sm font-light">
-						<p>Sugars</p>
-						<p>{food.sugars}</p>
+						<p>Sugar</p>
+						<p>{food.sugar_g} g</p>
 					</div>
 				{/if}
 			</section>
 			<div class="text-semi-bold flex w-full items-center justify-between text-lg">
 				<p>Protein</p>
-				<p>{food.protein}</p>
+				<p>{food.protein} g</p>
 			</div>
 			<section class="space-y-2">
 				<div class="text-semi-bold flex w-full items-center justify-between text-lg">
 					<p>Fat</p>
-					<p>{food.fat}</p>
+					<p>{food.fat} g</p>
 				</div>
-				{#if Object.hasOwn(food, 'saturated_fat')}
+				{#if Object.hasOwn(food, 'fat_saturated_g')}
 					<div class="flex w-full items-center justify-between text-sm font-light">
 						<p>Saturated fat</p>
-						<p>{food.saturated_fat}</p>
-					</div>
-				{/if}
-				{#if Object.hasOwn(food, 'unsaturated_fat')}
-					<div class="flex w-full items-center justify-between text-sm font-light">
-						<p>Unsaturated fat</p>
-						<p>{food.unsaturated_fat}</p>
+						<p>{food.fat_saturated_g} g</p>
 					</div>
 				{/if}
 			</section>
@@ -303,28 +348,28 @@
 				<div class="text-semi-bold flex w-full items-center text-lg">
 					<p>Other</p>
 				</div>
-				{#if Object.hasOwn(food, 'cholesterol')}
+				{#if Object.hasOwn(food, 'cholesterol_mg')}
 					<div class="flex w-full items-center justify-between text-sm font-light">
 						<p>Cholesterol</p>
-						<p>{food.cholesterol}</p>
+						<p>{food.cholesterol_mg} mg</p>
 					</div>
 				{/if}
-				{#if Object.hasOwn(food, 'sodium')}
+				{#if Object.hasOwn(food, 'sodium_mg')}
 					<div class="flex w-full items-center justify-between text-sm font-light">
 						<p>Sodium</p>
-						<p>{food.sodium}</p>
+						<p>{food.sodium_mg} mg</p>
 					</div>
 				{/if}
-				{#if Object.hasOwn(food, 'potasium')}
+				{#if Object.hasOwn(food, 'potassium_mg')}
 					<div class="flex w-full items-center justify-between text-sm font-light">
 						<p>Potasium</p>
-						<p>{food.potasium}</p>
+						<p>{food.potassium_mg} mg</p>
 					</div>
 				{/if}
 			</section>
-		</section>
-	</div>
-	<div class="text-md  container fixed bottom-0 bg-gradient-to-t from-base-100 to-transparent pb-4">
-		<button on:click|preventDefault={handleSubmit} class=" btn-main "> Track </button>
-	</div>
-{/await}
+		{/await}
+	</section>
+</div>
+<div class="text-md  container fixed bottom-0 bg-gradient-to-t from-base-100 to-transparent pb-4">
+	<button on:click|preventDefault={handleSubmit} class=" btn-main "> Track </button>
+</div>

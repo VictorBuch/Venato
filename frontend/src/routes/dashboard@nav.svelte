@@ -105,7 +105,7 @@
 	<title>Firness Journey | Dashboard</title>
 </svelte:head>
 
-<main class=" w-screen overflow-x-hidden bg-neutral">
+<main class=" w-screen overflow-x-hidden">
 	<nav class="container mt-6 flex h-max w-full items-center justify-evenly">
 		<h1 class="text-2xl font-bold text-accent">Fitness journey</h1>
 	</nav>
