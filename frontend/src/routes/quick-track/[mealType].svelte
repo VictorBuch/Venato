@@ -32,6 +32,7 @@
 				}
 			});
 			const { items } = await response.json();
+			console.log(items);
 			if (items.length === 0) {
 				toast.push('No food found');
 			}
@@ -57,12 +58,12 @@
 					carbs: totalCarbs,
 					protein: totalProtein,
 					fat: totalFat,
-					saturatedFat: totalFatSaturated,
-					cholesterol: totalCholesterol,
-					sodium: totalSodium,
-					sugars: totalSugar,
-					potassium: totalPotassium,
-					fiber: totalFiber
+					fat_saturated_g: totalFatSaturated,
+					cholesterol_mg: totalCholesterol,
+					sodium_mg: totalSodium,
+					sugar_g: totalSugar,
+					potassium_mg: totalPotassium,
+					fiber_g: totalFiber
 				};
 				food = finalFood;
 			}
@@ -90,12 +91,12 @@
 					carbs: carbohydrates_total_g,
 					protein: protein_g,
 					fat: fat_total_g,
-					saturatedFat: fat_saturated_g,
-					cholesterol: cholesterol_mg,
-					sodium: sodium_mg,
-					sugars: sugar_g,
-					potassium: potassium_mg,
-					fiber: fiber_g
+					fat_saturated_g,
+					cholesterol_mg,
+					sodium_mg,
+					sugar_g,
+					potassium_mg,
+					fiber_g
 				};
 				food = finalFood;
 			}
@@ -115,10 +116,12 @@
 					carbs: food.carbs,
 					protein: food.protein,
 					fat: food.fat,
-					sodium_mg: food?.sodium,
-					potassium_g: food?.potassium,
-					fat_saturated_g: food?.saturatedFat,
-					cholesterol_mg: food?.cholesterol,
+					sodium_mg: food?.sodium_mg,
+					potassium_mg: food?.potassium_mg,
+					fat_saturated_g: food?.fat_saturated_g,
+					cholesterol_mg: food?.cholesterol_mg,
+					sugar_g: food?.sugar_g,
+					fiber_g: food?.fiber_g,
 					nutrition_grade: 'A',
 					is_quick_tracked: true
 				}
@@ -154,7 +157,7 @@
 <svelte:head>
 	<title>Fitness Journey | Quick Track</title>
 </svelte:head>
-<section class="container mb-8 bg-accent-focus pt-4 drop-shadow-md">
+<section class="container mb-8 bg-accent pt-4 drop-shadow-md">
 	<div class=" flex h-full w-full  items-center  ">
 		<a href="/track-food/{mealType}">
 			<svg
@@ -282,39 +285,35 @@
 					<h1 class="font-semi-bold text-lg text-base-content">Other information</h1>
 					<section class="space-y-2">
 						<div class="text-semi-bold flex w-full items-center justify-between text-lg">
-							<p>Carbs (g)</p>
-							<p>{food.carbs.toFixed(2)}</p>
+							<p>Carbs</p>
+							<p>{food.carbs.toFixed(2)} g</p>
 						</div>
-						{#if Object.hasOwn(food, 'fiber')}
+						{#if Object.hasOwn(food, 'fiber_g')}
 							<div class="flex w-full items-center justify-between text-sm font-light">
-								<p>Fiber (g)</p>
-								<p>{food.fiber.toFixed(2)}</p>
+								<p>Fiber</p>
+								<p>{food.fiber_g.toFixed(2)} g</p>
 							</div>
 						{/if}
-						{#if Object.hasOwn(food, 'sugars')}
+						{#if Object.hasOwn(food, 'sugar_g')}
 							<div class="flex w-full items-center justify-between text-sm font-light">
-								<p>Sugars (g)</p>
-								<p>{food.sugars.toFixed(2)}</p>
+								<p>Sugars</p>
+								<p>{food.sugar_g.toFixed(2)} g</p>
 							</div>
 						{/if}
 					</section>
 					<div class="text-semi-bold flex w-full items-center justify-between text-lg">
-						<p>Protein (g)</p>
-						<p>{food.protein.toFixed(2)}</p>
+						<p>Protein</p>
+						<p>{food.protein.toFixed(2)} g</p>
 					</div>
 					<section class="space-y-2">
 						<div class="text-semi-bold flex w-full items-center justify-between text-lg">
-							<p>Fat (g)</p>
-							<p>{food.fat.toFixed(2)}</p>
+							<p>Fat</p>
+							<p>{food.fat.toFixed(2)} g</p>
 						</div>
-						{#if Object.hasOwn(food, 'saturatedFat')}
+						{#if Object.hasOwn(food, 'fat_saturated_g')}
 							<div class="flex w-full items-center justify-between text-sm font-light">
-								<p>Saturated fat (g)</p>
-								<p>{food.saturatedFat.toFixed(2)}</p>
-							</div>
-							<div class="flex w-full items-center justify-between text-sm font-light">
-								<p>Unsaturated fat (g)</p>
-								<p>{Math.ceil(food.fat - food.saturatedFat).toFixed(2)}</p>
+								<p>Saturated fat</p>
+								<p>{food.fat_saturated_g.toFixed(2)} g</p>
 							</div>
 						{/if}
 					</section>
@@ -322,22 +321,22 @@
 						<div class="text-semi-bold flex w-full items-center text-lg">
 							<p>Other</p>
 						</div>
-						{#if Object.hasOwn(food, 'cholesterol')}
+						{#if Object.hasOwn(food, 'cholesterol_mg')}
 							<div class="flex w-full items-center justify-between text-sm font-light">
-								<p>Cholesterol (mg)</p>
-								<p>{food.cholesterol.toFixed(2)}</p>
+								<p>Cholesterol</p>
+								<p>{food.cholesterol_mg.toFixed(2)} mg</p>
 							</div>
 						{/if}
-						{#if Object.hasOwn(food, 'sodium')}
+						{#if Object.hasOwn(food, 'sodium_mg')}
 							<div class="flex w-full items-center justify-between text-sm font-light">
-								<p>Sodium (mg)</p>
-								<p>{food.sodium.toFixed(2)}</p>
+								<p>Sodium</p>
+								<p>{food.sodium_mg.toFixed(2)} mg</p>
 							</div>
 						{/if}
-						{#if Object.hasOwn(food, 'potasium')}
+						{#if Object.hasOwn(food, 'potassium_mg')}
 							<div class="flex w-full items-center justify-between text-sm font-light">
-								<p>Potasium (mg)</p>
-								<p>{food.potasium.toFixed(2)}</p>
+								<p>Potasium</p>
+								<p>{food.potassium_mg.toFixed(2)} mg</p>
 							</div>
 						{/if}
 					</section>
