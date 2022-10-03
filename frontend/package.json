@@ -2,11 +2,11 @@
   "name": "frontend",
   "version": "0.0.1",
   "scripts": {
-    "dev": "svelte-kit dev",
-    "build": "svelte-kit build",
-    "package": "svelte-kit package",
-    "preview": "svelte-kit preview",
-    "prepare": "svelte-kit sync",
+    "dev": "vite dev",
+    "build": "vite build",
+    "package": "vite package",
+    "preview": "vite preview",
+    "prepare": "vite sync",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "prettier --check --plugin-search-dir=. . && eslint .",
@@ -20,7 +20,8 @@
     "axios": "^0.27.2",
     "daisyui": "^1.25.4",
     "svelte-local-storage-store": "^0.2.6",
-    "svelte-material-icons": "^2.0.2"
+    "svelte-material-icons": "^2.0.2",
+    "vite": "^3.1.4"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "next",
