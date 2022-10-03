@@ -4,10 +4,14 @@
 
 @layer base {
 	.btn-main {
-		@apply btn btn-block mt-8 border-0 bg-accent bg-gradient-to-r from-primary-focus to-primary text-primary-content shadow-lg shadow-primary/30;
+		@apply btn btn-block mt-8 border-0 bg-accent bg-gradient-to-r from-accent-focus to-accent text-primary-content shadow-lg shadow-accent-focus/30;
 	}
 }
 
 body {
 	@apply bg-base-100;
+}
+
+.loading {
+	@apply animate-pulse rounded-md bg-neutral;
 }

@@ -105,9 +105,9 @@
 	<title>Firness Journey | Dashboard</title>
 </svelte:head>
 
-<main class=" w-screen overflow-x-hidden bg-neutral">
+<main class=" w-screen overflow-x-hidden">
 	<nav class="container mt-6 flex h-max w-full items-center justify-evenly">
-		<h1 class="text-2xl font-bold text-primary">Fitness journey</h1>
+		<h1 class="text-2xl font-bold text-accent">Fitness journey</h1>
 	</nav>
 	<div class="flex w-full flex-col items-center ">
 		<div class="container py-8">
@@ -137,21 +137,21 @@
 			<section class="mt-6 flex w-full justify-between text-lg text-neutral-content">
 				<div class="flex w-1/4 flex-col items-center justify-center space-y-2">
 					<h3>Carbs</h3>
-					<progress class="progress progress-primary w-full" value={$carbsPercent} max="100" />
+					<progress class="progress progress-accent w-full" value={$carbsPercent} max="100" />
 					<p class="text-sm">
 						{$carbsEaten} / {$carbsGoal}g
 					</p>
 				</div>
 				<div class="flex w-1/4 flex-col items-center justify-center space-y-2">
 					<h3>Protein</h3>
-					<progress class="progress progress-primary w-full " value={$proteinPercent} max="100" />
+					<progress class="progress progress-accent w-full " value={$proteinPercent} max="100" />
 					<p class="text-sm">
 						{$proteinEaten} / {$proteinGoal}g
 					</p>
 				</div>
 				<div class="flex w-1/4 flex-col items-center justify-center space-y-2">
 					<h3>Fat</h3>
-					<progress class="progress progress-primary w-full " value={$fatPercent} max="100" />
+					<progress class="progress progress-accent w-full " value={$fatPercent} max="100" />
 					<p class="text-sm">
 						{$fatEaten} / {$fatGoal}g
 					</p>
@@ -205,7 +205,7 @@
 </main>
 
 <style>
-	.progress-primary {
+	.progress-accent {
 		--tw-bg-opacity: 1;
 		background-color: #4b5563;
 	}

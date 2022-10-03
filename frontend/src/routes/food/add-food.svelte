@@ -3,5 +3,5 @@
 
 <div class="container">
 	AddFood / under construction
-	<a href="/dashboard" class="btn btn-primary btn-block from-primary to-primary-focus ">Go back</a>
+	<a href="/dashboard" class="btn btn-accent btn-block from-accent to-accent-focus ">Go back</a>
 </div>
