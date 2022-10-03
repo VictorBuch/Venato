@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { supabase } from '../lib/supabaseClient';
+	import { supabase } from '../../lib/supabaseClient';
 	import { toast } from '@zerodevx/svelte-toast';
 
 	let email = '';
