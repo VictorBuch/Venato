@@ -263,7 +263,7 @@
 		{#if activeTab === 'recent'}
 			{#if $combinedMealsObj[mealType]?.length > 0 && !searchQuery.length}
 				<section class="my-8">
-					<h1>Consumed meals</h1>
+					<h1 class="mb-4 font-light text-base-content">Consumed meals</h1>
 					<div class="space-y-4">
 						{#each $combinedMealsObj[mealType] as meal}
 							<FoodCard
@@ -280,17 +280,21 @@
 				</section>
 			{/if}
 			<section class="my-8">
-				<h1>Recent Meals</h1>
+				<h1 class="mb-4 font-light text-base-content">Recent Meals</h1>
 				<div use:autoAnimate>
 					{#await fetchData}
-						<div class="space-y-4">
+						<div
+							class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
+						>
 							{#each Array(3) as food}
 								<FoodCardSkeleton />
 							{/each}
 						</div>
 					{:then data}
 						{#if filteredRecentFoods?.length > 0}
-							<div class="space-y-4">
+							<div
+								class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
+							>
 								{#each filteredRecentFoods as food}
 									<FoodCard
 										title={food.name}
@@ -315,9 +319,11 @@
 		{#await fetchData then data}
 			{#if activeTab === 'saved'}
 				<section class="my-8">
-					<h1>Saved Foods</h1>
+					<h1 class="mb-4 font-light text-base-content">Saved Meals</h1>
 					{#if filteredSavedFoods?.length > 0}
-						<div class="space-y-4">
+						<div
+							class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
+						>
 							{#each filteredSavedFoods as food}
 								<FoodCard
 									title={food.name}
@@ -335,9 +341,11 @@
 			{/if}
 			{#if activeTab === 'meals'}
 				<section class="my-8">
-					<h1>Meals</h1>
-					<div class="h-max space-y-4 overflow-auto">
-						{#if filteredMeals?.length > 0}
+					<h1 class="mb-4 font-light text-base-content">Meals</h1>
+					{#if filteredMeals?.length > 0}
+						<div
+							class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
+						>
 							{#each filteredMeals as meal}
 								<FoodCard
 									title={meal.name}
@@ -350,8 +358,8 @@
 									}}
 								/>
 							{/each}
-						{/if}
-					</div>
+						</div>
+					{/if}
 				</section>
 			{/if}
 		{/await}

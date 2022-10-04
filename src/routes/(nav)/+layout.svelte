@@ -9,38 +9,40 @@
 
 <slot />
 
-<footer
-	class="container fixed -bottom-[0.5px] right-0 left-0 flex w-full items-end justify-between rounded-t bg-accent pt-3 pb-1 text-accent-content"
+<div
+	class="container fixed -bottom-[0.5px] right-0 left-0 rounded-t-md bg-accent pt-3 pb-1 drop-shadow-md"
 >
-	<a
-		href="/dashboard"
-		class="flex flex-col items-center justify-end fill-accent-content text-sm font-light"
-	>
-		<CalendarToday size={'23'} color="inherit" />
-		Tracking
-	</a>
-	<a
-		href="/progress"
-		class="flex flex-col items-center justify-end fill-accent-content text-sm font-light"
-	>
-		<ChartLine size={'23'} color="inherit" />
-		Progress
-	</a>
-	<a
-		href="/recipes"
-		class="flex flex-col items-center justify-end fill-accent-content text-sm font-light"
-	>
-		<Noodles size={'23'} color="inherit" />
-		Recipes
-	</a>
-	<a
-		href="/my-account"
-		class="flex flex-col items-center justify-end fill-accent-content text-sm font-light"
-	>
-		<Account size={'23'} color="inherit" />
-		My account
-	</a>
-</footer>
+	<footer class=" flex w-full items-end justify-between  text-accent-content ">
+		<a
+			href="/dashboard"
+			class="flex flex-col items-center justify-end fill-accent-content text-sm font-light"
+		>
+			<CalendarToday size={'23'} color="inherit" />
+			Tracking
+		</a>
+		<a
+			href="/progress"
+			class="flex flex-col items-center justify-end fill-accent-content text-sm font-light"
+		>
+			<ChartLine size={'23'} color="inherit" />
+			Progress
+		</a>
+		<a
+			href="/recipes"
+			class="flex flex-col items-center justify-end fill-accent-content text-sm font-light"
+		>
+			<Noodles size={'23'} color="inherit" />
+			Recipes
+		</a>
+		<a
+			href="/my-account"
+			class="flex flex-col items-center justify-end fill-accent-content text-sm font-light"
+		>
+			<Account size={'23'} color="inherit" />
+			My account
+		</a>
+	</footer>
+</div>
 <SvelteToast />
 
 <style>
