@@ -36,6 +36,7 @@
 			if (data) {
 				food = data;
 				portion = String(food.portion);
+				console.log(food, 'food');
 			}
 		} catch (error) {
 			console.log(error);
@@ -313,13 +314,13 @@
 					<p>Carbs</p>
 					<p>{food.carbs} g</p>
 				</div>
-				{#if Object.hasOwn(food, 'fiber_g')}
+				{#if food?.fiber_g}
 					<div class="flex w-full items-center justify-between text-sm font-light">
 						<p>Fiber</p>
 						<p>{food.fiber_g} g</p>
 					</div>
 				{/if}
-				{#if Object.hasOwn(food, 'sugar_g')}
+				{#if food?.sugar_g}
 					<div class="flex w-full items-center justify-between text-sm font-light">
 						<p>Sugar</p>
 						<p>{food.sugar_g} g</p>
@@ -335,36 +336,38 @@
 					<p>Fat</p>
 					<p>{food.fat} g</p>
 				</div>
-				{#if Object.hasOwn(food, 'fat_saturated_g')}
+				{#if food?.fat_saturated_g}
 					<div class="flex w-full items-center justify-between text-sm font-light">
 						<p>Saturated fat</p>
 						<p>{food.fat_saturated_g} g</p>
 					</div>
 				{/if}
 			</section>
-			<section class="space-y-2">
-				<div class="text-semi-bold flex w-full items-center text-lg">
-					<p>Other</p>
-				</div>
-				{#if Object.hasOwn(food, 'cholesterol_mg')}
-					<div class="flex w-full items-center justify-between text-sm font-light">
-						<p>Cholesterol</p>
-						<p>{food.cholesterol_mg} mg</p>
+			{#if food?.cholesterol_mg || food?.sodium_mg || food?.potassium_mg}
+				<section class="space-y-2">
+					<div class="text-semi-bold flex w-full items-center text-lg">
+						<p>Other</p>
 					</div>
-				{/if}
-				{#if Object.hasOwn(food, 'sodium_mg')}
-					<div class="flex w-full items-center justify-between text-sm font-light">
-						<p>Sodium</p>
-						<p>{food.sodium_mg} mg</p>
-					</div>
-				{/if}
-				{#if Object.hasOwn(food, 'potassium_mg')}
-					<div class="flex w-full items-center justify-between text-sm font-light">
-						<p>Potasium</p>
-						<p>{food.potassium_mg} mg</p>
-					</div>
-				{/if}
-			</section>
+					{#if food?.cholesterol_mg}
+						<div class="flex w-full items-center justify-between text-sm font-light">
+							<p>Cholesterol</p>
+							<p>{food.cholesterol_mg} mg</p>
+						</div>
+					{/if}
+					{#if food?.sodium_mg}
+						<div class="flex w-full items-center justify-between text-sm font-light">
+							<p>Sodium</p>
+							<p>{food.sodium_mg} mg</p>
+						</div>
+					{/if}
+					{#if food?.potassium_mg}
+						<div class="flex w-full items-center justify-between text-sm font-light">
+							<p>Potasium</p>
+							<p>{food.potassium_mg} mg</p>
+						</div>
+					{/if}
+				</section>
+			{/if}
 		{/await}
 	</section>
 </div>
