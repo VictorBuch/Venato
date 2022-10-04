@@ -159,9 +159,11 @@
 		</div>
 		<section
 			id="Food"
-			class="item-center mt-8 flex w-full flex-col justify-center text-lg  text-base-200"
+			class="item-center mt-8 flex w-full flex-col justify-center text-lg text-base-200 "
 		>
-			<div class="container space-y-6">
+			<div
+				class="container space-y-6 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-12 md:space-y-0"
+			>
 				<MealCard
 					title="Breakfast"
 					foodItems={$consumedBreakfast}

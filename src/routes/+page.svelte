@@ -5,24 +5,12 @@
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 
-	const handleUser = async () => {
-		await getUser();
-		if (!Object.keys(get(user)).length) {
-			goto('/login');
-		} else {
-			if ($user.calorie_goal) {
-				goto('/dashboard');
-			} else {
-				goto('/get-user-information');
-			}
-		}
-	};
-
 	supabase.auth.onAuthStateChange(async (_, session) => {
-		await handleUser();
+		await getUser();
 	});
 
 	async function getUser() {
+		console.log('here');
 		try {
 			const db_user = await supabase.auth.user();
 			const { data, error } = await supabase
@@ -32,6 +20,11 @@
 				.single();
 			if (data) {
 				user.set({ ...data, id: db_user?.id });
+				if ($user.calorie_goal) {
+					goto('/dashboard');
+				} else {
+					goto('/get-user-information');
+				}
 			}
 			if (error) {
 				try {
@@ -45,10 +38,14 @@
 			}
 		} catch (error) {
 			alert(error.message);
+		} finally {
+			if (!Object.keys(get(user)).length) {
+				goto('/login');
+			}
 		}
 	}
 
 	onMount(async () => {
-		await handleUser();
+		await getUser();
 	});
 </script>

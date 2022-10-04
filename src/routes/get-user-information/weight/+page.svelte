@@ -30,7 +30,7 @@
 			const { data, error } = await updateUserCaloriesAndMacros();
 			if (!error) {
 				toast.push('Success');
-				goto('/dashboard');
+				goto('/my-account');
 			} else {
 				toast.push(error.message);
 			}
@@ -79,86 +79,90 @@
 	<title>Venato | Set weight</title>
 </svelte:head>
 <template>
-	<section class="container z-20 bg-accent-focus py-4 drop-shadow-md">
-		<div class=" flex h-full w-full  items-center space-x-2">
-			<button on:click={() => window.history.back()}>
-				<svg
-					class="h-6 w-6 !stroke-accent-content"
-					fill="none"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
-				>
-					<path d="M19 12H5M12 19l-7-7 7-7" />
-				</svg>
-			</button>
-			<h1 class="w-max text-xl font-bold text-accent-content">Get Started</h1>
+	<section class="z-20 bg-accent-focus py-4 drop-shadow-md">
+		<div class="container ">
+			<div class=" flex h-full w-full  items-center space-x-2">
+				<button on:click={() => window.history.back()}>
+					<svg
+						class="h-6 w-6 !stroke-accent-content"
+						fill="none"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path d="M19 12H5M12 19l-7-7 7-7" />
+					</svg>
+				</button>
+				<h1 class="w-max text-xl font-bold text-accent-content">Get Started</h1>
+			</div>
 		</div>
 	</section>
-	<div
-		class="container h-screen w-screen overflow-hidden bg-gradient-to-t from-accent to-accent-focus"
-	>
-		<main class="flex flex-col items-center justify-center pt-32">
-			{#if step === 'weight'}
-				<h1 class="text-3xl font-medium text-accent-content">What is your weight?</h1>
-				<div class="mt-20 flex w-full flex-col items-center justify-center space-y-8">
-					<div class="form-control">
-						<label class="flex items-end space-x-2">
-							<input
-								type="number"
-								placeholder=""
-								autofocus
-								class="max-w-xs input input-ghost w-24 !rounded-none border-0 border-b border-gray-800 !bg-transparent text-center text-xl focus:border-accent-content"
-								bind:value={weight}
-							/>
-							<span class="text-md font-medium text-accent-content">Kg</span>
-						</label>
+	<div class="h-screen w-screen overflow-hidden bg-gradient-to-t from-accent to-accent-focus">
+		<div class="container ">
+			<main class="flex flex-col items-center justify-center pt-32">
+				{#if step === 'weight'}
+					<h1 class="text-3xl font-medium text-accent-content">What is your weight?</h1>
+					<div class="mt-20 flex w-full flex-col items-center justify-center space-y-8">
+						<div class="form-control">
+							<label class="flex items-end space-x-2">
+								<input
+									type="number"
+									placeholder=""
+									autofocus
+									class="max-w-xs input input-ghost w-24 !rounded-none border-0 border-b border-gray-800 !bg-transparent text-center text-xl focus:border-accent-content"
+									bind:value={weight}
+								/>
+								<span class="text-md font-medium text-accent-content">Kg</span>
+							</label>
+						</div>
 					</div>
-				</div>
-			{:else if step === 'desiredWeight'}
-				<h1 class="text-center text-3xl font-medium text-accent-content">
-					What is your desired weight?
-				</h1>
-				<div class="mt-20 flex w-full flex-col items-center justify-center space-y-8">
-					<div class="form-control">
-						<label class="flex items-end space-x-2">
-							<input
-								type="number"
-								placeholder=""
-								autofocus
-								class="max-w-xs input input-ghost w-24 !rounded-none border-0 border-b border-gray-800 !bg-transparent text-center text-xl focus:border-accent-content"
-								bind:value={desiredWeight}
-							/>
-							<span class="text-md font-medium text-accent-content">Kg</span>
-						</label>
+				{:else if step === 'desiredWeight'}
+					<h1 class="text-center text-3xl font-medium text-accent-content">
+						What is your desired weight?
+					</h1>
+					<div class="mt-20 flex w-full flex-col items-center justify-center space-y-8">
+						<div class="form-control">
+							<label class="flex items-end space-x-2">
+								<input
+									type="number"
+									placeholder=""
+									autofocus
+									class="max-w-xs input input-ghost w-24 !rounded-none border-0 border-b border-gray-800 !bg-transparent text-center text-xl focus:border-accent-content"
+									bind:value={desiredWeight}
+								/>
+								<span class="text-md font-medium text-accent-content">Kg</span>
+							</label>
+						</div>
 					</div>
-				</div>
-			{:else if step === 'weightLossAmount'}
-				<h1 class="text-center text-3xl font-medium text-accent-content">
-					How much do you want to {$user.goal === 'loss' ? 'lose' : 'gain'}?
-				</h1>
-				<div class="mt-20 flex w-full flex-col items-center justify-center ">
-					<p class="text-md pb-8 font-light text-accent-content">{lossPerWeek} kg/week</p>
-					<input
-						bind:value={lossAmount}
-						type="range"
-						min="1"
-						max="3"
-						class="range range-lg "
-						step="1"
-					/>
-					<div class="flex w-full justify-between px-4 text-xs">
-						<span>|</span>
-						<span>|</span>
-						<span>|</span>
+				{:else if step === 'weightLossAmount'}
+					<h1 class="text-center text-3xl font-medium text-accent-content">
+						How much do you want to {$user.goal === 'loss' ? 'lose' : 'gain'}?
+					</h1>
+					<div class="mt-20 flex w-full flex-col items-center justify-center ">
+						<p class="text-md pb-8 font-light text-accent-content">{lossPerWeek} kg/week</p>
+						<input
+							bind:value={lossAmount}
+							type="range"
+							min="1"
+							max="3"
+							class="range range-lg "
+							step="1"
+						/>
+						<div class="flex w-full justify-between px-4 text-xs">
+							<span>|</span>
+							<span>|</span>
+							<span>|</span>
+						</div>
 					</div>
-				</div>
-			{/if}
-		</main>
+				{/if}
+			</main>
+		</div>
 	</div>
-	<div class="text-md  container fixed bottom-0  pb-4">
-		<button on:click|preventDefault={handleClick} class=" btn-main "> Confirm </button>
+	<div class="text-md fixed bottom-0 flex w-full items-center justify-center  pb-4">
+		<div class="container">
+			<button on:click|preventDefault={handleClick} class=" btn-main "> Confirm </button>
+		</div>
 	</div>
 </template>
