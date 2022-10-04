@@ -126,7 +126,7 @@
 	};
 
 	const handleBarcodeScanning = async () => {
-		goto(`/track-food/scan`);
+		goto(`/track-food/${mealType}/scan`);
 	};
 </script>
 
