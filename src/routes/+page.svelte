@@ -5,8 +5,21 @@
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 
-	supabase.auth.onAuthStateChange(async (_, session) => {
+	const handleUser = async () => {
 		await getUser();
+		if (!Object.keys(get(user)).length) {
+			goto('/login');
+		} else {
+			if ($user.calorie_goal) {
+				goto('/dashboard');
+			} else {
+				goto('/get-user-information');
+			}
+		}
+	};
+
+	supabase.auth.onAuthStateChange(async (_, session) => {
+		await handleUser();
 	});
 
 	async function getUser() {
@@ -36,15 +49,6 @@
 	}
 
 	onMount(async () => {
-		await getUser();
-		if (!Object.keys(get(user)).length) {
-			goto('/login');
-		} else {
-			if ($user.calorie_goal) {
-				goto('/dashboard');
-			} else {
-				goto('/get-user-information');
-			}
-		}
+		await handleUser();
 	});
 </script>
