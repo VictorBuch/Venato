@@ -87,7 +87,8 @@ export const proteinPercent = derived(
 );
 export const caloriesEaten = derived(
 	combinedMeals,
-	($combinedMeals) => $combinedMeals.reduce((value, current) => value + current.calories, 0),
+	($combinedMeals) =>
+		$combinedMeals.reduce((value, current) => value + current.calories_serving_size, 0),
 	0
 );
 

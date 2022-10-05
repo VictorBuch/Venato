@@ -23,9 +23,6 @@
 	let portion = '';
 	let unit = 'g';
 
-	// TODO: make food rating work
-	let foodRating = 'A';
-
 	const getFood = async () => {
 		try {
 			const { data, error } = await supabase
@@ -69,8 +66,7 @@
 					meal_id: food.id,
 					user_id: $user.id,
 					meal_type: mealType,
-					portion,
-					portion_unit: unit
+					portion
 				});
 
 				if (data) {
@@ -110,7 +106,7 @@
 	};
 
 	$: calculateFoodCalories = () => {
-		const calories = food?.calories * (Number(portion) / food?.portion);
+		const calories = food?.calories_serving_size * (Number(portion) / food?.portion);
 		return Math.ceil(calories);
 	};
 
@@ -197,8 +193,6 @@
 				<select class="select select-bordered select-lg bg-neutral " name="Unit" bind:value={unit}>
 					<option disabled selected>Pick one</option>
 					<option value={'g'}>grams</option>
-					<option value={'pound'}>pound</option>
-					<option value={'tbs'}>Tbs</option>
 				</select>
 			{/await}
 		</div>
@@ -209,19 +203,19 @@
 
 			<div class="text-lg font-semibold text-accent-content loading w-32 h-10  " />
 		{:then data}
-			{#if foodRating === 'A'}
+			{#if food.nutrition_grade === 'a'}
 				<figure class=" fill-info">
 					<EmoticonExcited color="inherit" size="40" />
 				</figure>
-			{:else if foodRating === 'B'}
+			{:else if food.nutrition_grade === 'b'}
 				<figure class=" fill-success">
 					<EmoticonHappy color="inherit" size="40" />
 				</figure>
-			{:else if foodRating === 'C'}
+			{:else if food.nutrition_grade === 'c'}
 				<figure class=" fill-warning">
 					<EmoticonSad color="inherit" size="40" />
 				</figure>
-			{:else if foodRating === 'D'}
+			{:else if food.nutrition_grade === 'd' || food.nutrition_grade === 'e'}
 				<figure class=" fill-error">
 					<EmoticonFrown color="inherit" size="40" />
 				</figure>
@@ -287,8 +281,8 @@
 			{/await}
 		</div>
 	</section>
+	<div class="divider" />
 	<section use:autoAnimate class="space-y-6">
-		<h1 class="font-semi-bold text-lg text-base-content">Other information</h1>
 		{#await foodPromise}
 			<div class="space-y-2">
 				<div class="loading w-full h-7" />
@@ -371,6 +365,8 @@
 		{/await}
 	</section>
 </div>
-<div class="text-md  container fixed bottom-0 bg-gradient-to-t from-base-100 to-transparent pb-4">
-	<button on:click|preventDefault={handleSubmit} class=" btn-main "> Track </button>
+<div class="text-md fixed bottom-0 flex w-full items-center justify-center  pb-4">
+	<div class="container">
+		<button on:click|preventDefault={handleSubmit} class=" btn-main "> Track </button>
+	</div>
 </div>
