@@ -30,7 +30,7 @@
 				{/if}
 			</div>
 			<p class="w-full truncate text-xs text-base-100 ">
-				{calories} kcal
+				{Math.ceil(calories)} kcal
 			</p>
 			<p class="w-full truncate text-xs text-base-100 ">
 				{servingSize} g

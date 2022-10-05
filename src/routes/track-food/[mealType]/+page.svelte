@@ -268,7 +268,7 @@
 						{#each $combinedMealsObj[mealType] as meal}
 							<FoodCard
 								title={meal.name}
-								calories={meal.calories}
+								calories={meal.calories_serving_size}
 								servingSize={meal.portion}
 								isQuickTracked={meal.is_quick_tracked}
 								on:clickFoodIcon={() => handleRemoveMeals(meal)}
@@ -279,7 +279,7 @@
 					</div>
 				</section>
 			{/if}
-			<section class="my-8">
+			<section class="my-8 pb-52">
 				<h1 class="mb-4 font-light text-base-content">Recent Meals</h1>
 				<div use:autoAnimate>
 					{#await fetchData}
@@ -298,7 +298,7 @@
 								{#each filteredRecentFoods as food}
 									<FoodCard
 										title={food.name}
-										calories={food.calories}
+										calories={food.calories_serving_size}
 										servingSize={food.portion}
 										on:clickFoodIcon={() => handleAddMeal(food)}
 										on:customizeFoodItem={() => {
@@ -318,7 +318,7 @@
 		{/if}
 		{#await fetchData then data}
 			{#if activeTab === 'saved'}
-				<section class="my-8">
+				<section class="my-8 pb-52">
 					<h1 class="mb-4 font-light text-base-content">Saved Meals</h1>
 					{#if filteredSavedFoods?.length > 0}
 						<div
@@ -327,7 +327,7 @@
 							{#each filteredSavedFoods as food}
 								<FoodCard
 									title={food.name}
-									calories={food.calories}
+									calories={food.calories_serving_size}
 									servingSize={food.portion}
 									on:clickFoodIcon={() => handleAddMeal(food)}
 									on:customizeFoodItem={() => {
@@ -340,7 +340,7 @@
 				</section>
 			{/if}
 			{#if activeTab === 'meals'}
-				<section class="my-8">
+				<section class="my-8 pb-52">
 					<h1 class="mb-4 font-light text-base-content">Meals</h1>
 					{#if filteredMeals?.length > 0}
 						<div
@@ -349,7 +349,7 @@
 							{#each filteredMeals as meal}
 								<FoodCard
 									title={meal.name}
-									calories={meal.calories}
+									calories={meal.calories_serving_size}
 									servingSize={meal.portion}
 									isQuickTracked={meal.is_quick_tracked}
 									on:clickFoodIcon={() => handleAddMeal(meal)}

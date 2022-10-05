@@ -167,7 +167,10 @@
 				<MealCard
 					title="Breakfast"
 					foodItems={$consumedBreakfast}
-					calories={$consumedBreakfast?.reduce((acc, food) => acc + food.calories, 0) || 0}
+					calories={$consumedBreakfast?.reduce(
+						(acc, food) => acc + food.calories_serving_size,
+						0
+					) || 0}
 					recommendedCalories={calculateRecommendedAmountOfCalories(22)}
 					addFoodItem={() => goto('/track-food/breakfast')}
 				>
@@ -176,7 +179,7 @@
 				<MealCard
 					title="Lunch"
 					foodItems={$consumedLunch}
-					calories={$consumedLunch?.reduce((acc, food) => acc + food.calories, 0) || 0}
+					calories={$consumedLunch?.reduce((acc, food) => acc + food.calories_serving_size, 0) || 0}
 					recommendedCalories={calculateRecommendedAmountOfCalories(33)}
 					addFoodItem={() => goto('/track-food/lunch')}
 				>
@@ -185,7 +188,8 @@
 				<MealCard
 					title="Dinner"
 					foodItems={$consumedDinner}
-					calories={$consumedDinner?.reduce((acc, food) => acc + food.calories, 0) || 0}
+					calories={$consumedDinner?.reduce((acc, food) => acc + food.calories_serving_size, 0) ||
+						0}
 					recommendedCalories={calculateRecommendedAmountOfCalories(35)}
 					addFoodItem={() => goto('/track-food/dinner')}
 				>
@@ -194,7 +198,8 @@
 				<MealCard
 					title="Snacks"
 					foodItems={$consumedSnacks}
-					calories={$consumedSnacks?.reduce((acc, food) => acc + food.calories, 0) || 0}
+					calories={$consumedSnacks?.reduce((acc, food) => acc + food.calories_serving_size, 0) ||
+						0}
 					recommendedCalories={calculateRecommendedAmountOfCalories(10)}
 					addFoodItem={() => goto('/track-food/snacks')}
 				>
