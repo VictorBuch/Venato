@@ -10,3 +10,5 @@ node_modules
 /victor
 *.py
 *.pyc
+*.vscode
+*.ipynb

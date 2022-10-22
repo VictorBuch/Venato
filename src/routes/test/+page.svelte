@@ -6,6 +6,7 @@
 		return parseFloat(((value * serving_size.replace(/\D/g, '')) / 100).toFixed(2));
 	};
 	function tsvJSON(tsv) {
+		console.log('tsvJSON');
 		var lines = tsv.split('\n');
 
 		var result = [];
@@ -22,6 +23,7 @@
 
 			result.push(obj);
 		}
+		console.log(result);
 
 		// fileter out objects with no code or where code is not a number and no product_name_en
 		result = result.filter(
@@ -73,17 +75,18 @@
 	}
 	const onFileSelected = async (event: Event) => {
 		let file = event.target.files[0];
+		console.log(file);
 		let reader = new FileReader();
 		reader.onload = async function (e) {
-			// console.log(reader.result);
+			console.log(e.target.result);
 			const text = e.target.result;
 			const data = tsvJSON(text);
 			console.log(data);
-			for (let i = 0; i < data.length; i++) {
-				const { data: food, error } = await supabase.from('meals').insert([data[i]]);
-				if (error) console.log('error', error);
-				console.log('food', food);
-			}
+			// for (let i = 0; i < data.length; i++) {
+			// 	const { data: food, error } = await supabase.from('meals').insert([data[i]]);
+			// 	if (error) console.log('error', error);
+			// 	console.log('food', food);
+			// }
 		};
 		reader.readAsText(file);
 	};

@@ -15,13 +15,14 @@
 	import EmoticonSad from 'svelte-material-icons/EmoticonSad.svelte';
 	import EmoticonFrown from 'svelte-material-icons/EmoticonFrown.svelte';
 	import EmoticonConfused from 'svelte-material-icons/EmoticonConfused.svelte';
-	import { onMount } from 'svelte';
 
 	let mealType = $page.params.mealType;
 	let food: Meal;
 	let isSaved = false;
-	let portion = '';
+	let serving_size = '';
 	let unit = 'g';
+	// TODO: see if the food is consumed and then use the consumed properties instead of default
+	// can be done by looping through the consumed meals and checking if the food is in there
 
 	const getFood = async () => {
 		try {
@@ -32,7 +33,7 @@
 				.single();
 			if (data) {
 				food = data;
-				portion = String(food.portion);
+				serving_size = String(food.serving_size);
 				console.log(food, 'food');
 			}
 		} catch (error) {
@@ -60,13 +61,13 @@
 	let savedPromise = getIsFoodSaved();
 
 	const handleSubmit = async (e: MouseEvent) => {
-		if (portion && unit) {
+		if (serving_size && unit) {
 			try {
 				const { data } = await supabase.from('consumed_meals').insert({
 					meal_id: food.id,
 					user_id: $user.id,
 					meal_type: mealType,
-					portion
+					portion: serving_size
 				});
 
 				if (data) {
@@ -106,7 +107,7 @@
 	};
 
 	$: calculateFoodCalories = () => {
-		const calories = food?.calories_serving_size * (Number(portion) / food?.portion);
+		const calories = food?.calories_serving_size * (Number(serving_size) / food?.serving_size);
 		return Math.ceil(calories);
 	};
 
@@ -186,7 +187,7 @@
 				<input
 					class="w-full  rounded border border-gray-400 p-2 text-gray-800 outline-none ring-0"
 					type="number"
-					bind:value={portion}
+					bind:value={serving_size}
 					required
 					min={1}
 				/>
@@ -283,6 +284,7 @@
 	</section>
 	<div class="divider" />
 	<section use:autoAnimate class="space-y-6">
+		<h2>Nutrition per 100g:</h2>
 		{#await foodPromise}
 			<div class="space-y-2">
 				<div class="loading w-full h-7" />

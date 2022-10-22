@@ -2,6 +2,7 @@ import { derived, writable } from 'svelte/store';
 import { supabase } from '$lib/supabaseClient';
 import { get } from 'svelte/store';
 import { user } from '$lib/stores/userStore';
+import { getMacroProportionateToPortion } from '$lib/helpers';
 
 const handleConsumedMealsChange = async () => {
 	const start = new Date();
@@ -24,7 +25,12 @@ const handleConsumedMealsChange = async () => {
 				.map((meal) => {
 					return {
 						...meal.meals,
-						portion: meal.portion
+						consumed_serving_size: meal.portion,
+						calories_consumed_serving_size: getMacroProportionateToPortion(
+							meal.meals.calories_serving_size,
+							meal.portion,
+							meal.meals.serving_size
+						)
 					};
 				}),
 			lunch: consumedMeals
@@ -32,7 +38,12 @@ const handleConsumedMealsChange = async () => {
 				.map((meal) => {
 					return {
 						...meal.meals,
-						portion: meal.portion
+						consumed_serving_size: meal.portion,
+						calories_consumed_serving_size: getMacroProportionateToPortion(
+							meal.meals.calories_serving_size,
+							meal.portion,
+							meal.meals.serving_size
+						)
 					};
 				}),
 			dinner: consumedMeals
@@ -40,16 +51,30 @@ const handleConsumedMealsChange = async () => {
 				.map((meal) => {
 					return {
 						...meal.meals,
-						portion: meal.portion
+						consumed_serving_size: meal.portion,
+						calories_consumed_serving_size: getMacroProportionateToPortion(
+							meal.meals.calories_serving_size,
+							meal.portion,
+							meal.meals.serving_size
+						)
 					};
 				}),
 			snacks: consumedMeals
 				.filter((meal) => meal.meal_type === 'snacks')
 				.map((meal) => {
-					return {
-						...meal.meals,
-						portion: meal.portion
-					};
+					if (meal.portion !== meal.meals.consumed_serving_size) {
+						return {
+							...meal.meals,
+							consumed_serving_size: meal.portion,
+							calories_consumed_serving_size: getMacroProportionateToPortion(
+								meal.meals.calories_serving_size,
+								meal.portion,
+								meal.meals.serving_size
+							)
+						};
+					} else {
+						return { ...meal.meals };
+					}
 				})
 		};
 		consumedBreakfast.set(consumed.breakfast);

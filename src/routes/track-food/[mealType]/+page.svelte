@@ -69,7 +69,6 @@
 	};
 
 	let fetchData = fetchMealData();
-	console.log($combinedMealsObj[mealType]);
 
 	$: filteredMeals =
 		$meals && mealType
@@ -101,7 +100,7 @@
 				user_id: $user?.id,
 				meal_type: mealType,
 				meal_id: meal.id,
-				portion: meal.portion
+				portion: meal.serving_size
 			}
 		]);
 		if (error) {
@@ -153,7 +152,7 @@
 				{mealType?.toUpperCase()}
 			</h1>
 			<div class="ml-auto h-max w-max">
-				<div class="dropdown-end dropdown">
+				<div class="dropdown dropdown-end">
 					<button tabindex="0">
 						<DotsVertical size="20" />
 					</button>
@@ -260,25 +259,27 @@
 				class="tab tab-bordered w-1/3 ">All meals</button
 			>
 		</div>
+		{#if $combinedMealsObj[mealType]?.length > 0 && !searchQuery.length}
+			<section class="my-8">
+				<h1 class="mb-4 font-light text-base-content">Consumed meals</h1>
+				<div
+					class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
+				>
+					{#each $combinedMealsObj[mealType] as meal}
+						<FoodCard
+							title={meal.name}
+							calories={meal.calories_consumed_serving_size}
+							servingSize={meal.consumed_serving_size}
+							isQuickTracked={meal.is_quick_tracked}
+							on:clickFoodIcon={() => handleRemoveMeals(meal)}
+							on:customizeFoodItem={() => handleCustomizePortion(meal)}
+							remove
+						/>
+					{/each}
+				</div>
+			</section>
+		{/if}
 		{#if activeTab === 'recent'}
-			{#if $combinedMealsObj[mealType]?.length > 0 && !searchQuery.length}
-				<section class="my-8">
-					<h1 class="mb-4 font-light text-base-content">Consumed meals</h1>
-					<div class="space-y-4">
-						{#each $combinedMealsObj[mealType] as meal}
-							<FoodCard
-								title={meal.name}
-								calories={meal.calories_serving_size}
-								servingSize={meal.portion}
-								isQuickTracked={meal.is_quick_tracked}
-								on:clickFoodIcon={() => handleRemoveMeals(meal)}
-								on:customizeFoodItem={() => handleCustomizePortion(meal)}
-								remove
-							/>
-						{/each}
-					</div>
-				</section>
-			{/if}
 			<section class="my-8 pb-52">
 				<h1 class="mb-4 font-light text-base-content">Recent Meals</h1>
 				<div use:autoAnimate>
@@ -299,7 +300,7 @@
 									<FoodCard
 										title={food.name}
 										calories={food.calories_serving_size}
-										servingSize={food.portion}
+										servingSize={food.serving_size}
 										on:clickFoodIcon={() => handleAddMeal(food)}
 										on:customizeFoodItem={() => {
 											handleCustomizePortion(food);
@@ -328,7 +329,7 @@
 								<FoodCard
 									title={food.name}
 									calories={food.calories_serving_size}
-									servingSize={food.portion}
+									servingSize={food.serving_size}
 									on:clickFoodIcon={() => handleAddMeal(food)}
 									on:customizeFoodItem={() => {
 										handleCustomizePortion(food);
@@ -350,7 +351,7 @@
 								<FoodCard
 									title={meal.name}
 									calories={meal.calories_serving_size}
-									servingSize={meal.portion}
+									servingSize={meal.serving_size}
 									isQuickTracked={meal.is_quick_tracked}
 									on:clickFoodIcon={() => handleAddMeal(meal)}
 									on:customizeFoodItem={() => {

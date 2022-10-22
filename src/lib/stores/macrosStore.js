@@ -1,3 +1,4 @@
+import { getMacroProportionateToPortion } from '$lib/helpers';
 import { derived, writable } from 'svelte/store';
 import { combinedMeals } from './consumedMeals';
 import { user } from './userStore';
@@ -5,7 +6,18 @@ import { user } from './userStore';
 export const carbsEaten = derived(
 	combinedMeals,
 	($combinedMeals) =>
-		Math.ceil($combinedMeals.reduce((value, current) => value + current?.carbs, 0)),
+		Math.ceil(
+			$combinedMeals.reduce(
+				(value, current) =>
+					value +
+					getMacroProportionateToPortion(
+						current?.carbs,
+						current?.consumed_serving_size,
+						current?.serving_size
+					),
+				0
+			)
+		),
 	0
 );
 
@@ -32,7 +44,19 @@ export const carbsPercent = derived(
 );
 export const fatEaten = derived(
 	combinedMeals,
-	($combinedMeals) => Math.ceil($combinedMeals.reduce((value, current) => value + current.fat, 0)),
+	($combinedMeals) =>
+		Math.ceil(
+			$combinedMeals.reduce(
+				(value, current) =>
+					value +
+					getMacroProportionateToPortion(
+						current?.fat,
+						current?.consumed_serving_size,
+						current?.serving_size
+					),
+				0
+			)
+		),
 	0
 );
 
@@ -60,7 +84,18 @@ export const fatPercent = derived(
 export const proteinEaten = derived(
 	combinedMeals,
 	($combinedMeals) =>
-		Math.ceil($combinedMeals.reduce((value, current) => value + current.protein, 0)),
+		Math.ceil(
+			$combinedMeals.reduce(
+				(value, current) =>
+					value +
+					getMacroProportionateToPortion(
+						current?.protein,
+						current?.consumed_serving_size,
+						current?.serving_size
+					),
+				0
+			)
+		),
 	0
 );
 
@@ -88,7 +123,7 @@ export const proteinPercent = derived(
 export const caloriesEaten = derived(
 	combinedMeals,
 	($combinedMeals) =>
-		$combinedMeals.reduce((value, current) => value + current.calories_serving_size, 0),
+		$combinedMeals.reduce((value, current) => value + current.calories_consumed_serving_size, 0),
 	0
 );
 

@@ -35,6 +35,7 @@
 		consumedSnacks,
 		meals
 	} from '$lib/stores/consumedMeals';
+	import { getMacroProportionateToPortion } from '$lib/helpers';
 
 	let consumedMeals;
 	let fetchedMeals;
@@ -46,7 +47,7 @@
 	onMount(async () => {
 		const start = new Date();
 		start.setHours(0, 0, 0, 0);
-		const { data } = await supabase
+		const { data: consumedMeals } = await supabase
 			.from('consumed_meals')
 			.select('meal_type, portion,meals(*)')
 			.match({ user_id: $user?.id })
@@ -56,45 +57,69 @@
 			.from('meals')
 			.select('*')
 			.match({ is_quick_tracked: false });
-		if (data && mealsData) {
-			const consumedMeals = {
-				breakfast: data
+		if (consumedMeals && mealsData) {
+			const consumed = {
+				breakfast: consumedMeals
 					.filter((meal) => meal.meal_type === 'breakfast')
 					.map((meal) => {
 						return {
 							...meal.meals,
-							portion: meal.portion
+							consumed_serving_size: meal.portion,
+							calories_consumed_serving_size: getMacroProportionateToPortion(
+								meal.meals.calories_serving_size,
+								meal.portion,
+								meal.meals.serving_size
+							)
 						};
 					}),
-				lunch: data
+				lunch: consumedMeals
 					.filter((meal) => meal.meal_type === 'lunch')
 					.map((meal) => {
 						return {
 							...meal.meals,
-							portion: meal.portion
+							consumed_serving_size: meal.portion,
+							calories_consumed_serving_size: getMacroProportionateToPortion(
+								meal.meals.calories_serving_size,
+								meal.portion,
+								meal.meals.serving_size
+							)
 						};
 					}),
-				dinner: data
+				dinner: consumedMeals
 					.filter((meal) => meal.meal_type === 'dinner')
 					.map((meal) => {
 						return {
 							...meal.meals,
-							portion: meal.portion
+							consumed_serving_size: meal.portion,
+							calories_consumed_serving_size: getMacroProportionateToPortion(
+								meal.meals.calories_serving_size,
+								meal.portion,
+								meal.meals.serving_size
+							)
 						};
 					}),
-				snacks: data
+				snacks: consumedMeals
 					.filter((meal) => meal.meal_type === 'snacks')
 					.map((meal) => {
-						return {
-							...meal.meals,
-							portion: meal.portion
-						};
+						if (meal.portion !== meal.meals.consumed_serving_size) {
+							return {
+								...meal.meals,
+								consumed_serving_size: meal.portion,
+								calories_consumed_serving_size: getMacroProportionateToPortion(
+									meal.meals.calories_serving_size,
+									meal.portion,
+									meal.meals.serving_size
+								)
+							};
+						} else {
+							return { ...meal.meals };
+						}
 					})
 			};
-			$consumedBreakfast = consumedMeals?.breakfast;
-			$consumedLunch = consumedMeals?.lunch;
-			$consumedDinner = consumedMeals?.dinner;
-			$consumedSnacks = consumedMeals?.snacks;
+			$consumedBreakfast = consumed?.breakfast;
+			$consumedLunch = consumed?.lunch;
+			$consumedDinner = consumed?.dinner;
+			$consumedSnacks = consumed?.snacks;
 			$meals = mealsData;
 		}
 	});
