@@ -2,9 +2,6 @@
 	import { supabase } from '$lib/supabaseClient';
 	let fileInput;
 
-	const getProportionateMacros = (value, serving_size) => {
-		return parseFloat(((value * serving_size.replace(/\D/g, '')) / 100).toFixed(2));
-	};
 	function tsvJSON(tsv) {
 		console.log('tsvJSON');
 		var lines = tsv.split('\n');
@@ -23,70 +20,54 @@
 
 			result.push(obj);
 		}
-		console.log(result);
-
-		// fileter out objects with no code or where code is not a number and no product_name_en
-		result = result.filter(
-			(food) =>
-				food.code &&
-				!isNaN(food.code) &&
-				food.product_name_en &&
-				food.product_name_en.length > 0 &&
-				food.product_name_en.match(/([A-z])\w+/g) &&
-				food['energy-kcal_value'] &&
-				food.serving_size &&
-				food.proteins_value &&
-				food.carbohydrates_value &&
-				food.fat_value
-		);
-		console.log(result.slice(100, 100));
-		// TODO: handle portion units g and ml and such
+		result = result.slice(3, 5);
 		result = result.map((food) => {
 			return {
-				barcode: food.code,
-				name: food.product_name_en,
-				brands: food.brands,
-				nutrition_grade: food['off:nutriscore_grade'],
-				calories_100g: parseInt(food['energy-kcal_value']),
-				portion: parseInt(food.serving_size.replace(/\D/g, '')),
-				calories_serving_size: getProportionateMacros(food['energy-kcal_value'], food.serving_size),
-				carbs: getProportionateMacros(food.carbohydrates_value, food.serving_size),
-				fat: getProportionateMacros(food.fat_value, food.serving_size),
-				fat_saturated_g: parseInt(food['saturated-fat_value']),
-				protein: getProportionateMacros(food.proteins_value, food.serving_size),
-				sodium_mg: food?.sodium_value.length
-					? getProportionateMacros(food.sodium_value, food.serving_size) * 1000
-					: null,
-				sugar_g: food?.sugars_value.length
-					? getProportionateMacros(food.sugars_value, food.serving_size)
-					: null,
-				cholesterol_mg: food?.cholesterol_value.length
-					? getProportionateMacros(food.cholesterol_value, food.serving_size) * 1000
-					: null,
-				fiber_g: food?.fiber_value.length
-					? getProportionateMacros(food.fiber_value, food.serving_size)
-					: null,
-				potassium_mg: food?.potassium_value.length
-					? getProportionateMacros(food.potassium_value, food.serving_size) * 1000
-					: null
+				barcode: food['barcode'],
+				name: food['name'],
+				brands: food['brands'],
+				calories_100g: parseFloat(food['calories_100g']),
+				calories_serving_size: parseFloat(food['calories_serving_size']),
+				carbs_100g: parseFloat(food['carbs_100g']),
+				carbs_serving_size: parseFloat(food['carbs_serving_size']),
+				fat_100g: parseFloat(food['fat_100g']),
+				fat_serving_size: parseFloat(food['fat_serving_size']),
+				protein_100g: parseFloat(food['protein_100g']),
+				protein_serving_size: parseFloat(food['protein_serving_size']),
+				fat_saturated_g_100g: parseFloat(food['fat_saturated_g_100g']),
+				fat_saturated_g_serving_size: parseFloat(food['fat_saturated_g_serving_size']),
+				fiber_100g: parseFloat(food['fiber_100g']),
+				fiber_serving_size: parseFloat(food['fiber_serving_size']),
+				sodium_100g: parseFloat(food['sodium_100g']),
+				sodium_serving_size: parseFloat(food['sodium_serving_size']),
+				sugar_100g: parseFloat(food['sugar_100g']),
+				sugar_serving_size: parseFloat(food['sugar_serving_size']),
+				cholesterol_100g: parseFloat(food['cholesterol_100g']),
+				cholesterol_serving_size: parseFloat(food['cholesterol_serving_size'])
 			};
 		});
-		return result; //JSON
+		return result;
 	}
+
 	const onFileSelected = async (event: Event) => {
+		console.log('onFileSelected');
 		let file = event.target.files[0];
 		console.log(file);
 		let reader = new FileReader();
 		reader.onload = async function (e) {
-			console.log(e.target.result);
+			console.log('reader.onload');
 			const text = e.target.result;
 			const data = tsvJSON(text);
 			console.log(data);
-			// for (let i = 0; i < data.length; i++) {
-			// 	const { data: food, error } = await supabase.from('meals').insert([data[i]]);
-			// 	if (error) console.log('error', error);
-			// 	console.log('food', food);
-			// }
+			for (let i = 0; i < data.length; i++) {
+				try {
+					const { data: food, error } = await supabase.from('meals').insert([data[i]]);
+					if (error) console.log('error', error);
+					console.log('food', food);
+				} catch (error) {
+					console.log('error', error);
+				}
+			}
 		};
 		reader.readAsText(file);
 	};

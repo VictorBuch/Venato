@@ -32,8 +32,7 @@
 		consumedBreakfast,
 		consumedLunch,
 		consumedDinner,
-		consumedSnacks,
-		meals
+		consumedSnacks
 	} from '$lib/stores/consumedMeals';
 	import { getMacroProportionateToPortion } from '$lib/helpers';
 
@@ -120,7 +119,6 @@
 			$consumedLunch = consumed?.lunch;
 			$consumedDinner = consumed?.dinner;
 			$consumedSnacks = consumed?.snacks;
-			$meals = mealsData;
 		}
 	});
 </script>

@@ -81,7 +81,7 @@ const handleConsumedMealsChange = async () => {
 		consumedLunch.set(consumed.lunch);
 		consumedDinner.set(consumed.dinner);
 		consumedSnacks.set(consumed.snacks);
-		meals.set(mealsData);
+
 		console.log(
 			'comsumed updated',
 			get(consumedBreakfast),
@@ -101,7 +101,6 @@ export const consumedBreakfast = writable([]);
 export const consumedLunch = writable([]);
 export const consumedDinner = writable([]);
 export const consumedSnacks = writable([]);
-export const meals = writable([]);
 
 export const combinedMealsObj = derived(
 	[consumedBreakfast, consumedLunch, consumedDinner, consumedSnacks],

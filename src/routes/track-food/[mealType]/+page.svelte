@@ -1,18 +1,13 @@
 <script lang="ts">
+	import InfiniteLoading from 'svelte-infinite-loading';
+	import VirtualList from 'svelte-tiny-virtual-list';
 	import { supabase } from '$lib/supabaseClient';
 	import { user } from '$lib/stores/userStore';
 	import { goto } from '$app/navigation';
 	import type { Meal } from '$lib/types/meals';
 	import autoAnimate from '@formkit/auto-animate';
 
-	import {
-		consumedBreakfast,
-		consumedLunch,
-		consumedDinner,
-		consumedSnacks,
-		combinedMealsObj,
-		meals
-	} from '$lib/stores/consumedMeals';
+	import { combinedMealsObj } from '$lib/stores/consumedMeals';
 
 	import {
 		caloriesEaten,
@@ -39,10 +34,12 @@
 	let mealType = $page?.params?.mealType;
 	let savedMeals: [Meal];
 	let recentMeals: [Meal];
+	let meals: [Meal];
 	let searchQuery = '';
 	let activeTab = 'recent';
 
 	const fetchMealData = async () => {
+		// TODO: Split this into multiple calls to make the initial load of recent meals faster
 		try {
 			const start = new Date();
 			start.setHours(0, 0, 0, 0);
@@ -57,9 +54,16 @@
 				.match({ user_id: $user?.id, meal_type: $page.params.mealType })
 				.lt('created_at', start.toISOString());
 
-			if (fetchSavedMeals && fetchRecentMeals) {
+			const { data: fetchMeals } = await supabase
+				.from('meals')
+				.select('*')
+				.order('created_at', { ascending: false })
+				.limit(500);
+
+			if (fetchSavedMeals && fetchRecentMeals && fetchMeals) {
 				savedMeals = fetchSavedMeals ? fetchSavedMeals.map((mealObj) => mealObj.meals) : [];
 				recentMeals = fetchRecentMeals ? fetchRecentMeals.map((mealObj) => mealObj.meals) : [];
+				meals = fetchMeals;
 			}
 		} catch (error) {
 			console.log(error);
@@ -70,9 +74,30 @@
 
 	let fetchData = fetchMealData();
 
+	function infiniteHandler({ detail: { complete, error } }) {
+		try {
+			const fetchMeals = supabase
+				.from('meals')
+				.select('*')
+				.order('created_at', { ascending: false })
+				.limit(500);
+
+			fetchMeals.then((res) => {
+				if (res.error) {
+					error();
+				} else {
+					meals = [...meals, ...res.data];
+					complete();
+				}
+			});
+		} catch (e) {
+			error();
+		}
+	}
+
 	$: filteredMeals =
-		$meals && mealType
-			? $meals
+		meals && mealType
+			? meals
 					.filter(
 						(meal) =>
 							!$combinedMealsObj[mealType].includes(
@@ -259,6 +284,7 @@
 				class="tab tab-bordered w-1/3 ">All meals</button
 			>
 		</div>
+
 		{#if $combinedMealsObj[mealType]?.length > 0 && !searchQuery.length}
 			<section class="my-8">
 				<h1 class="mb-4 font-light text-base-content">Consumed meals</h1>
@@ -279,6 +305,7 @@
 				</div>
 			</section>
 		{/if}
+
 		{#if activeTab === 'recent'}
 			<section class="my-8 pb-52">
 				<h1 class="mb-4 font-light text-base-content">Recent Meals</h1>
@@ -317,6 +344,7 @@
 				</div>
 			</section>
 		{/if}
+
 		{#await fetchData then data}
 			{#if activeTab === 'saved'}
 				<section class="my-8 pb-52">
@@ -340,6 +368,7 @@
 					{/if}
 				</section>
 			{/if}
+
 			{#if activeTab === 'meals'}
 				<section class="my-8 pb-52">
 					<h1 class="mb-4 font-light text-base-content">Meals</h1>
@@ -347,7 +376,24 @@
 						<div
 							class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
 						>
-							{#each filteredMeals as meal}
+							<VirtualList width="100%" height={600} itemCount={filteredMeals.length} itemSize={50}>
+								<div slot="item" let:index let:style {style}>
+									<FoodCard
+										title={filteredMeals[index].name}
+										calories={filteredMeals[index].calories_serving_size}
+										servingSize={filteredMeals[index].serving_size}
+										isQuickTracked={filteredMeals[index].is_quick_tracked}
+										on:clickFoodIcon={() => handleAddMeal(filteredMeals[index])}
+										on:customizeFoodItem={() => {
+											handleCustomizePortion(filteredMeals[index]);
+										}}
+									/>
+								</div>
+								<div slot="footer">
+									<InfiniteLoading on:infinite={infiniteHandler} />
+								</div>
+							</VirtualList>
+							<!-- {#each filteredMeals as meal}
 								<FoodCard
 									title={meal.name}
 									calories={meal.calories_serving_size}
@@ -358,7 +404,7 @@
 										handleCustomizePortion(meal);
 									}}
 								/>
-							{/each}
+							{/each} -->
 						</div>
 					{/if}
 				</section>
