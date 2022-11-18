@@ -16,16 +16,6 @@
 			in a better way and get organized. Remember getting healthy is not a goal but a journey! Good
 			luck
 		</p>
-		<aside>
-			<p>
-				This is a personal project and should not be used without researching nutritional basics. If
-				combined with working out I would reccomend this resource: <a
-					class="font-medium text-primary-focus"
-					href="https://youtube.com/jeff-nippard"
-					target="__blank">Jeff Nippard</a
-				>
-			</p>
-		</aside>
 		<a href="/get-user-information/goal" class="btn-main">Lets get started!</a>
 	</div>
 </div>

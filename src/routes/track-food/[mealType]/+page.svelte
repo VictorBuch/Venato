@@ -98,7 +98,7 @@
 			const { data, error } = await supabase
 				.from('meals')
 				.select('*')
-				.textSearch('name', searchQuery, { type: 'websearch' });
+				.textSearch('name', searchQuery);
 			if (data) {
 				queriedMeals = data;
 			}
