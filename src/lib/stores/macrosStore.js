@@ -11,7 +11,7 @@ export const carbsEaten = derived(
 				(value, current) =>
 					value +
 					getMacroProportionateToPortion(
-						current?.carbs,
+						current?.carbs_100g,
 						current?.consumed_serving_size,
 						current?.serving_size
 					),
@@ -50,7 +50,7 @@ export const fatEaten = derived(
 				(value, current) =>
 					value +
 					getMacroProportionateToPortion(
-						current?.fat,
+						current?.fat_100g,
 						current?.consumed_serving_size,
 						current?.serving_size
 					),
@@ -89,7 +89,7 @@ export const proteinEaten = derived(
 				(value, current) =>
 					value +
 					getMacroProportionateToPortion(
-						current?.protein,
+						current?.protein_100g,
 						current?.consumed_serving_size,
 						current?.serving_size
 					),

@@ -151,10 +151,10 @@
 						text={`Kcal ${$caloriesPercent > 100 ? 'over' : 'left'}`}
 					/>
 				</div>
-				<!-- <div class=" flex w-1/4 flex-col items-center justify-center">
+				<div class=" flex w-1/4 flex-col items-center justify-center">
 					<h1>{$caloriesBurned}</h1>
 					<h2>BURNED</h2>
-				</div> -->
+				</div>
 			</section>
 			<section class="mt-6 flex w-full justify-between text-lg text-neutral-content">
 				<div class="flex w-1/4 flex-col items-center justify-center space-y-2">
@@ -185,7 +185,7 @@
 			class="item-center mt-8 flex w-full flex-col justify-center text-lg text-base-200 "
 		>
 			<div
-				class="container space-y-6 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-12 md:space-y-0"
+				class="container space-y-6 md:grid md:auto-rows-auto md:grid-cols-2  md:gap-12 md:space-y-0 md:grid-flow-row"
 			>
 				<MealCard
 					title="Breakfast"
