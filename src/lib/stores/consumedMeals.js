@@ -93,8 +93,10 @@ const handleConsumedMealsChange = async () => {
 };
 
 const consumedMealsSubscriptions = supabase
-	.from('consumed_meals')
-	.on('*', handleConsumedMealsChange)
+	.channel('public:consumed_meals')
+	.on('postgres_changes', { event: '*', schema: 'public', table: 'consumed_meals' }, (payload) =>
+		handleConsumedMealsChange()
+	)
 	.subscribe();
 
 export const consumedBreakfast = writable([]);

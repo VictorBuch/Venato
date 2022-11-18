@@ -11,14 +11,19 @@
 
 	async function getUser() {
 		try {
-			const db_user = await supabase.auth.user();
+			const {
+				data: { session }
+			} = await supabase.auth.getSession();
+			const { user: db_user } = session;
+
 			const { data, error } = await supabase
 				.from('profiles')
 				.select()
 				.eq('id', db_user?.id)
 				.single();
 			if (data) {
-				user.set({ ...data, id: db_user?.id });
+				$user = { ...data, id: db_user?.id };
+				console.log($user, 'gotten user');
 				if ($user.calorie_goal) {
 					goto('/dashboard');
 				} else {

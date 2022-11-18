@@ -14,7 +14,7 @@
 				if (error) throw error;
 				alert('Check your email for the login link!');
 			} else {
-				const { error } = await supabase.auth.signIn({ provider: 'google' });
+				const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
 				if (error) throw error;
 			}
 		} catch (error) {
