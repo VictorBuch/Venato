@@ -54,16 +54,13 @@
 				.match({ user_id: $user?.id, meal_type: $page.params.mealType })
 				.lt('created_at', start.toISOString());
 
-			const { data: fetchMeals } = await supabase
-				.from('meals')
-				.select('*')
-				.order('created_at', { ascending: false })
-				.limit(500);
+			const { data: fetchMeals } = await supabase.from('meals').select('*').limit(100);
 
 			if (fetchSavedMeals && fetchRecentMeals && fetchMeals) {
 				savedMeals = fetchSavedMeals ? fetchSavedMeals.map((mealObj) => mealObj.meals) : [];
 				recentMeals = fetchRecentMeals ? fetchRecentMeals.map((mealObj) => mealObj.meals) : [];
 				meals = fetchMeals;
+				console.log(meals);
 			}
 		} catch (error) {
 			console.log(error);
@@ -76,11 +73,7 @@
 
 	function infiniteHandler({ detail: { complete, error } }) {
 		try {
-			const fetchMeals = supabase
-				.from('meals')
-				.select('*')
-				.order('created_at', { ascending: false })
-				.limit(500);
+			const fetchMeals = supabase.from('meals').select('*').limit(500);
 
 			fetchMeals.then((res) => {
 				if (res.error) {
@@ -97,16 +90,9 @@
 
 	$: filteredMeals =
 		meals && mealType
-			? meals
-					.filter(
-						(meal) =>
-							!$combinedMealsObj[mealType].includes(
-								$combinedMealsObj[mealType].find((comMeal) => comMeal.id === meal.id)
-							)
-					)
-					.filter((meal) => {
-						return meal.name.toLowerCase().includes(searchQuery.toLowerCase());
-					})
+			? meals.filter((meal) => {
+					return meal.name.toLowerCase().includes(searchQuery.toLowerCase());
+			  })
 			: [];
 	$: filteredSavedFoods = savedMeals
 		? savedMeals.filter((food) => {
@@ -177,7 +163,7 @@
 				{mealType?.toUpperCase()}
 			</h1>
 			<div class="ml-auto h-max w-max">
-				<div class="dropdown dropdown-end">
+				<div class="dropdown-end dropdown">
 					<button tabindex="0">
 						<DotsVertical size="20" />
 					</button>
@@ -305,25 +291,55 @@
 				</div>
 			</section>
 		{/if}
-
-		{#if activeTab === 'recent'}
-			<section class="my-8 pb-52">
-				<h1 class="mb-4 font-light text-base-content">Recent Meals</h1>
-				<div use:autoAnimate>
-					{#await fetchData}
-						<div
-							class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
-						>
-							{#each Array(3) as food}
-								<FoodCardSkeleton />
-							{/each}
-						</div>
-					{:then data}
-						{#if filteredRecentFoods?.length > 0}
+		{#if searchQuery.length < 1}
+			{#if activeTab === 'recent'}
+				<section class="my-8 pb-52">
+					<h1 class="mb-4 font-light text-base-content">Recent Meals</h1>
+					<div use:autoAnimate>
+						{#await fetchData}
 							<div
 								class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
 							>
-								{#each filteredRecentFoods as food}
+								{#each Array(3) as food}
+									<FoodCardSkeleton />
+								{/each}
+							</div>
+						{:then data}
+							{#if filteredRecentFoods?.length > 0}
+								<div
+									class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
+								>
+									{#each filteredRecentFoods as food}
+										<FoodCard
+											title={food.name}
+											calories={food.calories_serving_size}
+											servingSize={food.serving_size}
+											on:clickFoodIcon={() => handleAddMeal(food)}
+											on:customizeFoodItem={() => {
+												handleCustomizePortion(food);
+											}}
+										/>
+									{/each}
+								</div>
+							{:else}
+								<div class="mt-4 flex w-full items-center justify-center">
+									<h3 class="text-sm">No recent meals</h3>
+								</div>
+							{/if}
+						{/await}
+					</div>
+				</section>
+			{/if}
+
+			{#await fetchData then data}
+				{#if activeTab === 'saved'}
+					<section class="my-8 pb-52">
+						<h1 class="mb-4 font-light text-base-content">Saved Meals</h1>
+						{#if filteredSavedFoods?.length > 0}
+							<div
+								class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
+							>
+								{#each filteredSavedFoods as food}
 									<FoodCard
 										title={food.name}
 										calories={food.calories_serving_size}
@@ -335,80 +351,62 @@
 									/>
 								{/each}
 							</div>
-						{:else}
-							<div class="mt-4 flex w-full items-center justify-center">
-								<h3 class="text-sm">No recent meals</h3>
+						{/if}
+					</section>
+				{/if}
+
+				{#if activeTab === 'meals'}
+					<section class="my-8 pb-32">
+						<h1 class="mb-4 font-light text-base-content">Meals</h1>
+						{#if meals?.length > 0}
+							<div class="list">
+								<VirtualList width="100%" height={500} itemCount={meals.length} itemSize={130}>
+									<div slot="item" let:index let:style {style}>
+										<FoodCard
+											title={meals[index].name}
+											calories={meals[index].calories_serving_size}
+											servingSize={meals[index].serving_size}
+											isQuickTracked={meals[index].is_quick_tracked}
+											on:clickFoodIcon={() => handleAddMeal(meals[index])}
+											on:customizeFoodItem={() => {
+												handleCustomizePortion(meals[index]);
+											}}
+										/>
+									</div>
+									<div slot="footer">
+										<InfiniteLoading on:infinite={infiniteHandler} />
+									</div>
+								</VirtualList>
 							</div>
 						{/if}
-					{/await}
-				</div>
+					</section>
+				{/if}
+			{/await}
+		{:else}
+			<section class="my-8 pb-52">
+				<h1 class="mb-4 font-light text-base-content">Found Meals</h1>
+				{#if filteredMeals?.length > 0}
+					<div
+						class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
+					>
+						{#each filteredMeals as food}
+							<FoodCard
+								title={food.name}
+								calories={food.calories_serving_size}
+								servingSize={food.serving_size}
+								on:clickFoodIcon={() => handleAddMeal(food)}
+								on:customizeFoodItem={() => {
+									handleCustomizePortion(food);
+								}}
+							/>
+						{/each}
+					</div>
+				{:else}
+					<div class="mt-4 flex w-full items-center justify-center">
+						<h3 class="text-sm">No meals found</h3>
+					</div>
+				{/if}
 			</section>
 		{/if}
-
-		{#await fetchData then data}
-			{#if activeTab === 'saved'}
-				<section class="my-8 pb-52">
-					<h1 class="mb-4 font-light text-base-content">Saved Meals</h1>
-					{#if filteredSavedFoods?.length > 0}
-						<div
-							class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
-						>
-							{#each filteredSavedFoods as food}
-								<FoodCard
-									title={food.name}
-									calories={food.calories_serving_size}
-									servingSize={food.serving_size}
-									on:clickFoodIcon={() => handleAddMeal(food)}
-									on:customizeFoodItem={() => {
-										handleCustomizePortion(food);
-									}}
-								/>
-							{/each}
-						</div>
-					{/if}
-				</section>
-			{/if}
-
-			{#if activeTab === 'meals'}
-				<section class="my-8 pb-52">
-					<h1 class="mb-4 font-light text-base-content">Meals</h1>
-					{#if filteredMeals?.length > 0}
-						<div
-							class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
-						>
-							<VirtualList width="100%" height={600} itemCount={filteredMeals.length} itemSize={50}>
-								<div slot="item" let:index let:style {style}>
-									<FoodCard
-										title={filteredMeals[index].name}
-										calories={filteredMeals[index].calories_serving_size}
-										servingSize={filteredMeals[index].serving_size}
-										isQuickTracked={filteredMeals[index].is_quick_tracked}
-										on:clickFoodIcon={() => handleAddMeal(filteredMeals[index])}
-										on:customizeFoodItem={() => {
-											handleCustomizePortion(filteredMeals[index]);
-										}}
-									/>
-								</div>
-								<div slot="footer">
-									<InfiniteLoading on:infinite={infiniteHandler} />
-								</div>
-							</VirtualList>
-							<!-- {#each filteredMeals as meal}
-								<FoodCard
-									title={meal.name}
-									calories={meal.calories_serving_size}
-									servingSize={meal.serving_size}
-									isQuickTracked={meal.is_quick_tracked}
-									on:clickFoodIcon={() => handleAddMeal(meal)}
-									on:customizeFoodItem={() => {
-										handleCustomizePortion(meal);
-									}}
-								/>
-							{/each} -->
-						</div>
-					{/if}
-				</section>
-			{/if}
-		{/await}
 	</div>
 </div>

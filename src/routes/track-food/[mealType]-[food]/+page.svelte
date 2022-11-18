@@ -252,30 +252,48 @@
 				<div class="flex flex-col items-center">
 					<ProgressRing
 						radius={75}
-						percent={calculatePercentage(food.carbs, food.carbs + food.protein + food.fat)}
+						percent={calculatePercentage(
+							food.carbs_serving_size,
+							food.carbs_serving_size + food.protein_serving_size + food.fat_serving_size
+						)}
 						percentOver={0}
 						stroke={1}
-						text={`${calculatePercentage(food.carbs, food.carbs + food.protein + food.fat)}%`}
+						text={`${calculatePercentage(
+							food.carbs_serving_size,
+							food.carbs_serving_size + food.protein_serving_size + food.fat_serving_size
+						)}%`}
 					/>
 					<p class="mt-2 text-xs uppercase text-base-content">Carbs</p>
 				</div>
 				<div class="flex flex-col items-center">
 					<ProgressRing
 						radius={75}
-						percent={calculatePercentage(food.protein, food.carbs + food.protein + food.fat)}
+						percent={calculatePercentage(
+							food.protein_serving_size,
+							food.carbs_serving_size + food.protein_serving_size + food.fat_serving_size
+						)}
 						percentOver={0}
 						stroke={1}
-						text={`${calculatePercentage(food.protein, food.carbs + food.protein + food.fat)}%`}
+						text={`${calculatePercentage(
+							food.protein_serving_size,
+							food.carbs_serving_size + food.protein_serving_size + food.fat_serving_size
+						)}%`}
 					/>
 					<p class="mt-2 text-xs uppercase text-base-content">Protein</p>
 				</div>
 				<div class="flex flex-col items-center">
 					<ProgressRing
 						radius={75}
-						percent={calculatePercentage(food.fat, food.carbs + food.protein + food.fat)}
+						percent={calculatePercentage(
+							food.fat_serving_size,
+							food.carbs_serving_size + food.protein_serving_size + food.fat_serving_size
+						)}
 						percentOver={0}
 						stroke={1}
-						text={`${calculatePercentage(food.fat, food.carbs + food.protein + food.fat)}%`}
+						text={`${calculatePercentage(
+							food.fat_serving_size,
+							food.carbs_serving_size + food.protein_serving_size + food.fat_serving_size
+						)}%`}
 					/>
 					<p class="mt-2 text-xs uppercase text-base-content">Fat</p>
 				</div>
@@ -308,7 +326,7 @@
 			<section class="space-y-2">
 				<div class="text-semi-bold flex w-full items-center justify-between text-lg">
 					<p>Carbs</p>
-					<p>{food.carbs} g</p>
+					<p>{food.carbs_serving_size} g</p>
 				</div>
 				{#if food?.fiber_g}
 					<div class="flex w-full items-center justify-between text-sm font-light">
@@ -325,17 +343,17 @@
 			</section>
 			<div class="text-semi-bold flex w-full items-center justify-between text-lg">
 				<p>Protein</p>
-				<p>{food.protein} g</p>
+				<p>{food.protein_serving_size} g</p>
 			</div>
 			<section class="space-y-2">
 				<div class="text-semi-bold flex w-full items-center justify-between text-lg">
 					<p>Fat</p>
-					<p>{food.fat} g</p>
+					<p>{food.fat_serving_size} g</p>
 				</div>
 				{#if food?.fat_saturated_g}
 					<div class="flex w-full items-center justify-between text-sm font-light">
 						<p>Saturated fat</p>
-						<p>{food.fat_saturated_g} g</p>
+						<p>{food.fat_serving_size_saturated_g} g</p>
 					</div>
 				{/if}
 			</section>
