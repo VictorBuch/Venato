@@ -1,18 +1,13 @@
 <script lang="ts">
+	import InfiniteLoading from 'svelte-infinite-loading';
+	import VirtualList from 'svelte-tiny-virtual-list';
 	import { supabase } from '$lib/supabaseClient';
 	import { user } from '$lib/stores/userStore';
 	import { goto } from '$app/navigation';
 	import type { Meal } from '$lib/types/meals';
 	import autoAnimate from '@formkit/auto-animate';
 
-	import {
-		consumedBreakfast,
-		consumedLunch,
-		consumedDinner,
-		consumedSnacks,
-		combinedMealsObj,
-		meals
-	} from '$lib/stores/consumedMeals';
+	import { combinedMealsObj } from '$lib/stores/consumedMeals';
 
 	import {
 		caloriesEaten,
@@ -39,10 +34,12 @@
 	let mealType = $page?.params?.mealType;
 	let savedMeals: [Meal];
 	let recentMeals: [Meal];
+	let meals: [Meal];
 	let searchQuery = '';
 	let activeTab = 'recent';
 
 	const fetchMealData = async () => {
+		// TODO: Split this into multiple calls to make the initial load of recent meals faster
 		try {
 			const start = new Date();
 			start.setHours(0, 0, 0, 0);
@@ -57,9 +54,12 @@
 				.match({ user_id: $user?.id, meal_type: $page.params.mealType })
 				.lt('created_at', start.toISOString());
 
-			if (fetchSavedMeals && fetchRecentMeals) {
+			const { data: fetchMeals } = await supabase.from('meals').select('*').limit(100);
+
+			if (fetchSavedMeals && fetchRecentMeals && fetchMeals) {
 				savedMeals = fetchSavedMeals ? fetchSavedMeals.map((mealObj) => mealObj.meals) : [];
 				recentMeals = fetchRecentMeals ? fetchRecentMeals.map((mealObj) => mealObj.meals) : [];
+				meals = fetchMeals;
 			}
 		} catch (error) {
 			console.log(error);
@@ -69,21 +69,46 @@
 	};
 
 	let fetchData = fetchMealData();
-	console.log($combinedMealsObj[mealType]);
 
-	$: filteredMeals =
-		$meals && mealType
-			? $meals
-					.filter(
-						(meal) =>
-							!$combinedMealsObj[mealType].includes(
-								$combinedMealsObj[mealType].find((comMeal) => comMeal.id === meal.id)
-							)
-					)
-					.filter((meal) => {
-						return meal.name.toLowerCase().includes(searchQuery.toLowerCase());
-					})
-			: [];
+	function infiniteHandler({ detail: { complete, error } }) {
+		try {
+			const fetchMeals = supabase.from('meals').select('*').limit(500);
+
+			fetchMeals.then((res) => {
+				if (res.error) {
+					error();
+				} else {
+					meals = [...meals, ...res.data];
+					complete();
+				}
+			});
+		} catch (e) {
+			error();
+		}
+	}
+
+	let timeout;
+	let queriedMeals = [];
+	let querying = false;
+
+	const debounce = () => {
+		clearTimeout(timeout);
+		querying = true;
+		timeout = setTimeout(async () => {
+			const { data, error } = await supabase
+				.from('meals')
+				.select('*')
+				.textSearch('name', searchQuery, { type: 'websearch' });
+			if (data) {
+				queriedMeals = data;
+			}
+			if (error) {
+				console.log(error);
+			}
+			querying = false;
+		}, 1000);
+	};
+
 	$: filteredSavedFoods = savedMeals
 		? savedMeals.filter((food) => {
 				return food.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -101,7 +126,7 @@
 				user_id: $user?.id,
 				meal_type: mealType,
 				meal_id: meal.id,
-				portion: meal.portion
+				portion: meal.serving_size
 			}
 		]);
 		if (error) {
@@ -175,6 +200,7 @@
 						type="text"
 						placeholder="Search…"
 						bind:value={searchQuery}
+						on:keyup={debounce}
 						class="input input-bordered w-full bg-accent-content !text-black placeholder:text-gray-700"
 					/>
 					<button class="btn btn-square">
@@ -260,46 +286,80 @@
 				class="tab tab-bordered w-1/3 ">All meals</button
 			>
 		</div>
-		{#if activeTab === 'recent'}
-			{#if $combinedMealsObj[mealType]?.length > 0 && !searchQuery.length}
-				<section class="my-8">
-					<h1 class="mb-4 font-light text-base-content">Consumed meals</h1>
-					<div class="space-y-4">
-						{#each $combinedMealsObj[mealType] as meal}
-							<FoodCard
-								title={meal.name}
-								calories={meal.calories_serving_size}
-								servingSize={meal.portion}
-								isQuickTracked={meal.is_quick_tracked}
-								on:clickFoodIcon={() => handleRemoveMeals(meal)}
-								on:customizeFoodItem={() => handleCustomizePortion(meal)}
-								remove
-							/>
-						{/each}
-					</div>
-				</section>
-			{/if}
-			<section class="my-8 pb-52">
-				<h1 class="mb-4 font-light text-base-content">Recent Meals</h1>
-				<div use:autoAnimate>
-					{#await fetchData}
-						<div
-							class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
-						>
-							{#each Array(3) as food}
-								<FoodCardSkeleton />
-							{/each}
-						</div>
-					{:then data}
-						{#if filteredRecentFoods?.length > 0}
+
+		{#if $combinedMealsObj[mealType]?.length > 0 && !searchQuery.length}
+			<section class="my-8">
+				<h1 class="mb-4 font-light text-base-content">Consumed meals</h1>
+				<div
+					class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
+				>
+					{#each $combinedMealsObj[mealType] as meal}
+						<FoodCard
+							title={meal.name}
+							calories={meal.calories_consumed_serving_size}
+							servingSize={meal.consumed_serving_size}
+							isQuickTracked={meal.is_quick_tracked}
+							on:clickFoodIcon={() => handleRemoveMeals(meal)}
+							on:customizeFoodItem={() => handleCustomizePortion(meal)}
+							remove
+						/>
+					{/each}
+				</div>
+			</section>
+		{/if}
+		{#if searchQuery.length < 1}
+			{#if activeTab === 'recent'}
+				<section class="my-8 pb-52">
+					<h1 class="mb-4 font-light text-base-content">Recent Meals</h1>
+					<div use:autoAnimate>
+						{#await fetchData}
 							<div
 								class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
 							>
-								{#each filteredRecentFoods as food}
+								{#each Array(3) as food}
+									<FoodCardSkeleton />
+								{/each}
+							</div>
+						{:then data}
+							{#if filteredRecentFoods?.length > 0}
+								<div
+									class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
+								>
+									{#each filteredRecentFoods as food}
+										<FoodCard
+											title={food.name}
+											calories={food.calories_serving_size}
+											servingSize={food.serving_size}
+											on:clickFoodIcon={() => handleAddMeal(food)}
+											on:customizeFoodItem={() => {
+												handleCustomizePortion(food);
+											}}
+										/>
+									{/each}
+								</div>
+							{:else}
+								<div class="mt-4 flex w-full items-center justify-center">
+									<h3 class="text-sm">No recent meals</h3>
+								</div>
+							{/if}
+						{/await}
+					</div>
+				</section>
+			{/if}
+
+			{#await fetchData then data}
+				{#if activeTab === 'saved'}
+					<section class="my-8 pb-52">
+						<h1 class="mb-4 font-light text-base-content">Saved Meals</h1>
+						{#if filteredSavedFoods?.length > 0}
+							<div
+								class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
+							>
+								{#each filteredSavedFoods as food}
 									<FoodCard
 										title={food.name}
 										calories={food.calories_serving_size}
-										servingSize={food.portion}
+										servingSize={food.serving_size}
 										on:clickFoodIcon={() => handleAddMeal(food)}
 										on:customizeFoodItem={() => {
 											handleCustomizePortion(food);
@@ -307,61 +367,69 @@
 									/>
 								{/each}
 							</div>
-						{:else}
-							<div class="mt-4 flex w-full items-center justify-center">
-								<h3 class="text-sm">No recent meals</h3>
+						{/if}
+					</section>
+				{/if}
+
+				{#if activeTab === 'meals'}
+					<section class="my-8 pb-32">
+						<h1 class="mb-4 font-light text-base-content">Meals</h1>
+						{#if meals?.length > 0}
+							<div class="list">
+								<VirtualList width="100%" height={500} itemCount={meals.length} itemSize={130}>
+									<div slot="item" let:index let:style {style}>
+										<FoodCard
+											title={meals[index].name}
+											calories={meals[index].calories_serving_size}
+											servingSize={meals[index].serving_size}
+											isQuickTracked={meals[index].is_quick_tracked}
+											on:clickFoodIcon={() => handleAddMeal(meals[index])}
+											on:customizeFoodItem={() => {
+												handleCustomizePortion(meals[index]);
+											}}
+										/>
+									</div>
+									<div slot="footer">
+										<InfiniteLoading on:infinite={infiniteHandler} />
+									</div>
+								</VirtualList>
 							</div>
 						{/if}
-					{/await}
+					</section>
+				{/if}
+			{/await}
+		{:else if querying}
+			<section class="my-8 pb-52">
+				<h1 class="mb-4 font-light text-base-content">Found Meals</h1>
+				<div class="mt-4 flex w-full items-center justify-center">
+					<h3 class="text-sm">Searching...</h3>
 				</div>
 			</section>
+		{:else}
+			<section class="my-8 pb-52">
+				<h1 class="mb-4 font-light text-base-content">Found Meals</h1>
+				{#if queriedMeals?.length > 0}
+					<div
+						class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
+					>
+						{#each queriedMeals as food}
+							<FoodCard
+								title={food.name}
+								calories={food.calories_serving_size}
+								servingSize={food.serving_size}
+								on:clickFoodIcon={() => handleAddMeal(food)}
+								on:customizeFoodItem={() => {
+									handleCustomizePortion(food);
+								}}
+							/>
+						{/each}
+					</div>
+				{:else}
+					<div class="mt-4 flex w-full items-center justify-center">
+						<h3 class="text-sm">No meals found</h3>
+					</div>
+				{/if}
+			</section>
 		{/if}
-		{#await fetchData then data}
-			{#if activeTab === 'saved'}
-				<section class="my-8 pb-52">
-					<h1 class="mb-4 font-light text-base-content">Saved Meals</h1>
-					{#if filteredSavedFoods?.length > 0}
-						<div
-							class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
-						>
-							{#each filteredSavedFoods as food}
-								<FoodCard
-									title={food.name}
-									calories={food.calories_serving_size}
-									servingSize={food.portion}
-									on:clickFoodIcon={() => handleAddMeal(food)}
-									on:customizeFoodItem={() => {
-										handleCustomizePortion(food);
-									}}
-								/>
-							{/each}
-						</div>
-					{/if}
-				</section>
-			{/if}
-			{#if activeTab === 'meals'}
-				<section class="my-8 pb-52">
-					<h1 class="mb-4 font-light text-base-content">Meals</h1>
-					{#if filteredMeals?.length > 0}
-						<div
-							class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
-						>
-							{#each filteredMeals as meal}
-								<FoodCard
-									title={meal.name}
-									calories={meal.calories_serving_size}
-									servingSize={meal.portion}
-									isQuickTracked={meal.is_quick_tracked}
-									on:clickFoodIcon={() => handleAddMeal(meal)}
-									on:customizeFoodItem={() => {
-										handleCustomizePortion(meal);
-									}}
-								/>
-							{/each}
-						</div>
-					{/if}
-				</section>
-			{/if}
-		{/await}
 	</div>
 </div>

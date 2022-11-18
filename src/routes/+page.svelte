@@ -10,7 +10,6 @@
 	});
 
 	async function getUser() {
-		console.log('here');
 		try {
 			const db_user = await supabase.auth.user();
 			const { data, error } = await supabase

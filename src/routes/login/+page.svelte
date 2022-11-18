@@ -1,16 +1,22 @@
 <script lang="ts">
 	import { supabase } from '../../lib/supabaseClient';
 	import { toast } from '@zerodevx/svelte-toast';
+	import Google from 'svelte-material-icons/Google.svelte';
 
 	let email = '';
 	let loading = false;
 
-	const handleLogin = async () => {
+	const handleLogin = async (provider) => {
 		try {
 			loading = true;
-			const { error } = await supabase.auth.signIn({ email });
-			if (error) throw error;
-			alert('Check your email for the login link!');
+			if (provider === 'email') {
+				const { error } = await supabase.auth.signIn({ email });
+				if (error) throw error;
+				alert('Check your email for the login link!');
+			} else {
+				const { error } = await supabase.auth.signIn({ provider: 'google' });
+				if (error) throw error;
+			}
 		} catch (error) {
 			toast.push(error.error_description || error.message);
 		} finally {
@@ -33,7 +39,7 @@
 				</h2>
 			</div>
 			<form on:submit|preventDefault={handleLogin} class="mt-8 space-y-4">
-				<input type="hidden" name="remember" default={true} />
+				<!-- <input type="hidden" name="remember" default={true} />
 				<div class="-space-y-px rounded-md shadow-md">
 					<div>
 						<label for="email-address" class="sr-only"> Email address </label>
@@ -49,7 +55,16 @@
 					</div>
 				</div>
 
-				<button type="submit" class="btn-main"> Sign in </button>
+				<button type="submit" class="btn-main"> Sign in </button> -->
+				<!--  Google signing button -->
+				<button
+					type="button"
+					on:click={() => handleLogin('google')}
+					class="btn-main"
+					disabled={loading}
+				>
+					<Google size={25} />
+				</button>
 				<!-- <div class="flex justify-center text-sm"> -->
 				<!-- 	<a href="/forgot" class="font-medium text-neutral-content"> Forgot your password? </a> -->
 				<!-- </div> -->

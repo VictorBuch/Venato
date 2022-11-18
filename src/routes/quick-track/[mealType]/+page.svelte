@@ -52,8 +52,8 @@
 				const totalFoods = items.map((item) => `${item.serving_size_g}g ${item.name}`);
 				const totalFoodsString = totalFoods.join(', ');
 				const finalFood = {
-					calories: totalCalories,
-					portion: totalPortion,
+					calories_serving_size: totalCalories,
+					serving_size: totalPortion,
 					name: totalFoodsString,
 					carbs: totalCarbs,
 					protein: totalProtein,
@@ -85,8 +85,8 @@
 				calories = Math.ceil(calories);
 				serving_size_g = Math.ceil(serving_size_g);
 				const finalFood = {
-					calories,
-					portion: serving_size_g,
+					calories_serving_size: calories,
+					serving_size: serving_size_g,
 					name,
 					carbs: carbohydrates_total_g,
 					protein: protein_g,
@@ -111,8 +111,8 @@
 			const { data, error } = await supabase.from('meals').insert([
 				{
 					name: food.name,
-					portion: food.portion,
-					calories: food.calories,
+					serving_size: food.serving_size,
+					calories_serving_size: food.calories_serving_size,
 					carbs: food.carbs,
 					protein: food.protein,
 					fat: food.fat,
@@ -132,7 +132,7 @@
 						meal_id: data[0].id,
 						user_id: get(user).id,
 						meal_type: mealType,
-						portion: food.portion
+						portion: food.serving_size
 					}
 				]);
 				if (mealData) {
@@ -221,13 +221,13 @@
 						<div class="ml-6 flex w-60 flex-col items-start justify-center">
 							<h1 class="w-full text-base font-semibold">{food.name}</h1>
 							<p class="w-full truncate text-sm">
-								{food.portion}g
+								{food.serving_size}g
 							</p>
 						</div>
 					</div>
 					<hr class="border border-gray-200" />
 					<p class="flex h-max items-end justify-center  py-2 text-center text-sm">
-						{food.calories} kcal
+						{food.calories_serving_size} kcal
 					</p>
 				</div>
 				<div class="flex w-full items-center space-x-2">
@@ -356,7 +356,7 @@
 				<label class="space-y-2">
 					<span>Kcal</span>
 					<input
-						bind:value={food.calories}
+						bind:value={food.calories_serving_size}
 						type="text"
 						placeholder="Required"
 						class="max-w-xs input w-full bg-neutral text-xl text-neutral-content placeholder:text-xs placeholder:text-gray-400"
@@ -374,7 +374,7 @@
 				<label class="space-y-2">
 					<span>Portion</span>
 					<input
-						bind:value={food.portion}
+						bind:value={food.serving_size}
 						type="text"
 						placeholder="Optional"
 						class="max-w-xs input w-full bg-neutral text-xl text-neutral-content placeholder:text-xs placeholder:text-gray-400"
