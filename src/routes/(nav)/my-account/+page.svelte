@@ -206,11 +206,11 @@
 	<div class="card static my-8 block w-full bg-neutral shadow-xl">
 		<div class="card-body h-max">
 			<div class="flex items-center space-x-8">
-				<div class="avatar">
+				<!-- <div class="avatar">
 					<div class="mask mask-hexagon w-24">
 						<img alt="avatar" src="https://api.lorem.space/image/face?hash=55350" />
 					</div>
-				</div>
+				</div> -->
 				<div>
 					<input
 						type="text"

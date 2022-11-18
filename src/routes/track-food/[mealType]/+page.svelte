@@ -60,7 +60,6 @@
 				savedMeals = fetchSavedMeals ? fetchSavedMeals.map((mealObj) => mealObj.meals) : [];
 				recentMeals = fetchRecentMeals ? fetchRecentMeals.map((mealObj) => mealObj.meals) : [];
 				meals = fetchMeals;
-				console.log(meals);
 			}
 		} catch (error) {
 			console.log(error);
@@ -88,12 +87,28 @@
 		}
 	}
 
-	$: filteredMeals =
-		meals && mealType
-			? meals.filter((meal) => {
-					return meal.name.toLowerCase().includes(searchQuery.toLowerCase());
-			  })
-			: [];
+	let timeout;
+	let queriedMeals = [];
+	let querying = false;
+
+	const debounce = () => {
+		clearTimeout(timeout);
+		querying = true;
+		timeout = setTimeout(async () => {
+			const { data, error } = await supabase
+				.from('meals')
+				.select('*')
+				.textSearch('name', searchQuery, { type: 'websearch' });
+			if (data) {
+				queriedMeals = data;
+			}
+			if (error) {
+				console.log(error);
+			}
+			querying = false;
+		}, 1000);
+	};
+
 	$: filteredSavedFoods = savedMeals
 		? savedMeals.filter((food) => {
 				return food.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -185,6 +200,7 @@
 						type="text"
 						placeholder="Search…"
 						bind:value={searchQuery}
+						on:keyup={debounce}
 						class="input input-bordered w-full bg-accent-content !text-black placeholder:text-gray-700"
 					/>
 					<button class="btn btn-square">
@@ -382,14 +398,21 @@
 					</section>
 				{/if}
 			{/await}
+		{:else if querying}
+			<section class="my-8 pb-52">
+				<h1 class="mb-4 font-light text-base-content">Found Meals</h1>
+				<div class="mt-4 flex w-full items-center justify-center">
+					<h3 class="text-sm">Searching...</h3>
+				</div>
+			</section>
 		{:else}
 			<section class="my-8 pb-52">
 				<h1 class="mb-4 font-light text-base-content">Found Meals</h1>
-				{#if filteredMeals?.length > 0}
+				{#if queriedMeals?.length > 0}
 					<div
 						class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
 					>
-						{#each filteredMeals as food}
+						{#each queriedMeals as food}
 							<FoodCard
 								title={food.name}
 								calories={food.calories_serving_size}
