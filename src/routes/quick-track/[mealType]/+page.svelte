@@ -108,33 +108,39 @@
 	const addFoodItem = async () => {
 		try {
 			// TODO: fix nutrition grade
-			const { data, error } = await supabase.from('meals').insert([
-				{
-					name: food.name,
-					serving_size: food.serving_size,
-					calories_serving_size: food.calories_serving_size,
-					carbs: food.carbs,
-					protein: food.protein,
-					fat: food.fat,
-					sodium_mg: food?.sodium_mg,
-					potassium_mg: food?.potassium_mg,
-					fat_saturated_g: food?.fat_saturated_g,
-					cholesterol_mg: food?.cholesterol_mg,
-					sugar_g: food?.sugar_g,
-					fiber_g: food?.fiber_g,
-					nutrition_grade: 'A',
-					is_quick_tracked: true
-				}
-			]);
-			if (data) {
-				const { data: mealData, error: mealError } = await supabase.from('consumed_meals').insert([
+			const { data, error } = await supabase
+				.from('meals')
+				.insert([
 					{
-						meal_id: data[0].id,
-						user_id: get(user).id,
-						meal_type: mealType,
-						portion: food.serving_size
+						name: food.name,
+						serving_size: food.serving_size,
+						calories_serving_size: food.calories_serving_size,
+						carbs: food.carbs,
+						protein: food.protein,
+						fat: food.fat,
+						sodium_mg: food?.sodium_mg,
+						potassium_mg: food?.potassium_mg,
+						fat_saturated_g: food?.fat_saturated_g,
+						cholesterol_mg: food?.cholesterol_mg,
+						sugar_g: food?.sugar_g,
+						fiber_g: food?.fiber_g,
+						nutrition_grade: 'A',
+						is_quick_tracked: true
 					}
-				]);
+				])
+				.select();
+			if (data) {
+				const { data: mealData, error: mealError } = await supabase
+					.from('consumed_meals')
+					.insert([
+						{
+							meal_id: data[0].id,
+							user_id: get(user).id,
+							meal_type: mealType,
+							portion: food.serving_size
+						}
+					])
+					.select();
 				if (mealData) {
 					toast.push('Meal added');
 					goto(`/track-food/${mealType}`);

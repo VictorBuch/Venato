@@ -32,10 +32,13 @@
 			}
 			if (error) {
 				try {
-					const { data, error } = await supabase.from('profiles').insert({
-						id: db_user?.id,
-						updated_at: db_user?.updated_at
-					});
+					const { data, error } = await supabase
+						.from('profiles')
+						.insert({
+							id: db_user?.id,
+							updated_at: db_user?.updated_at
+						})
+						.select();
 				} catch (e) {
 					console.log(e);
 				}

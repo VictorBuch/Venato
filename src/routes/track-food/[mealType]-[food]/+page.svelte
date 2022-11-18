@@ -63,12 +63,15 @@
 	const handleSubmit = async (e: MouseEvent) => {
 		if (serving_size && unit) {
 			try {
-				const { data } = await supabase.from('consumed_meals').insert({
-					meal_id: food.id,
-					user_id: $user.id,
-					meal_type: mealType,
-					portion: serving_size
-				});
+				const { data } = await supabase
+					.from('consumed_meals')
+					.insert({
+						meal_id: food.id,
+						user_id: $user.id,
+						meal_type: mealType,
+						portion: serving_size
+					})
+					.select();
 
 				if (data) {
 					toast.push('Meal added successfully!');

@@ -121,14 +121,17 @@
 		: [];
 
 	const handleAddMeal = async (meal: Meal) => {
-		const { data, error } = await supabase.from('consumed_meals').insert([
-			{
-				user_id: $user?.id,
-				meal_type: mealType,
-				meal_id: meal.id,
-				portion: meal.serving_size
-			}
-		]);
+		const { data, error } = await supabase
+			.from('consumed_meals')
+			.insert([
+				{
+					user_id: $user?.id,
+					meal_type: mealType,
+					meal_id: meal.id,
+					portion: meal.serving_size
+				}
+			])
+			.select();
 		if (error) {
 			toast.push('Could not add meal');
 			console.log(error);
@@ -201,7 +204,7 @@
 						placeholder="Search…"
 						bind:value={searchQuery}
 						on:keyup={debounce}
-						class="input input-bordered w-full bg-accent-content !text-black placeholder:text-gray-700"
+						class="input-bordered input w-full bg-accent-content !text-black placeholder:text-gray-700"
 					/>
 					<button class="btn btn-square">
 						<svg
@@ -291,7 +294,7 @@
 			<section class="my-8">
 				<h1 class="mb-4 font-light text-base-content">Consumed meals</h1>
 				<div
-					class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
+					class="space-y-4 md:grid md:auto-rows-auto md:grid-cols-2  md:gap-6 md:space-y-0 md:grid-flow-row"
 				>
 					{#each $combinedMealsObj[mealType] as meal}
 						<FoodCard
@@ -410,7 +413,7 @@
 				<h1 class="mb-4 font-light text-base-content">Found Meals</h1>
 				{#if queriedMeals?.length > 0}
 					<div
-						class="space-y-4 md:grid md:grid-flow-row md:auto-rows-auto  md:grid-cols-2 md:gap-6 md:space-y-0"
+						class="space-y-4 md:grid md:auto-rows-auto md:grid-cols-2  md:gap-6 md:space-y-0 md:grid-flow-row"
 					>
 						{#each queriedMeals as food}
 							<FoodCard

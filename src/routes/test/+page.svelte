@@ -61,7 +61,7 @@
 			console.log(data);
 			for (let i = 0; i < data.length; i++) {
 				try {
-					const { data: food, error } = await supabase.from('meals').insert([data[i]]);
+					const { data: food, error } = await supabase.from('meals').insert([data[i]]).select();
 					if (error) console.log('error', error);
 					console.log('food', food);
 				} catch (error) {
