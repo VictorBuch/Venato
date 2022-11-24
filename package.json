@@ -12,6 +12,10 @@
     "format": "prettier --write --plugin-search-dir=. ."
   },
   "dependencies": {
+    "@capacitor/android": "^4.5.0",
+    "@capacitor/camera": "^4.1.4",
+    "@capacitor/cli": "^4.5.0",
+    "@capacitor/core": "^4.5.0",
     "@formkit/auto-animate": "^1.0.0-beta.3",
     "@mui/icons-material": "^5.8.0",
     "@mui/material": "^5.8.0",
@@ -27,6 +31,7 @@
   "devDependencies": {
     "@sveltejs/adapter-auto": "next",
     "@sveltejs/adapter-netlify": "^1.0.0-next.78",
+    "@sveltejs/adapter-static": "^1.0.0-next.48",
     "@sveltejs/kit": "next",
     "@tailwindcss/line-clamp": "^0.4.0",
     "@typescript-eslint/eslint-plugin": "^5.27.0",

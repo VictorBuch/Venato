@@ -1,4 +1,4 @@
-import adapter from '@sveltejs/adapter-netlify';
+import adapter from '@sveltejs/adapter-static'
 import preprocess from 'svelte-preprocess';
 
 /** @type {import('@sveltejs/kit').Config} */
@@ -8,7 +8,10 @@ const config = {
 	preprocess: preprocess({ postcss: true }),
 
 	kit: {
-		adapter: adapter({ edge: false, split: false })
+		adapter: adapter({
+			fallback: 'index.html'
+		  }),
+		  prerender: { entries: [] }
 	}
 };
 
